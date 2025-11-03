@@ -5,12 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Volts;
-import static frc.robot.Constants.CoralLevel.INTAKE;
-import static frc.robot.Constants.CoralLevel.L1;
-import static frc.robot.Constants.CoralLevel.L2;
-import static frc.robot.Constants.CoralLevel.L3;
-import static frc.robot.Constants.CoralLevel.L4;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -19,8 +13,6 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -34,20 +26,10 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.CoralLevel;
 import frc.robot.sim.SimulationContext;
-import frc.robot.subsystems.algae.Algae;
-import frc.robot.subsystems.algae.RealAlgaeIO;
-import frc.robot.subsystems.algae.SimAlgaeIO;
-import frc.robot.subsystems.coral.Coral;
-import frc.robot.subsystems.coral.RealCoralIO;
-import frc.robot.subsystems.coral.SimCoralIO;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
 import frc.robot.subsystems.drive.SimSwerveIO;
-import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.elevator.RealElevatorIO;
-import frc.robot.subsystems.elevator.SimElevatorIO;
 import java.util.function.Supplier;
 
 @Logged
@@ -57,12 +39,9 @@ public class Robot extends TimedRobot {
 
   // The robot's subsystems
   private final DriveSubsystem drive;
-  private final Elevator elevator;
-  private final Coral coral;
-  private final Algae algae;
   private final Vision vision;
 
-  private int turnMultiplier = 1;
+  private final int turnMultiplier = 1;
 
   // Driver and operator controls
   @NotLogged private final CommandXboxController operatorController; // NOPMD
@@ -78,19 +57,10 @@ public class Robot extends TimedRobot {
     // Initialize our subsystems. If our program is running in simulation mode (either from the
     // simulate command in vscode or from running in unit tests), then we use the simulation IO
     // layers. Otherwise, the IO layers that interact with real hardware are used.
-
     if (Robot.isSimulation()) {
       drive = new DriveSubsystem(new SimSwerveIO());
-      elevator = new Elevator(new SimElevatorIO());
-      coral = new Coral(new SimCoralIO());
-      algae = new Algae(new SimAlgaeIO());
-
     } else {
-      // Running on real hardware
       drive = new DriveSubsystem(new MAXSwerveIO());
-      elevator = new Elevator(new RealElevatorIO());
-      coral = new Coral(new RealCoralIO());
-      algae = new Algae(new RealAlgaeIO());
     }
     vision = new Vision();
 
@@ -104,7 +74,6 @@ public class Robot extends TimedRobot {
     odometryTestChooser.addOption("Drive 21 Feet", () -> drive.driveDistance(Feet.of(21)));
 
     autoChooser.setDefaultOption("Do Nothing", Commands::none);
-    autoChooser.addOption("Score L4", this::autoScoreL4);
     autoChooser.addOption("10s Leave", drive::autoLeaveArea);
 
     Shuffleboard.getTab("Test").add("Drive Distance Selection", odometryTestChooser);
@@ -115,8 +84,6 @@ public class Robot extends TimedRobot {
     lStick = new CommandJoystick(Constants.OIConstants.rightJoystickPort);
 
     // Configure the button bindings and automatic bindings
-    configureButtonBindings();
-    configureAutomaticBindings();
 
     // Configure default commands
     /*
@@ -128,17 +95,9 @@ public class Robot extends TimedRobot {
      */
     drive.setDefaultCommand(driveFastWithFlightSticks());
 
-    //    rStick.trigger().whileTrue(driveSlowWithFlightSticks()); // Disabled because William is a
-    // shit driver
-
-    elevator.setDefaultCommand(elevator.stop());
-    coral.setDefaultCommand(coral.stow());
-    algae.setDefaultCommand(algae.stow());
     // Start data logging
 
     SignalLogger.start();
-
-    DriverStation.startDataLog(DataLogManager.getLog(), true);
 
     Epilogue.configure(
         config ->
@@ -146,6 +105,8 @@ public class Robot extends TimedRobot {
                 EpilogueBackend.multi(
                     new FileBackend(DataLogManager.getLog()),
                     new NTEpilogueBackend(NetworkTableInstance.getDefault())));
+
+    DriverStation.startDataLog(DataLogManager.getLog(), true);
 
     // Disable joystick warnings by default
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -168,262 +129,6 @@ public class Robot extends TimedRobot {
   private Command driveSlowWithFlightSticks() {
     //noinspection SuspiciousNameCombination
     return drive.driveSlowWithJoysticks(lStick::getY, lStick::getX, rStick::getTwist);
-  }
-
-  private void configureButtonBindings() {
-    /*
-    BA: Score L1
-    BB: Score L2
-    BX: Score L3
-    BY: Score L4
-    LB: Elevator Home
-    RB: Coral Intake
-    LT:
-    RT: [BROKEN]
-    ST:
-    UA: Algae Intake Ground
-    RA: Algae Intake L3
-    DA: Algae Score
-    LA: Algae Intake L2
-    */
-
-    configureTeleopBindings();
-    configureTestBindings();
-  }
-
-  /**
-   * Configures controls that will be used in teleop mode in the main competition. Primarily used
-   * for controlling subsystems.
-   */
-  private void configureTeleopBindings() {
-    rStick.button(7).onTrue(drive.zeroGyro());
-    //    operatorController.leftTrigger().whileTrue(drive.setXCommand());
-    operatorController.start().whileTrue(drive.setXCommand());
-
-    bindVision();
-
-    bindElevator();
-
-    bindCoral();
-
-    bindAlgae();
-  }
-
-  private void bindVision() {
-    rStick
-        .button(2)
-        .whileTrue(
-            drive.defer(
-                () -> {
-                  turnMultiplier = 0;
-                  return drive.rotateToHeading(
-                      vision
-                          .getLastRealValue()
-                          .toPose2d()
-                          .getRotation()
-                          .rotateBy(Rotation2d.k180deg)
-                          .plus(drive.getHeading()));
-                }));
-
-    rStick
-        .button(2)
-        .onFalse(
-            Commands.runOnce(() -> turnMultiplier = 1)
-                .andThen(
-                    drive.driveToRobotRelativePose(
-                        vision
-                            .getLastRealValue()
-                            .toPose2d()
-                            .plus(new Transform2d(-0.5, 0, Rotation2d.kZero))
-                            .times(-1))));
-  }
-
-  private void bindElevator() {
-    operatorController.leftBumper().whileTrue(elevator.goToBottom());
-  }
-
-  private void bindCoral() {
-    operatorController
-        .leftTrigger()
-        .onTrue(
-            coral.setDynamicGrabberVoltage(Constants.CoralConstants.grabScoreVoltage.in(Volts)));
-    operatorController.leftTrigger().onFalse(coral.zeroDynamicGrabberVoltage());
-
-    operatorController
-        .rightBumper()
-        .onTrue(
-            coral.setDynamicGrabberVoltage(Constants.CoralConstants.grabIntakeVoltage.in(Volts)));
-    operatorController.rightBumper().whileTrue(controlCoralAtLevel(INTAKE));
-    operatorController
-        .rightBumper()
-        .onFalse(coral.zeroDynamicGrabberVoltage().andThen(finishControlCoral()));
-
-    operatorController.a().whileTrue(controlCoralAtLevel(L1));
-    operatorController.a().onFalse(finishControlCoral());
-
-    operatorController.b().whileTrue(controlCoralAtLevel(L2));
-    operatorController.b().onFalse(finishControlCoral());
-
-    operatorController.x().whileTrue(controlCoralAtLevel(L3));
-    operatorController.x().onFalse(finishControlCoral());
-
-    operatorController.y().whileTrue(controlCoralAtLevel(L4));
-    operatorController.y().onFalse(finishControlCoral());
-  }
-
-  private Command controlCoralAtLevel(CoralLevel level) {
-    return switch (level) {
-      case L1 ->
-          elevator
-              .goToL1Height()
-              .deadlineFor(coral.stowAndHold())
-              .andThen(coral.zeroDynamicGrabberVoltage())
-              .andThen(coral.scoreL1().alongWith(elevator.holdTargetPosition()))
-              .withName("Score L1");
-      case L2 ->
-          elevator
-              .goToL2Height()
-              .deadlineFor(coral.stowAndHold())
-              .andThen(coral.zeroDynamicGrabberVoltage())
-              .andThen(coral.scoreL2().alongWith(elevator.holdTargetPosition()))
-              .withName("Score L2");
-      case L3 ->
-          elevator
-              .goToL3Height()
-              .deadlineFor(coral.stowAndHold())
-              .andThen(coral.zeroDynamicGrabberVoltage())
-              .andThen(coral.scoreL3().alongWith(elevator.holdTargetPosition()))
-              .withName("Score L3");
-      case L4 ->
-          elevator
-              .goToL4Height()
-              .deadlineFor(coral.stowAndHold())
-              .andThen(coral.zeroDynamicGrabberVoltage())
-              .andThen(coral.scoreL4().alongWith(elevator.holdTargetPosition()))
-              .withName("Score L4");
-      case INTAKE ->
-          elevator
-              .home()
-              .deadlineFor(coral.stow())
-              .andThen(coral.intake())
-              .withName("Coral Intake");
-    };
-  }
-
-  private Command finishControlCoral() {
-    return elevator.goToBottom().alongWith(coral.stowUntilDone()).withName("Return to bottom");
-  }
-
-  private void bindAlgae() {
-
-    // Intake Ground
-    operatorController
-        .povUp()
-        .whileTrue(
-            elevator
-                .goToAlgaeIntakeHeight()
-                .andThen(algae.intakeGround())
-                .withName("Algae Intake Ground"));
-
-    operatorController
-        .povUp()
-        .onFalse(
-            algae
-                .stowUntilDone()
-                .deadlineFor(elevator.goToBottom())
-                .withName("Finish Algae Ground Intake"));
-
-    // Score Processor
-    operatorController
-        .povDown()
-        .whileTrue(
-            elevator
-                .goToAlgaeScoreHeight()
-                .andThen(algae.scoreProcessor())
-                .withName("Score Algae"));
-
-    operatorController
-        .povDown()
-        .onFalse(
-            algae.stowUntilDone().andThen(elevator.goToBottom()).withName("Finish Algae Score"));
-
-    // Algae L2
-    operatorController
-        .povLeft()
-        .debounce(0.2)
-        .whileTrue(
-            elevator
-                .goToAlgaeL2Height()
-                .andThen(algae.intakeReef().deadlineFor(elevator.holdTargetPosition()))
-                .withName("Intake Algae L2"));
-
-    operatorController
-        .povLeft()
-        .debounce(0.2)
-        .onFalse(
-            algae
-                .stowUntilDone()
-                .andThen(elevator.goToBottom())
-                .withName("Finish Algae Intake L2"));
-
-    // Algae L3
-    operatorController
-        .povRight()
-        .debounce(0.2)
-        .whileTrue(
-            elevator
-                .goToAlgaeL3Height()
-                .andThen(algae.intakeReef().deadlineFor(elevator.holdTargetPosition()))
-                .withName("Intake Algae L3"));
-
-    operatorController
-        .povRight()
-        .debounce(0.2)
-        .onFalse(
-            algae
-                .stowUntilDone()
-                .andThen(elevator.goToBottom())
-                .withName("Finish Algae Intake L3"));
-  }
-
-  /**
-   * Configures additional controls that are only active in test mode. Primarily used for sysid
-   * routines.
-   */
-  @SuppressWarnings("unused")
-  private void configureTestBindings() {
-    //    operatorController
-    //        .leftTrigger()
-    //        .and(RobotModeTriggers.test())
-    //        .whileTrue(elevator.findFeedforwardTerms().withName("Run Elevator Sysid Routine"));
-    //    operatorController
-    //        .back()
-    //        .and(RobotModeTriggers.test())
-    //        .whileTrue(drive.defer(() -> odometryTestChooser.getSelected().get()));
-    //        operatorController
-    //            .rightBumper()
-    //            .and(RobotModeTriggers.test())
-    //            .whileTrue(coral.runSysIdRoutine().withName("Run Coral Sysid Routine"));
-    //    operatorController
-    //        .leftBumper()
-    //        .and(RobotModeTriggers.test())
-    //        .whileTrue(algae.runSysIdRoutine().withName("Run Algae Sysid Routine"));
-  }
-
-  public Command autoScoreL4() {
-    return drive
-        .moveForwardsUntilStopped()
-        .andThen(controlCoralAtLevel(CoralLevel.L4))
-        .withTimeout(3)
-        .andThen(
-            coral.setDynamicGrabberVoltage(Constants.CoralConstants.grabScoreVoltage.in(Volts)))
-        .withTimeout(3)
-        .andThen(coral.stowUntilDone())
-        .andThen(finishControlCoral());
-  }
-
-  private void configureAutomaticBindings() {
-    //    elevator.isStalling.whileTrue(elevator.stop());
   }
 
   /**
@@ -459,15 +164,17 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(false);
     }
 
+    vision.update();
+
+    Epilogue.update(this);
+
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    vision.update();
 
     CommandScheduler.getInstance().run();
 
-    Epilogue.update(this);
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
   }
 
@@ -494,32 +201,12 @@ public class Robot extends TimedRobot {
     }
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
-  }
-
-  /** This function is called periodically during operator control. */
-  @Override
   public void teleopPeriodic() {}
 
-  @Override
-  public void testInit() {
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
-
-  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
 }

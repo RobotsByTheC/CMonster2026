@@ -1,0 +1,314 @@
+{
+  "version": 1.0,
+  "grid_size": 32,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Last Run Time",
+            "x": 256.0,
+            "y": 160.0,
+            "width": 320.0,
+            "height": 480.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "Epilogue/Stats/Last Run",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "min_value": 6.0,
+              "max_value": 14.0,
+              "color": 4278238420,
+              "line_width": 3.0
+            }
+          },
+          {
+            "title": "Battery Voltage",
+            "x": 0.0,
+            "y": 160.0,
+            "width": 256.0,
+            "height": 640.0,
+            "type": "Voltage View",
+            "properties": {
+              "topic": "Robot/Battery Voltage",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 10.0,
+              "max_value": 13.0,
+              "divisions": 13,
+              "inverted": false,
+              "orientation": "vertical"
+            }
+          },
+          {
+            "title": "Auto Chooser",
+            "x": 256.0,
+            "y": 640.0,
+            "width": 320.0,
+            "height": 160.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Chooser",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Average Velocity",
+            "x": 576.0,
+            "y": 160.0,
+            "width": 352.0,
+            "height": 480.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "Robot/drive/getAverageVelocity",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": 0.0,
+              "max_value": 15.0,
+              "number_of_labels": 15,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Left Camera",
+            "x": 928.0,
+            "y": 160.0,
+            "width": 416.0,
+            "height": 320.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1181_Input_MJPEG_Server",
+              "period": 0.06,
+              "compression": 15,
+              "fps": 30,
+              "resolution": [
+                360.0,
+                240.0
+              ]
+            }
+          },
+          {
+            "title": "Right Camera",
+            "x": 928.0,
+            "y": 480.0,
+            "width": 416.0,
+            "height": 320.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1183_Input_MJPEG_Server",
+              "period": 0.06,
+              "compression": 15,
+              "fps": 30,
+              "resolution": [
+                360.0,
+                240.0
+              ]
+            }
+          },
+          {
+            "title": "Height Variance",
+            "x": 1344.0,
+            "y": 416.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Robot/elevator/getHeightVariance",
+              "period": 0.033,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Coral Variance",
+            "x": 1344.0,
+            "y": 544.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Robot/coral/getRotationVariance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Algae Variance",
+            "x": 1344.0,
+            "y": 672.0,
+            "width": 192.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Robot/algae/getRotationVariance",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 576.0,
+            "y": 640.0,
+            "width": 352.0,
+            "height": 160.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "Can See AprilTag",
+            "x": 1344.0,
+            "y": 160.0,
+            "width": 192.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/vision/canSeeFilteredTag",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    },
+    {
+      "name": "Test",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Drive Distance Selection",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1024.0,
+            "height": 256.0,
+            "type": "Split Button Chooser",
+            "properties": {
+              "topic": "/Shuffleboard/Test/Drive Distance Selection",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Field",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 1248.0,
+            "height": 544.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/Shuffleboard/Drive/Field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 4",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "X PID",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 544.0,
+            "type": "PIDController",
+            "properties": {
+              "topic": "/Shuffleboard/Drive/X PID",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Y PID",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 544.0,
+            "type": "PIDController",
+            "properties": {
+              "topic": "/Shuffleboard/Drive/Y PID",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Theta PID",
+            "x": 544.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 544.0,
+            "type": "ProfiledPIDController",
+            "properties": {
+              "topic": "/Shuffleboard/Drive/Theta PID",
+              "period": 0.06
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Drive",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1248.0,
+            "height": 768.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/Shuffleboard/Drive/Field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

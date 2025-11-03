@@ -9,7 +9,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
@@ -17,7 +16,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -32,8 +30,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -168,131 +164,6 @@ public final class Constants {
     }
   }
 
-  public static final class ElevatorConstants {
-    // Elevator minimum rising voltage: 4.5 volts
-    // Elevator minimum falling voltage: 0.7 volts
-
-    // Top face of the carriage rail to the carpet
-    public static final Distance zeroOffset = Inches.of(14.5);
-    public static final Distance l1 = zeroOffset; // 22
-    public static final Distance l2 = zeroOffset.plus(Inches.of(7.5)); // 36
-    public static final Distance l3 = zeroOffset.plus(Inches.of(23.5));
-    public static final Distance l4 = zeroOffset.plus(Inches.of(55));
-    public static final Distance bargeHeight = Inches.of(74.5);
-    public static final Distance coralIntake = zeroOffset;
-    public static final Distance algaeIntakeHeight = zeroOffset.plus(Inches.of(6));
-    public static final Distance algaeScoreHeight = zeroOffset.plus(Inches.of(6));
-    public static final Distance algaeL2 = zeroOffset.plus(Inches.of(37.5));
-    public static final Distance algaeL3 = zeroOffset.plus(Inches.of(54));
-
-    public static final Current stallThreshold = Amps.of(75);
-    public static final Time stallDuration = Milliseconds.of(500);
-
-    public static final Distance minHeight = zeroOffset;
-    // Slightly less than max elevator extension
-    public static final Distance maxHeight = Inches.of(74.625);
-
-    public static final int leftCanID = 10;
-    public static final int rightCanID = 9;
-
-    @SuppressWarnings("unused")
-    public static final double gearboxReduction = 9.5238; // 4.86:1
-
-    // Raw: 21.3689 rotations from bottom to top
-    // Actual extension = 67.5"
-    // 67.5 / 21.3689 = 3.1588
-    // 11.875
-    // 1.612
-    public static final double positionConversionFactor =
-        (maxHeight.minus(zeroOffset).in(Inches)) / 34.417;
-    public static final double velocityConversionFactor = positionConversionFactor / 60;
-
-    public static final int currentLimit = 40;
-
-    public static final double KS = 0.745;
-    public static final double KG = 0.4;
-    public static final double KV = 2.2;
-    public static final double KA = 0;
-    public static final double KP = 32;
-    public static final double KI = 0;
-    public static final double KD = 0.35;
-  }
-
-  public static final class CoralConstants {
-    public static final int grabberCanID = 12;
-    public static final int wristCanID = 16;
-
-    public static final Current grabStallLimit = Amps.of(9);
-    public static final Current grabDoneLimit = Amps.of(6.5);
-    public static final Time grabStallDuration = Milliseconds.of(150);
-
-    public static final Current grabCurrentLimit = Amps.of(40);
-    public static final Current wristCurrentLimit = Amps.of(40);
-
-    public static final Voltage grabIntakeVoltage = Volts.of(-9);
-    public static final Voltage grabScoreVoltage = Volts.of(9);
-    public static final Voltage coralHoldVoltage = Volts.of(-2);
-
-    public static final Angle intakeAngle = Degrees.of(30);
-    public static final Angle troughScoreAngle = Degrees.of(-15);
-    public static final Angle branchScoreAngle = Degrees.of(-38);
-    public static final Angle tipScoreAngle = Degrees.of(-63); // -33.5
-    public static final Angle stowAngle = Degrees.of(30);
-
-    public static final double wristGearing = 60;
-
-    public static final Angle minWristAngle = Degrees.of(-35); // -75
-    public static final Angle maxWristAngle = Degrees.of(80); // 50
-    public static final Angle wristTolerance = Degrees.of(2);
-
-    public static final double KS = 2; // 0.34646
-    public static final double KG = 0.25; // 0.1159 or 0.13 or 0.30995
-    public static final double KV = 46.18; // 52.183
-    public static final double KA = 5.4707; // 4.3241
-    public static final double KP = 3; // 12 / 1.6
-    public static final double KI = 0;
-    public static final double KD = 0.05;
-  }
-
-  public static final class AlgaeConstants {
-    public static final int leftCanID = 15;
-    public static final int rightCanID = 14;
-    public static final int wristCanID = 13;
-
-    public static final Current grabStallLimit = Amps.of(17);
-    public static final Time grabStallDuration = Milliseconds.of(6000);
-
-    public static final Current grabCurrentLimit = Amps.of(15);
-    public static final Current wristCurrentLimit = Amps.of(40);
-
-    public static final Voltage grabIntakeVoltage = Volts.of(-9);
-    public static final Voltage grabScoreVoltage = Volts.of(9);
-    public static final Voltage bargeScoreVoltage = Volts.of(12);
-
-    public static final Angle groundIntakeAngle = Degrees.of(-15);
-    public static final Angle reefIntakeAngle = Degrees.of(-35);
-    public static final Angle processorScoreAngle = Degrees.of(0);
-    public static final Angle bargeScoreAngle = Degrees.of(55);
-    public static final Angle stowAngle = Degrees.of(85);
-
-    @SuppressWarnings("unused")
-    public static final Angle holdAngle = Degrees.of(50);
-
-    public static final double wristGearing = 60;
-
-    public static final Angle minWristAngle = Degrees.of(-40); // -35
-    public static final Angle maxWristAngle = Degrees.of(100);
-    public static final Angle wristTolerance = Degrees.of(2);
-
-    public static final double KS = 0.41008;
-    public static final double KG = 0.1169;
-    public static final double KV = 0.9437;
-    public static final double KA = 0.022004;
-    public static final double KP = 5; // 6
-    public static final double KI = 0;
-    public static final double KD = 0; // 0.1
-  }
-
   public static final class VisionConstants {
     public static final Pose3d leftOffset =
         new Pose3d(
@@ -314,14 +185,6 @@ public final class Constants {
                 Degrees.of(30), // Pitch, up
                 Degrees.of(15) // Yaw, left
                 ));
-  }
-
-  public enum CoralLevel {
-    L1,
-    L2,
-    L3,
-    L4,
-    INTAKE
   }
 
   public static final class OIConstants {

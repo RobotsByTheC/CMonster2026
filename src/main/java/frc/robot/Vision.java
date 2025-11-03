@@ -3,19 +3,16 @@ package frc.robot;
 import static frc.robot.Constants.VisionConstants.leftOffset;
 import static frc.robot.Constants.VisionConstants.rightOffset;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.filter.RepetitiveDebouncer;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-
-import frc.robot.filter.RepetitiveDebouncer;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -24,8 +21,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class Vision {
   public static final int NO_TAG = 0;
   public static final Pose3d NO_TARGET = Pose3d.kZero;
-  public static final AprilTagFieldLayout fieldLayout =
-      AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   private PhotonTrackedTarget nearestReefAprilTag;
   private Pose3d nearestReefAprilTagTransform = NO_TARGET;
