@@ -9,18 +9,18 @@
         "containers": [
           {
             "title": "Last Run Time",
-            "x": 256.0,
+            "x": 160.0,
             "y": 160.0,
             "width": 320.0,
-            "height": 480.0,
+            "height": 384.0,
             "type": "Graph",
             "properties": {
               "topic": "Epilogue/Stats/Last Run",
               "period": 0.033,
               "data_type": "double",
               "time_displayed": 5.0,
-              "min_value": 6.0,
-              "max_value": 14.0,
+              "min_value": 3.0,
+              "max_value": 20.0,
               "color": 4278238420,
               "line_width": 3.0
             }
@@ -29,8 +29,8 @@
             "title": "Battery Voltage",
             "x": 0.0,
             "y": 160.0,
-            "width": 256.0,
-            "height": 640.0,
+            "width": 160.0,
+            "height": 544.0,
             "type": "Voltage View",
             "properties": {
               "topic": "Robot/Battery Voltage",
@@ -45,8 +45,8 @@
           },
           {
             "title": "Auto Chooser",
-            "x": 256.0,
-            "y": 640.0,
+            "x": 160.0,
+            "y": 544.0,
             "width": 320.0,
             "height": 160.0,
             "type": "ComboBox Chooser",
@@ -58,10 +58,10 @@
           },
           {
             "title": "Average Velocity",
-            "x": 576.0,
+            "x": 480.0,
             "y": 160.0,
             "width": 352.0,
-            "height": 480.0,
+            "height": 384.0,
             "type": "Radial Gauge",
             "properties": {
               "topic": "Robot/drive/getAverageVelocity",
@@ -79,14 +79,15 @@
           },
           {
             "title": "Left Camera",
-            "x": 928.0,
+            "x": 832.0,
             "y": 160.0,
-            "width": 416.0,
+            "width": 352.0,
             "height": 320.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/photonvision_Port_1181_Input_MJPEG_Server",
               "period": 0.06,
+              "rotation_turns": 0,
               "compression": 15,
               "fps": 30,
               "resolution": [
@@ -97,14 +98,15 @@
           },
           {
             "title": "Right Camera",
-            "x": 928.0,
-            "y": 480.0,
-            "width": 416.0,
+            "x": 1184.0,
+            "y": 160.0,
+            "width": 352.0,
             "height": 320.0,
             "type": "Camera Stream",
             "properties": {
               "topic": "/CameraPublisher/photonvision_Port_1183_Input_MJPEG_Server",
               "period": 0.06,
+              "rotation_turns": 0,
               "compression": 15,
               "fps": 30,
               "resolution": [
@@ -114,51 +116,9 @@
             }
           },
           {
-            "title": "Height Variance",
-            "x": 1344.0,
-            "y": 416.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "Robot/elevator/getHeightVariance",
-              "period": 0.033,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Coral Variance",
-            "x": 1344.0,
-            "y": 544.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "Robot/coral/getRotationVariance",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
-            "title": "Algae Variance",
-            "x": 1344.0,
-            "y": 672.0,
-            "width": 192.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "Robot/algae/getRotationVariance",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Match Time",
-            "x": 576.0,
-            "y": 640.0,
+            "x": 480.0,
+            "y": 544.0,
             "width": 352.0,
             "height": 160.0,
             "type": "Match Time",
@@ -173,10 +133,10 @@
           },
           {
             "title": "Can See AprilTag",
-            "x": 1344.0,
-            "y": 160.0,
+            "x": 832.0,
+            "y": 480.0,
             "width": 192.0,
-            "height": 256.0,
+            "height": 224.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/vision/canSeeFilteredTag",
@@ -186,6 +146,19 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Turn Speed",
+            "x": 1024.0,
+            "y": 480.0,
+            "width": 512.0,
+            "height": 224.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/turnMultiplier",
+              "period": 0.06,
+              "data_type": "double"
             }
           }
         ]
