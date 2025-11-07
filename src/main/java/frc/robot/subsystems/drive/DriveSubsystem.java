@@ -421,8 +421,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
                   thetaController.calculate(io.getHeading().getRadians(), heading.getRadians()));
           drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
         })
-        .until(thetaController::atSetpoint)
-        .withName("Rotate to " + heading.getDegrees() + " Degrees");
+        .until(thetaController::atSetpoint);
   }
 
   private void setForward() {
