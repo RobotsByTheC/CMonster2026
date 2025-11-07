@@ -7,13 +7,13 @@ public class MovingAverage {
   private final int size;
 
   /**
-   * The MovingAverage class tracks the last {@see size} values given to it, and can be used to average out data.
+   * The MovingAverage class tracks the last {@see size} values given to it, and can be used to
+   * average out data.
    */
   public MovingAverage(int size) {
     this.size = size;
     values = new ArrayList<>();
   }
-
 
   public void addValue(double value) {
     if (values.size() >= size) values.remove(0);
