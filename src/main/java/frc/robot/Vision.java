@@ -24,6 +24,9 @@ public class Vision {
 
   private PhotonTrackedTarget nearestReefAprilTag;
   private Pose3d nearestReefAprilTagTransform = NO_TARGET;
+  private Rotation2d lastRealLeftValue;
+  private Rotation2d lastRealRightValue;
+  private Rotation2d lastRealAverageValue = new Rotation2d();
   private int nearestTagId = NO_TAG;
 
   private final RepetitiveDebouncer seesTagDebouncer = new RepetitiveDebouncer(8, false);
@@ -93,6 +96,10 @@ public class Vision {
       Pose3d rightPose = getTransformRelativeToRobot(bestRight, rightOffset);
       Rotation3d leftRotation = leftPose.getRotation();
       Rotation3d rightRotation = rightPose.getRotation();
+
+      if (leftPose != Pose3d.kZero) lastRealLeftValue = leftPose.getRotation().toRotation2d();
+      if (rightPose != Pose3d.kZero) lastRealRightValue = rightPose.getRotation().toRotation2d();
+      lastRealAverageValue = lastRealLeftValue.plus(lastRealRightValue).div(2);
 
       nearestReefAprilTagTransform =
           new Pose3d(
@@ -170,5 +177,9 @@ public class Vision {
 
   public boolean canSeeFilteredTag() {
     return !seesTagDebouncer.getBoolean();
+  }
+
+  public Rotation2d getLastRealAverageValue() {
+    return lastRealAverageValue;
   }
 }
