@@ -167,23 +167,23 @@ public final class Constants {
   public static final class VisionConstants {
     public static final Pose3d leftOffset =
         new Pose3d(
-            Inches.of(3), // X, forward
-            Inches.of(12.25), // Y, left
-            Inches.of(32.5), // Z, up
-            new Rotation3d(
-                Degrees.of(0), // Roll, twist
-                Degrees.of(30), // Pitch, up
-                Degrees.of(-15) // Yaw, left
-                ));
-    public static final Pose3d rightOffset =
-        new Pose3d(
-            Inches.of(3), // X, forward
-            Inches.of(-12.25), // Y, left
-            Inches.of(32.5), // Z, up
+            Inches.of(10.5), // X, forward
+            Inches.of(12), // Y, left
+            Inches.of(5.75), // Z, up
             new Rotation3d(
                 Degrees.of(0), // Roll, twist
                 Degrees.of(30), // Pitch, up
                 Degrees.of(15) // Yaw, left
+                ));
+    public static final Pose3d rightOffset =
+        new Pose3d(
+            Inches.of(10.5), // X, forward
+            Inches.of(-12), // Y, left
+            Inches.of(5.75), // Z, up
+            new Rotation3d(
+                Degrees.of(0), // Roll, twist
+                Degrees.of(30), // Pitch, up
+                Degrees.of(-15) // Yaw, left
                 ));
   }
 
