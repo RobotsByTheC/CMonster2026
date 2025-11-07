@@ -278,7 +278,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    *     as a number from -1 (maximum clockwise speed) to +1 (maximum counter-clockwise speed).
    * @return the driving command
    */
-  public Command driveFastWithJoysticks(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega) {
+  public Command driveXYTheta(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega) {
     var xSpeed = MetersPerSecond.mutable(0);
     var ySpeed = MetersPerSecond.mutable(0);
     var omegaSpeed = RadiansPerSecond.mutable(0);
