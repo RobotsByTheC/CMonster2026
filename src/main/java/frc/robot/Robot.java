@@ -88,8 +88,10 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    operatorController.a().whileTrue(drive.driveToRobotRelativePose(vision.getLastRealValue().toPose2d()));
+    operatorController.a().whileTrue(drive.rotateToHeading(vision.getLastRealValue().getRotation().toRotation2d()));
     operatorController.x().whileTrue(drive.driveDistance(Feet.of(3)));
+    operatorController.b().whileTrue(drive.driveToRobotRelativePose(vision.getLastRealValue().toPose2d()));
+    operatorController.y().whileTrue(drive.rotateToHeading(vision.getLastRealAverageValue()));
   }
 
   private void configureDefaultCommands() {
