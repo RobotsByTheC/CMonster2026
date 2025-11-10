@@ -36,7 +36,6 @@ import java.util.function.Supplier;
 public class Robot extends TimedRobot {
   private final DriveSubsystem drive;
   private final Vision vision;
-  private final LiveIssue liveIssue;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick rStick;
@@ -55,7 +54,6 @@ public class Robot extends TimedRobot {
       drive = new DriveSubsystem(new MAXSwerveIO());
     }
     vision = new Vision();
-    liveIssue = LiveIssue.INSTANCE;
 
     operatorController = new CommandXboxController(Constants.OIConstants.driverControllerPort);
     rStick = new CommandJoystick(Constants.OIConstants.rightJoystickPort);
@@ -88,10 +86,7 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    operatorController.a().whileTrue(drive.rotateToHeading(vision.getLastRealValue().getRotation().toRotation2d()));
-    operatorController.x().whileTrue(drive.driveDistance(Feet.of(3)));
-    operatorController.b().whileTrue(drive.driveToRobotRelativePose(vision.getLastRealValue().toPose2d()));
-    operatorController.y().whileTrue(drive.rotateToHeading(vision.getLastRealAverageValue()));
+    operatorController.y().onTrue(Commands.runOnce(() -> System.out.println("hello")));
   }
 
   private void configureDefaultCommands() {
@@ -169,8 +164,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    globalTurnSpeedMultiplier = 1-(lStick.getThrottle()+1)/2;
-    globalDriveSpeedMultiplier = 1-(rStick.getThrottle()+1)/2;
+    globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
+    globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
   }
   // endregion
 }
