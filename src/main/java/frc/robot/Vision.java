@@ -43,9 +43,6 @@ public class Vision {
   private Rotation2d lastRealRotation = Rotation2d.kZero;
 
   public void update() {
-    if (right.isConnected()) LiveIssue.INSTANCE.addIssue("Right is not connected :(\n");
-    if (left.isConnected()) LiveIssue.INSTANCE.addIssue("Left is not connected :(\n");
-
     var leftResults = left.getAllUnreadResults();
     var rightResults = right.getAllUnreadResults();
 
