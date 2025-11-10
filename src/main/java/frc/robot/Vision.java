@@ -24,9 +24,9 @@ public class Vision {
 
   private PhotonTrackedTarget nearestReefAprilTag;
   private Pose3d nearestReefAprilTagTransform = NO_TARGET;
-  private Rotation2d lastRealLeftValue;
-  private Rotation2d lastRealRightValue;
-  private Rotation2d lastRealAverageValue = new Rotation2d();
+  private Rotation2d lastRealLeftValue = Rotation2d.kZero;
+  private Rotation2d lastRealRightValue = Rotation2d.kZero;
+  private Rotation2d lastRealAverageValue = Rotation2d.kZero;
   private int nearestTagId = NO_TAG;
 
   private final RepetitiveDebouncer seesTagDebouncer = new RepetitiveDebouncer(8, false);
