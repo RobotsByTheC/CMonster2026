@@ -7,7 +7,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.FeetPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -300,28 +299,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         .withName("Drive With Joysticks");
   }
 
-  public Command driveSlowWithJoysticks(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega) {
-    var xSpeed = MetersPerSecond.mutable(0);
-    var ySpeed = MetersPerSecond.mutable(0);
-    var omegaSpeed = RadiansPerSecond.mutable(0);
-
-    return run(() -> {
-          xSpeed.mut_setMagnitude(
-              MathUtil.applyDeadband(-x.getAsDouble(), 0.01)
-                  * DriveConstants.maxSpeed.in(MetersPerSecond));
-          ySpeed.mut_setMagnitude(
-              MathUtil.applyDeadband(-y.getAsDouble(), 0.01)
-                  * DriveConstants.maxSpeed.in(MetersPerSecond));
-          omegaSpeed.mut_setMagnitude(
-              MathUtil.applyDeadband(-omega.getAsDouble(), 0.15)
-                  * DriveConstants.slowAngularSpeed.in(RadiansPerSecond));
-
-          drive(xSpeed, ySpeed, omegaSpeed, ReferenceFrame.FIELD);
-        })
-        .finallyDo(this::setX)
-        .withName("Drive With Joysticks");
-  }
-
   @Override
   public void close() {
     io.close();
@@ -382,21 +359,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
                         RadiansPerSecond.zero(),
                         ReferenceFrame.FIELD)))
         .withName("Auto Leave Area");
-  }
-
-  public Command moveForwardsUntilStopped() {
-    return startRun(
-            timer::restart,
-            () ->
-                drive(
-                    FeetPerSecond.of(3),
-                    FeetPerSecond.zero(),
-                    RadiansPerSecond.zero(),
-                    ReferenceFrame.ROBOT))
-        .until(
-            () ->
-                (io.getForwardAcceleration().lte(FeetPerSecondPerSecond.of(-6)))
-                    && timer.get() > 0.5);
   }
 
   @SuppressWarnings("unused")

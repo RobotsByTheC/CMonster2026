@@ -86,7 +86,9 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    operatorController.y().onTrue(Commands.runOnce(() -> System.out.println("hello")));
+    operatorController
+        .y()
+        .onTrue(drive.driveToRobotRelativePose(vision.getTargetPose().toPose2d()));
   }
 
   private void configureDefaultCommands() {

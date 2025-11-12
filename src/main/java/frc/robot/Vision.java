@@ -5,14 +5,9 @@ import static frc.robot.Constants.VisionConstants.rightOffset;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.filter.RepetitiveDebouncer;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -22,133 +17,37 @@ public class Vision {
   public static final int NO_TAG = 0;
   public static final Pose3d NO_TARGET = Pose3d.kZero;
 
-  private PhotonTrackedTarget nearestReefAprilTag;
-  private Pose3d nearestReefAprilTagTransform = NO_TARGET;
-  private Rotation2d lastRealLeftValue = Rotation2d.kZero;
-  private Rotation2d lastRealRightValue = Rotation2d.kZero;
-  private Rotation2d lastRealAverageValue = Rotation2d.kZero;
-  private int nearestTagId = NO_TAG;
+  private final PhotonCamera rightCamera = new PhotonCamera("OV9281-1");
+  private final PhotonCamera leftCamera = new PhotonCamera("OV9281-2");
 
-  private final RepetitiveDebouncer seesTagDebouncer = new RepetitiveDebouncer(8, false);
-
-  @Logged private Transform3d leftTransform = new Transform3d();
-  @Logged private Transform3d rightTransform = new Transform3d();
-
-  public final Trigger seesTagTrigger = new Trigger(this::seesTag);
-
-  private final PhotonCamera right = new PhotonCamera("OV9281-1");
-  private final PhotonCamera left = new PhotonCamera("OV9281-2");
-  private final Set<Integer> reefIDs = Set.of(6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22);
-  private Pose3d lastRealValue = Pose3d.kZero;
-  private Rotation2d lastRealRotation = Rotation2d.kZero;
+  private Pose3d lastRealLeftPose = NO_TARGET;
+  private Pose3d lastRealRightPose = NO_TARGET;
+  private Pose3d lastRealPose = NO_TARGET;
 
   public void update() {
-    var leftResults = left.getAllUnreadResults();
-    var rightResults = right.getAllUnreadResults();
+    var leftResults = leftCamera.getAllUnreadResults();
+    var rightResults = rightCamera.getAllUnreadResults();
 
-    // Find the ID number of the nearest reef AprilTag
+    Pose3d leftPose =
+        getTransformRelativeToRobot(getClosestTarget(leftResults, leftOffset), leftOffset);
+    Pose3d rightPose =
+        getTransformRelativeToRobot(getClosestTarget(rightResults, rightOffset), rightOffset);
 
-    nearestTagId =
-        leftResults.stream()
-            .filter(
-                lr ->
-                    rightResults.stream()
-                        .anyMatch(
-                            rr -> {
-                              if (rr.getBestTarget() != null && lr.getBestTarget() != null) {
-                                return rr.getBestTarget().getFiducialId()
-                                    == lr.getBestTarget().getFiducialId();
-                              } else {
-                                return false;
-                              }
-                            }))
-            .min(
-                Comparator.comparingDouble(
-                    r ->
-                        getTransformRelativeToRobot(r.getBestTarget(), leftOffset)
-                            .getTranslation()
-                            .getNorm()))
-            .map(r -> r.getBestTarget().getFiducialId())
-            .orElse(NO_TAG);
+    if (leftPose != null && !leftPose.equals(NO_TARGET)) lastRealLeftPose = leftPose;
+    if (rightPose != null && !rightPose.equals(NO_TARGET)) lastRealRightPose = rightPose;
 
-    // Find the pose of the nearest reef AprilTag, with some debugging logging for the raw
-    // transforms from the cameras
-
-    PhotonTrackedTarget bestOverall = null;
-    PhotonTrackedTarget bestLeft = getClosestTarget(leftResults, leftOffset);
-    PhotonTrackedTarget bestRight = getClosestTarget(rightResults, rightOffset);
-
-    if (bestLeft == null) {
-      bestOverall = bestRight;
-      if (bestOverall != null) {
-        nearestReefAprilTagTransform = getTransformRelativeToRobot(bestOverall, rightOffset);
-      } else {
-        nearestReefAprilTagTransform = NO_TARGET;
-      }
-    } else if (bestRight == null) {
-      bestOverall = bestLeft;
-      nearestReefAprilTagTransform = getTransformRelativeToRobot(bestOverall, leftOffset);
-    } else {
-      Pose3d leftPose = getTransformRelativeToRobot(bestLeft, leftOffset);
-      Pose3d rightPose = getTransformRelativeToRobot(bestRight, rightOffset);
-      Rotation3d leftRotation = leftPose.getRotation();
-      Rotation3d rightRotation = rightPose.getRotation();
-
-      if (leftPose != Pose3d.kZero) lastRealLeftValue = leftPose.getRotation().toRotation2d();
-      if (rightPose != Pose3d.kZero) lastRealRightValue = rightPose.getRotation().toRotation2d();
-      lastRealAverageValue = lastRealLeftValue.plus(lastRealRightValue).div(2);
-
-      nearestReefAprilTagTransform =
-          new Pose3d(
-              (leftPose.getX() + rightPose.getX()) / 2,
-              (leftPose.getY() + rightPose.getY()) / 2,
-              (leftPose.getZ() + rightPose.getZ()) / 2,
-              new Rotation3d(
-                  (leftRotation.getX() + rightRotation.getX()) / 2,
-                  (leftRotation.getY() + rightRotation.getY()) / 2,
-                  (leftRotation.getZ() + rightRotation.getZ()) / 2));
-    }
-    nearestReefAprilTag = bestOverall;
-    if (bestLeft == null) {
-      leftTransform = new Transform3d();
-    } else {
-      leftTransform = bestLeft.bestCameraToTarget;
-    }
-    if (bestRight == null) {
-      rightTransform = new Transform3d();
-    } else {
-      rightTransform = bestRight.bestCameraToTarget;
-    }
-
-    if (nearestReefAprilTagTransform != null
-        && !nearestReefAprilTagTransform.equals(Pose3d.kZero)) {
-      lastRealValue = nearestReefAprilTagTransform;
-      lastRealRotation = lastRealValue.getRotation().toRotation2d().plus(Rotation2d.k180deg);
-    }
-    seesTagDebouncer.addValue(seesTag());
-  }
-
-  /**
-   * Gets the ID of the nearest detected AprilTag seen by both cameras. Returns {@link #NO_TAG} if
-   * no AprilTag is detected by both cameras.
-   */
-  @SuppressWarnings("unused")
-  public int getNearestTagId() {
-    return nearestTagId;
-  }
-
-  public boolean seesTag() {
-    return nearestTagId != NO_TAG;
-  }
-
-  @SuppressWarnings("unused")
-  public Pose3d getRobotTransformNearestToReef() {
-    return nearestReefAprilTagTransform;
-  }
-
-  @SuppressWarnings("unused")
-  public PhotonTrackedTarget getNearestReefAprilTag() {
-    return nearestReefAprilTag;
+    lastRealPose =
+        new Pose3d(
+            (lastRealLeftPose.getX() + lastRealRightPose.getX()) / 2,
+            (lastRealLeftPose.getY() + lastRealRightPose.getY()) / 2,
+            (lastRealLeftPose.getZ() + lastRealRightPose.getZ()) / 2,
+            new Rotation3d(
+                (lastRealLeftPose.getRotation().getX() + lastRealRightPose.getRotation().getX())
+                    / 2,
+                (lastRealLeftPose.getRotation().getY() + lastRealRightPose.getRotation().getY())
+                    / 2,
+                (lastRealLeftPose.getRotation().getZ() + lastRealRightPose.getRotation().getZ())
+                    / 2));
   }
 
   private Pose3d getTransformRelativeToRobot(PhotonTrackedTarget target, Pose3d cameraPosition) {
@@ -159,7 +58,6 @@ public class Vision {
       List<PhotonPipelineResult> pipelineResults, Pose3d cameraPosition) {
     return pipelineResults.stream()
         .flatMap(result -> result.getTargets().stream())
-        .filter(target -> reefIDs.contains(target.getFiducialId()))
         .min(
             Comparator.comparingDouble(
                 target ->
@@ -167,16 +65,15 @@ public class Vision {
         .orElse(null);
   }
 
-  @SuppressWarnings("unused")
-  public Pose3d getLastRealValue() {
-    return lastRealValue;
+  public Pose3d getTargetPose() {
+    return lastRealPose;
   }
 
-  public boolean canSeeFilteredTag() {
-    return !seesTagDebouncer.getBoolean();
+  public Pose3d getLastRealLeftPose() {
+    return lastRealLeftPose;
   }
 
-  public Rotation2d getLastRealAverageValue() {
-    return lastRealAverageValue;
+  public Pose3d getLastRealRightPose() {
+    return lastRealRightPose;
   }
 }
