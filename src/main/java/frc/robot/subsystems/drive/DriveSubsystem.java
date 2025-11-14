@@ -196,7 +196,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public Command driveToRobotRelativePose(Pose2d pose) {
     Pose2d[] startingPose = new Pose2d[1];
     return runOnce(() -> startingPose[0] = getPose())
-        .andThen(rotateToHeading(pose.getRotation()))
+//        .andThen(rotateToHeading(pose.getRotation()))
         .andThen(
             run(
                 () -> {
