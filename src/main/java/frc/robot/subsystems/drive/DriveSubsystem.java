@@ -44,11 +44,13 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 @Logged
 public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
@@ -78,7 +80,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final HolonomicDriveController driveController =
       new HolonomicDriveController(xController, yController, thetaController);
 
+  @Logged public double goal;
   // Odometry class for tracking robot pose
+  @NotLogged private final SwerveDrivePoseEstimator visionPoseEstimator;
   @NotLogged private final SwerveDrivePoseEstimator poseEstimator;
 
   private final Field2d field = new Field2d();
@@ -109,6 +113,20 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
             // Use default standard deviations of ±35" and ±52° for vision-derived position data
             VecBuilder.fill(
                 Inches.of(35).in(Meters), Inches.of(35).in(Meters), Degrees.of(52).in(Radians)));
+    visionPoseEstimator =
+        new SwerveDrivePoseEstimator(
+            driveKinematics,
+            Rotation2d.fromDegrees(0),
+            io.getModulePositions(),
+            new Pose2d(Feet.zero(), Feet.zero(), new Rotation2d(Degrees.zero())),
+            // Use default standard deviations of ±4" and ±6° for odometry-derived position data
+            // (i.e. 86% of results will be within 4" and 6° of the true value, and 95% will
+            // be within ±8" and ±12°)
+            VecBuilder.fill(
+                Inches.of(4).in(Meters), Inches.of(4).in(Meters), Degrees.of(6).in(Radians)),
+            // Use default standard deviations of ±35" and ±52° for vision-derived position data
+            VecBuilder.fill(
+                Inches.of(35).in(Meters), Inches.of(35).in(Meters), Degrees.of(52).in(Radians)));
 
     Shuffleboard.getTab("Drive").add("Field", field);
     Shuffleboard.getTab("Drive").add("X PID", xController);
@@ -120,6 +138,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public void periodic() {
     // Update the odometry in the periodic block
     poseEstimator.update(io.getHeading(), io.getModulePositions());
+    visionPoseEstimator.update(io.getHeading(), io.getModulePositions());
     field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 
@@ -193,10 +212,29 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     io.setDesiredModuleStates(swerveModuleStates);
   }
 
+  public Command mySecondAttemptAtDriveToRobotRelativePose(Supplier<Pose2d> target, Trigger canSeeTarget) {
+    return Commands.runOnce(
+            () -> poseEstimator.resetPose(Pose2d.kZero))
+        .andThen(run(() -> {
+          drive(driveController.calculate(Pose2d.kZero, target.get(), 0, Rotation2d.kZero).div(3));
+        }).until(() -> ((target.get().getMeasureX().in(Meters) < 0.5 && target.get().getMeasureY().in(Meters) < 0.5) || !canSeeTarget.getAsBoolean())));
+  }
+
+  public Command myDriveToPose(Supplier<Pose2d> target) {
+    return Commands.runOnce(
+        () -> {
+          poseEstimator.resetPose(Pose2d.kZero);
+        })
+        .andThen(run(() -> {
+          drive(driveController.calculate(poseEstimator.getEstimatedPosition(), target.get(), 1, Rotation2d.kZero));
+//          System.out.println("Trying to drive to " + target + ", currently at " + poseEstimator.getEstimatedPosition());
+        }));
+  }
+
   public Command driveToRobotRelativePose(Pose2d pose) {
     Pose2d[] startingPose = new Pose2d[1];
     return runOnce(() -> startingPose[0] = getPose())
-//        .andThen(rotateToHeading(pose.getRotation()))
+        //        .andThen(rotateToHeading(pose.getRotation()))
         .andThen(
             run(
                 () -> {

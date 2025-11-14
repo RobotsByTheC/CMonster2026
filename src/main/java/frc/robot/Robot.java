@@ -86,9 +86,7 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-    operatorController
-        .y()
-        .onTrue(drive.driveToRobotRelativePose(vision.getTargetPose().toPose2d()));
+    operatorController.x().whileTrue(drive.mySecondAttemptAtDriveToRobotRelativePose(() -> vision.getTargetPose().toPose2d(), vision.SEES_TAG));
   }
 
   private void configureDefaultCommands() {

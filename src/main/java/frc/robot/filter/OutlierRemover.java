@@ -13,9 +13,9 @@ public class OutlierRemover {
   public double getAverageDistance() {
     double sum = 0;
     for (double distance : VALUES) {
-      sum+=distance;
+      sum += distance;
     }
-    return sum/VALUES.size();
+    return sum / VALUES.size();
   }
 
   public void addValue(double value) {
@@ -24,7 +24,7 @@ public class OutlierRemover {
       VALUES.add(value);
       return;
     }
-    if (Math.abs((average-value)/average) < 0.5) {
+    if (Math.abs((average - value) / average) < 0.5) {
       VALUES.remove(0);
       VALUES.add(value);
     }

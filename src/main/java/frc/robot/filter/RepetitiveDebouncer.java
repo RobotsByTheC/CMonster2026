@@ -24,6 +24,6 @@ public class RepetitiveDebouncer {
   }
 
   public boolean getBoolean() {
-    return repetitions >= repetitionThreshold;
+    return desiredValue == repetitions >= repetitionThreshold;
   }
 }
