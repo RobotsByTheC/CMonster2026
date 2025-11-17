@@ -7,6 +7,7 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -29,6 +30,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -49,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import java.util.Arrays;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -59,15 +62,12 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final Voltage appliedSysidVoltage = Volts.zero();
   private final SwerveIO io;
 
-  @SuppressWarnings("unused")
   private final PIDController xController =
-      new PIDController(Constants.AutoConstants.pXController, 0, 0);
+      new PIDController(Constants.AutoConstants.pXController, 0.05, 0.2);
 
-  @SuppressWarnings("unused")
   private final PIDController yController =
-      new PIDController(Constants.AutoConstants.pYController, 0, 0);
+      new PIDController(Constants.AutoConstants.pYController, 0.05, 0.2);
 
-  @SuppressWarnings("FieldCanBeLocal")
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
           Constants.AutoConstants.pThetaController,
@@ -87,6 +87,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final Field2d field = new Field2d();
 
+  private BooleanSupplier blegg = driveController::atReference;
+  @Logged private DoubleSupplier estimatedX;
+
   public enum ReferenceFrame {
     ROBOT,
     FIELD
@@ -96,9 +99,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public DriveSubsystem(SwerveIO io) {
     this.io = io;
 
-    xController.setTolerance(Meters.convertFrom(0.5, Inches));
-    yController.setTolerance(Meters.convertFrom(0.5, Inches));
+    xController.setTolerance(Meters.convertFrom(2, Inches));
+    yController.setTolerance(Meters.convertFrom(2, Inches));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController.setTolerance(new Pose2d(Inches.of(2), Inches.of(2), new Rotation2d(Degrees.of(5))));
     poseEstimator =
         new SwerveDrivePoseEstimator(
             driveKinematics,
@@ -127,6 +131,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
             // Use default standard deviations of ±35" and ±52° for vision-derived position data
             VecBuilder.fill(
                 Inches.of(35).in(Meters), Inches.of(35).in(Meters), Degrees.of(52).in(Radians)));
+    estimatedX = () -> visionPoseEstimator.getEstimatedPosition().getMeasureX().in(Meters);
 
     Shuffleboard.getTab("Drive").add("Field", field);
     Shuffleboard.getTab("Drive").add("X PID", xController);
@@ -212,23 +217,50 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     io.setDesiredModuleStates(swerveModuleStates);
   }
 
-  public Command mySecondAttemptAtDriveToRobotRelativePose(Supplier<Pose2d> target, Trigger canSeeTarget) {
-    return Commands.runOnce(
-            () -> poseEstimator.resetPose(Pose2d.kZero))
-        .andThen(run(() -> {
-          drive(driveController.calculate(Pose2d.kZero, target.get(), 0, Rotation2d.kZero).div(3));
-        }).until(() -> ((target.get().getMeasureX().in(Meters) < 0.5 && target.get().getMeasureY().in(Meters) < 0.5) || !canSeeTarget.getAsBoolean())));
+  public Command myThirdAttemptAtDriveToRobotRelativePose(Supplier<Pose2d> target) {
+    return Commands.runOnce(() -> {
+      visionPoseEstimator.resetPose(Pose2d.kZero);
+      System.out.println(target.get());
+        })
+        .andThen(
+            run( () -> {
+                drive(
+                    driveController.calculate(
+                        visionPoseEstimator.getEstimatedPosition(),
+                        target.get().plus(new Transform2d(Meters.of(-0.5), Meters.of(0.1), Rotation2d.kZero)),
+                        0,
+                        Rotation2d.kZero));
+            }).until(driveController::atReference)
+        );
+  }
+
+  public Command mySecondAttemptAtDriveToRobotRelativePose(
+      Supplier<Pose2d> target, Trigger canSeeTarget) {
+    return Commands.runOnce(() -> poseEstimator.resetPose(Pose2d.kZero))
+        .andThen(
+            run(() -> {
+                  drive(
+                      driveController
+                          .calculate(Pose2d.kZero, target.get(), 0, Rotation2d.kZero)
+                          .div(3));
+                })
+                .until(() -> (driveController.atReference())));
   }
 
   public Command myDriveToPose(Supplier<Pose2d> target) {
     return Commands.runOnce(
-        () -> {
-          poseEstimator.resetPose(Pose2d.kZero);
-        })
-        .andThen(run(() -> {
-          drive(driveController.calculate(poseEstimator.getEstimatedPosition(), target.get(), 1, Rotation2d.kZero));
-//          System.out.println("Trying to drive to " + target + ", currently at " + poseEstimator.getEstimatedPosition());
-        }));
+            () -> {
+              poseEstimator.resetPose(Pose2d.kZero);
+            })
+        .andThen(
+            run(
+                () -> {
+                  drive(
+                      driveController.calculate(
+                          poseEstimator.getEstimatedPosition(), target.get(), 1, Rotation2d.kZero));
+                  //          System.out.println("Trying to drive to " + target + ", currently at "
+                  // + poseEstimator.getEstimatedPosition());
+                }));
   }
 
   public Command driveToRobotRelativePose(Pose2d pose) {
