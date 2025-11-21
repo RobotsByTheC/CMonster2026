@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -13,6 +14,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -168,6 +170,16 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
+
+    if (lStick.povUp().getAsBoolean()){
+        drive.rotateToHeading(new Rotation2d(Degrees.of(0)));
+    } else if (lStick.povRight().getAsBoolean()){
+        drive.rotateToHeading(new Rotation2d(Degrees.of(90)));
+    } else if (lStick.povDown().getAsBoolean()){
+        drive.rotateToHeading(new Rotation2d(Degrees.of(180)));
+    } else if (lStick.povLeft().getAsBoolean()){
+        drive.rotateToHeading(new Rotation2d(Degrees.of(270)));
+    }
   }
   // endregion
 }
