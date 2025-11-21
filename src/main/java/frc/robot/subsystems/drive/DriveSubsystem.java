@@ -173,6 +173,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         .withName("Reset Gyro");
   }
 
+  public void resetHeading() {
+    io.resetHeading(Rotation2d.kZero);
+  }
+
   public Command driveDistance(Distance distance) {
     Pose2d[] pose = new Pose2d[1];
     return startRun(

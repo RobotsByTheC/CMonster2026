@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -13,6 +14,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,6 +46,13 @@ public class Robot extends TimedRobot {
   private double globalTurnSpeedMultiplier = 1;
   private double globalDriveSpeedMultiplier = 1;
 
+  private final double offsetRotationPOV = 0;
+  //originally off by 30 degrees. fixed.
+  private final double top = 0 + offsetRotationPOV;
+  private final double bottom = 90 + offsetRotationPOV;
+  private final double left = 180 + offsetRotationPOV;
+  private final double right = 270 + offsetRotationPOV;
+
   private final SendableChooser<Supplier<Command>> odometryTestChooser;
   private final SendableChooser<Supplier<Command>> autoChooser;
 
@@ -69,6 +78,10 @@ public class Robot extends TimedRobot {
     startLogging();
 
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    //makes it so the heading always starts at zero
+      //while we do start at zero, degrees add up after 360. can get to 100000s of degrees. fix
+      drive.resetHeading();
   }
 
   // region | CONFIGURE METHODS |
@@ -86,6 +99,14 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+
+      //This chunk makes it so the robot snaps to different headings in accordance to the left sticks' POV (circle thing on the top)
+      //down and left are swapped. Weirdly, it works. fix later!!!
+      lStick.povUp().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
+      lStick.povRight().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
+      lStick.povDown().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
+      lStick.povLeft().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+
     operatorController
         .x()
         .onTrue(
@@ -170,6 +191,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
+
+    System.out.println(drive.getHeading());
   }
   // endregion
 }
