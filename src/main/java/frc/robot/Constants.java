@@ -116,9 +116,9 @@ public final class Constants {
     public static final Current drivingCurrentLimit = Amps.of(50);
     public static final Current turningCurrentLimit = Amps.of(20);
 
-    public static final double drivingP = 0.04;
-    public static final double drivingI = 0;
-    public static final double drivingD = 0;
+    public static final double drivingP = 0.04; //0.04 previous
+    public static final double drivingI = 0; //0 previous
+    public static final double drivingD = 0; //0 previous
     public static final double drivingFF = 1 / driveWheelFreeSpeed.in(MetersPerSecond);
 
     public static final double turningP = 1;

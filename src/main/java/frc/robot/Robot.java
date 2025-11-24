@@ -32,6 +32,8 @@ import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
 import frc.robot.subsystems.drive.SimSwerveIO;
+
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
@@ -107,6 +109,12 @@ public class Robot extends TimedRobot {
       lStick.povDown().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
       lStick.povLeft().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
 
+      //For debugging
+      //drives forward 30
+      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
+      //drives backward 30
+      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
+
     operatorController
         .x()
         .onTrue(
@@ -137,13 +145,23 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
 
+  //Attempted to log the inputs from X and Y on the driving controllers.
+    //Unable to log, shows up as 0. fix later
+    //This was to get more info about the robot drifting slightly while moving. Concluded it must be -
+    // - driver input becuase the robot driving autonomusly moved in a straight line.
+    @Logged double x_joy;
+    @Logged double y_joy;
+    @Logged double twist_joy;
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
+      x_joy = rStick.getX();
+      y_joy = rStick.getY();
+      twist_joy = rStick.getTwist();
     return drive.driveXYTheta(
-        () -> rStick.getY() * globalDriveSpeedMultiplier,
-        () -> rStick.getX() * globalDriveSpeedMultiplier,
-        () -> lStick.getTwist() * globalTurnSpeedMultiplier);
+            () -> rStick.getY() * globalDriveSpeedMultiplier,
+            () -> rStick.getX() * globalDriveSpeedMultiplier,
+            () -> lStick.getTwist() * globalTurnSpeedMultiplier);
   }
 
   // endregion
