@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -13,6 +14,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -33,6 +35,8 @@ import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
 import frc.robot.subsystems.drive.SimSwerveIO;
+
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
@@ -47,6 +51,13 @@ public class Robot extends TimedRobot {
 
   private double globalTurnSpeedMultiplier = 1;
   private double globalDriveSpeedMultiplier = 1;
+
+  private final double offsetRotationPOV = 0;
+  //originally off by 30 degrees. fixed.
+  private final double top = 0 + offsetRotationPOV;
+  private final double bottom = 90 + offsetRotationPOV;
+  private final double left = 180 + offsetRotationPOV;
+  private final double right = 270 + offsetRotationPOV;
 
   private final SendableChooser<Supplier<Command>> odometryTestChooser;
   private final SendableChooser<Supplier<Command>> autoChooser;
@@ -73,6 +84,10 @@ public class Robot extends TimedRobot {
     startLogging();
 
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    //makes it so the heading always starts at zero
+      //while we do start at zero, degrees add up after 360. can get to 100000s of degrees. fix
+      drive.resetHeading();
   }
 
   // region | CONFIGURE METHODS |
@@ -90,6 +105,20 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
+
+      //This chunk makes it so the robot snaps to different headings in accordance to the left sticks' POV (circle thing on the top)
+      //down and left are swapped. Weirdly, it works. fix later!!!
+      lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
+      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
+      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
+      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+
+      //For debugging
+      //drives forward 30
+//      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
+      //drives backward 30
+//      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
+
     operatorController
         .x()
         .onTrue(
@@ -120,13 +149,23 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
 
+  //Attempted to log the inputs from X and Y on the driving controllers.
+    //Unable to log, shows up as 0. fix later
+    //This was to get more info about the robot drifting slightly while moving. Concluded it must be -
+    // - driver input becuase the robot driving autonomusly moved in a straight line.
+    @Logged double x_joy;
+    @Logged double y_joy;
+    @Logged double twist_joy;
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
+      x_joy = rStick.getX();
+      y_joy = rStick.getY();
+      twist_joy = rStick.getTwist();
     return drive.driveXYTheta(
-        () -> rStick.getY() * globalDriveSpeedMultiplier,
-        () -> rStick.getX() * globalDriveSpeedMultiplier,
-        () -> lStick.getTwist() * globalTurnSpeedMultiplier);
+            () -> rStick.getY() * globalDriveSpeedMultiplier,
+            () -> rStick.getX() * globalDriveSpeedMultiplier,
+            () -> lStick.getTwist() * globalTurnSpeedMultiplier);
   }
 
   // endregion
@@ -175,6 +214,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
+
+//    System.out.println(drive.getHeading());
   }
   // endregion
 }

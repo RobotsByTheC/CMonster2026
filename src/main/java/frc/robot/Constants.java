@@ -44,7 +44,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final LinearVelocity maxSpeed = MetersPerSecond.of(4.5);
-    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0);
+    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0); //previosly 2
     public static final AngularVelocity slowAngularSpeed = RotationsPerSecond.of(0.5);
 
     public static final int gyroCanID = 50;
@@ -116,9 +116,9 @@ public final class Constants {
     public static final Current drivingCurrentLimit = Amps.of(50);
     public static final Current turningCurrentLimit = Amps.of(20);
 
-    public static final double drivingP = 0.04;
-    public static final double drivingI = 0;
-    public static final double drivingD = 0;
+    public static final double drivingP = 0.04; //0.04 previous
+    public static final double drivingI = 0; //0 previous
+    public static final double drivingD = 0; //0 previous
     public static final double drivingFF = 1 / driveWheelFreeSpeed.in(MetersPerSecond);
 
     public static final double turningP = 1;
