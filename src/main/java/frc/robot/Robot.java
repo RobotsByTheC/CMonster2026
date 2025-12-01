@@ -104,16 +104,16 @@ public class Robot extends TimedRobot {
 
       //This chunk makes it so the robot snaps to different headings in accordance to the left sticks' POV (circle thing on the top)
       //down and left are swapped. Weirdly, it works. fix later!!!
-      lStick.povUp().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
-      lStick.povRight().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
-      lStick.povDown().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
-      lStick.povLeft().whileTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+      lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
+      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
+      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
+      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
 
       //For debugging
       //drives forward 30
-      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
+//      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
       //drives backward 30
-      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
+//      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
 
     operatorController
         .x()
@@ -210,7 +210,7 @@ public class Robot extends TimedRobot {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
 
-    System.out.println(drive.getHeading());
+//    System.out.println(drive.getHeading());
   }
   // endregion
 }

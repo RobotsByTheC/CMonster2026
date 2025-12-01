@@ -44,7 +44,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final LinearVelocity maxSpeed = MetersPerSecond.of(4.5);
-    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0);
+    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0); //previosly 2
     public static final AngularVelocity slowAngularSpeed = RotationsPerSecond.of(0.5);
 
     public static final int gyroCanID = 50;

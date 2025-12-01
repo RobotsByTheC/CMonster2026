@@ -451,7 +451,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   public Command rotateToHeading(Rotation2d heading) {
     // Use a PID controller to control the heading of the robot
-    return run(() -> {
+    return runOnce(() -> {
+        System.out.println("Rotating to heading " + heading);
+    }).andThen(() -> {
           AngularVelocity velocity =
               RadiansPerSecond.of(
                   thetaController.calculate(io.getHeading().getRadians(), heading.getRadians()));
