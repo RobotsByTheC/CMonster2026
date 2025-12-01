@@ -6,8 +6,11 @@ import static frc.robot.Constants.VisionConstants.rightOffset;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.filter.RepetitiveDebouncer;
+import frc.robot.logging.Issue;
+import frc.robot.logging.IssueTracker;
 import java.util.Comparator;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -31,7 +34,13 @@ public class Vision {
   private final RepetitiveDebouncer DEBOUNCER = new RepetitiveDebouncer(10, false);
   public final Trigger SEES_TAG = new Trigger(DEBOUNCER::getBoolean);
 
+  public Vision() {
+    IssueTracker.addIssue(new Issue("IssueTracker", "Left Camera Disconnected", Alert.AlertType.kError, leftCamera::isConnected));
+    IssueTracker.addIssue(new Issue("IssueTracker", "Right Camera Disconnected", Alert.AlertType.kError, rightCamera::isConnected));
+  }
+
   public void update() {
+//    System.out.println("Left: " + leftCamera.isConnected() + ", Right: " + rightCamera.isConnected());
     var leftResults = leftCamera.getAllUnreadResults();
     var rightResults = rightCamera.getAllUnreadResults();
 
@@ -77,12 +86,11 @@ public class Vision {
     return lastRealPose;
   }
 
-  public Pose3d getLastRealLeftPose() {
-    return lastRealLeftPose;
+  public boolean getLeftCameraOn() {
+    return leftCamera.isConnected();
   }
-
-  public Pose3d getLastRealRightPose() {
-    return lastRealRightPose;
+  public boolean getRightCameraOn() {
+    return rightCamera.isConnected();
   }
 
   private void createRealValues() {

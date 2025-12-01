@@ -14,6 +14,7 @@ import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,6 +27,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.logging.Issue;
+import frc.robot.logging.IssueTracker;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
@@ -34,6 +37,7 @@ import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
+  public final IssueTracker issueTracker = new IssueTracker();
   private final DriveSubsystem drive;
   private final Vision vision;
 
@@ -146,6 +150,7 @@ public class Robot extends TimedRobot {
       DriverStation.silenceJoystickConnectionWarning(false);
     }
 
+    IssueTracker.periodicUpdate();
     vision.update();
     Epilogue.update(this);
     CommandScheduler.getInstance().run();

@@ -19,7 +19,10 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.wpilibj.Alert;
 import frc.robot.Constants;
+import frc.robot.logging.Issue;
+import frc.robot.logging.IssueTracker;
 import frc.robot.subsystems.drive.swerve.MAXSwerveModuleIO;
 import frc.robot.subsystems.drive.swerve.SwerveModule;
 
@@ -56,6 +59,10 @@ public class MAXSwerveIO implements SwerveIO {
 
   // The gyro sensor
   private final Pigeon2 gyro = new Pigeon2(Constants.DriveConstants.gyroCanID);
+
+  public MAXSwerveIO() {
+    IssueTracker.addIssue(new Issue("IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, gyro::isConnected));
+  }
 
   @Override
   public SwerveModule frontLeft() {

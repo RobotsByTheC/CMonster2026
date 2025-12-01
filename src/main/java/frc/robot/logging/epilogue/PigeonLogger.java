@@ -1,4 +1,4 @@
-package frc.robot.logging;
+package frc.robot.logging.epilogue;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.epilogue.CustomLoggerFor;
