@@ -60,7 +60,8 @@ public class MAXSwerveIO implements SwerveIO {
   // The gyro sensor
   private final Pigeon2 gyro = new Pigeon2(Constants.DriveConstants.gyroCanID);
 
-  public MAXSwerveIO() {
+  @Override
+  public void init() {
     IssueTracker.addIssue(new Issue("IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, gyro::isConnected));
   }
 

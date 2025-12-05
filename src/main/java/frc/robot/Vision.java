@@ -34,13 +34,12 @@ public class Vision {
   private final RepetitiveDebouncer DEBOUNCER = new RepetitiveDebouncer(10, false);
   public final Trigger SEES_TAG = new Trigger(DEBOUNCER::getBoolean);
 
-  public Vision() {
+  public void registerIssues() {
     IssueTracker.addIssue(new Issue("IssueTracker", "Left Camera Disconnected", Alert.AlertType.kError, leftCamera::isConnected));
     IssueTracker.addIssue(new Issue("IssueTracker", "Right Camera Disconnected", Alert.AlertType.kError, rightCamera::isConnected));
   }
 
   public void update() {
-//    System.out.println("Left: " + leftCamera.isConnected() + ", Right: " + rightCamera.isConnected());
     var leftResults = leftCamera.getAllUnreadResults();
     var rightResults = rightCamera.getAllUnreadResults();
 

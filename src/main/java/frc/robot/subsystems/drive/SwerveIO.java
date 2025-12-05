@@ -26,6 +26,8 @@ public interface SwerveIO extends AutoCloseable {
   /** Gets the current heading of the chassis. */
   Rotation2d getHeading();
 
+  default void init() {}
+
   void resetHeading(Rotation2d heading);
 
   /**

@@ -41,13 +41,15 @@ import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
-  public final IssueTracker issueTracker = new IssueTracker();
   private final DriveSubsystem drive;
   private final Vision vision;
 
-  @NotLogged private final CommandXboxController operatorController;
-  @NotLogged private final CommandJoystick rStick;
-  @NotLogged private final CommandJoystick lStick;
+  @NotLogged
+  private final CommandXboxController operatorController;
+  @NotLogged
+  private final CommandJoystick rStick;
+  @NotLogged
+  private final CommandJoystick lStick;
 
   private double globalTurnSpeedMultiplier = 1;
   private double globalDriveSpeedMultiplier = 1;
@@ -77,6 +79,9 @@ public class Robot extends TimedRobot {
     odometryTestChooser = new SendableChooser<>();
     autoChooser = new SendableChooser<>();
 
+    drive.registerIssues();
+    vision.registerIssues();
+
     configureDriveDistanceChooser();
     configureAutonomous();
     configureButtonBindings();
@@ -85,9 +90,7 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
-    //makes it so the heading always starts at zero
-      //while we do start at zero, degrees add up after 360. can get to 100000s of degrees. fix
-      drive.resetHeading();
+    drive.resetHeading();
   }
 
   // region | CONFIGURE METHODS |
@@ -105,19 +108,10 @@ public class Robot extends TimedRobot {
   }
 
   private void configureButtonBindings() {
-
-      //This chunk makes it so the robot snaps to different headings in accordance to the left sticks' POV (circle thing on the top)
-      //down and left are swapped. Weirdly, it works. fix later!!!
-      lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
-      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
-      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
-      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
-
-      //For debugging
-      //drives forward 30
-//      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
-      //drives backward 30
-//      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
+    lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
+    lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
+    lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left)))); //POV left and down are swapped
+    lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
 
     operatorController
         .x()
@@ -148,20 +142,9 @@ public class Robot extends TimedRobot {
 
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
-
-  //Attempted to log the inputs from X and Y on the driving controllers.
-    //Unable to log, shows up as 0. fix later
-    //This was to get more info about the robot drifting slightly while moving. Concluded it must be -
-    // - driver input becuase the robot driving autonomusly moved in a straight line.
-    @Logged double x_joy;
-    @Logged double y_joy;
-    @Logged double twist_joy;
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
-      x_joy = rStick.getX();
-      y_joy = rStick.getY();
-      twist_joy = rStick.getTwist();
     return drive.driveXYTheta(
             () -> rStick.getY() * globalDriveSpeedMultiplier,
             () -> rStick.getX() * globalDriveSpeedMultiplier,
