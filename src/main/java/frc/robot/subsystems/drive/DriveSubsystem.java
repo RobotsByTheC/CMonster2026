@@ -75,7 +75,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
           0,
           new TrapezoidProfile.Constraints(
               DriveConstants.maxAngularSpeed.in(RadiansPerSecond),
-              RadiansPerSecondPerSecond.convertFrom(10, RotationsPerSecondPerSecond)));
+              RadiansPerSecondPerSecond.convertFrom(10, RotationsPerSecondPerSecond))); //speed currently set to 8, can get to around 10
 
   private final HolonomicDriveController driveController =
       new HolonomicDriveController(xController, yController, thetaController);
@@ -87,7 +87,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   private final Field2d field = new Field2d();
 
-  private BooleanSupplier blegg = driveController::atReference;
+  private BooleanSupplier blegg = driveController::atReference; //PETER YOU HAVE TO CHANGE THIS
   @Logged private DoubleSupplier estimatedX;
 
   public enum ReferenceFrame {
@@ -95,12 +95,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     FIELD
   }
 
+  private final double threshold = 0.1;
+
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem(SwerveIO io) {
     this.io = io;
 
     xController.setTolerance(Meters.convertFrom(2, Inches));
     yController.setTolerance(Meters.convertFrom(2, Inches));
+    thetaController.setTolerance(0.05);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController.setTolerance(new Pose2d(Inches.of(2), Inches.of(2), new Rotation2d(Degrees.of(5))));
     poseEstimator =
@@ -154,6 +157,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    */
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
+  }
+
+  public double getError() {
+      return thetaController.getPositionError();
   }
 
   /**
@@ -449,17 +456,18 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         .withName("Set 0");
   }
 
+  public boolean isThetaControllerAtSetpoint() {
+      return thetaController.atSetpoint();
+  }
+
   public Command rotateToHeading(Rotation2d heading) {
     // Use a PID controller to control the heading of the robot
-    return runOnce(() -> {
-        System.out.println("Rotating to heading " + heading);
-    }).andThen(() -> {
+    return Commands.run(() -> {
           AngularVelocity velocity =
               RadiansPerSecond.of(
                   thetaController.calculate(io.getHeading().getRadians(), heading.getRadians()));
           drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
-        })
-        .until(thetaController::atSetpoint);
+        }).until(() -> Math.abs(thetaController.getGoal().position-io.getHeading().getRadians())<threshold);
   }
 
   private void setForward() {

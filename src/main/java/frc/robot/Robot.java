@@ -113,12 +113,6 @@ public class Robot extends TimedRobot {
       lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
       lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
 
-      //For debugging
-      //drives forward 30
-//      rStick.button(12).onTrue(drive.driveDistance(Feet.of(30)));
-      //drives backward 30
-//      rStick.button(11).onTrue(drive.driveDistance(Feet.of(-30)));
-
     operatorController
         .x()
         .onTrue(
@@ -149,6 +143,10 @@ public class Robot extends TimedRobot {
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
 
+  @Logged public CommandScheduler getScheduler() {
+      return CommandScheduler.getInstance();
+  }
+
   //Attempted to log the inputs from X and Y on the driving controllers.
     //Unable to log, shows up as 0. fix later
     //This was to get more info about the robot drifting slightly while moving. Concluded it must be -
@@ -159,13 +157,16 @@ public class Robot extends TimedRobot {
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
-      x_joy = rStick.getX();
-      y_joy = rStick.getY();
-      twist_joy = rStick.getTwist();
-    return drive.driveXYTheta(
+    return Commands.runOnce(() -> {
+        x_joy = rStick.getX();
+        y_joy = rStick.getY();
+        twist_joy = rStick.getTwist();
+    }).andThen(
+            drive.driveXYTheta(
             () -> rStick.getY() * globalDriveSpeedMultiplier,
             () -> rStick.getX() * globalDriveSpeedMultiplier,
-            () -> lStick.getTwist() * globalTurnSpeedMultiplier);
+            () -> lStick.getTwist() * globalTurnSpeedMultiplier));
+
   }
 
   // endregion
@@ -215,7 +216,7 @@ public class Robot extends TimedRobot {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
 
-//    System.out.println(drive.getHeading());
+      System.out.println(drive.getHeading());
   }
   // endregion
 }
