@@ -360,12 +360,11 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    *     as a number from -1 (maximum clockwise speed) to +1 (maximum counter-clockwise speed).
    * @return the driving command
    */
-  public Command driveXYTheta(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega, Rotation2d rotation) {
+  public Command driveXYTheta(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega) {
     var xSpeed = MetersPerSecond.mutable(0);
     var ySpeed = MetersPerSecond.mutable(0);
     var omegaSpeed = RadiansPerSecond.mutable(0);
-    AngularVelocity rotateAsVelocity = RadiansPerSecond.of(rotation.getRadians());
-    var ultimateSpeed = omegaSpeed.plus(rotateAsVelocity);
+    // Potential issue: when nothing is pressed on the D-pad, it's value is -1. As it's casted to a rotation2d, this could cause some issues.
 
       return run(() -> {
           xSpeed.mut_setMagnitude(
@@ -378,7 +377,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
               MathUtil.applyDeadband(-omega.getAsDouble(), 0.15)
                   * DriveConstants.maxAngularSpeed.in(RadiansPerSecond));
 
-          drive(xSpeed, ySpeed, ultimateSpeed, ReferenceFrame.FIELD);
+          drive(xSpeed, ySpeed, omegaSpeed, ReferenceFrame.FIELD);
         })
         .finallyDo(this::setX)
         .withName("Drive With Joysticks");
