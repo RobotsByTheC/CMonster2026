@@ -108,10 +108,10 @@ public class Robot extends TimedRobot {
 
       //This chunk makes it so the robot snaps to different headings in accordance to the left sticks' POV (circle thing on the top)
       //down and left are swapped. Weirdly, it works. fix later!!!
-      lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
-      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
-      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
-      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
+//      lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
+//      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
+//      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+//      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
 
     operatorController
         .x()
@@ -157,33 +157,36 @@ public class Robot extends TimedRobot {
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
-    return Commands.runOnce(() -> {
-        x_joy = rStick.getX();
-        y_joy = rStick.getY();
-        twist_joy = rStick.getTwist();
-    }).andThen(
-            drive.driveXYTheta(
-            () -> rStick.getY() * globalDriveSpeedMultiplier,
-            () -> rStick.getX() * globalDriveSpeedMultiplier,
-            () -> lStick.getTwist() * globalTurnSpeedMultiplier, new Rotation2d(Degrees.of(rStick.getHID().getPOV()))));
-            }
+      return Commands.runOnce(() -> {
+          x_joy = rStick.getX();
+          y_joy = rStick.getY();
+          twist_joy = rStick.getTwist();
+      }).andThen(
+              drive.driveXYTheta(
+                      () -> rStick.getY() * globalDriveSpeedMultiplier,
+                      () -> rStick.getX() * globalDriveSpeedMultiplier,
+                      (rStick.getHID().getPOV() == -1) ? () -> lStick.getTwist() * globalDriveSpeedMultiplier : () -> rStick.getHID().getPOV())
+      );
+  }
+
+            //lStick.getTwist() * globalTurnSpeedMultiplier , new Rotation2d(Degrees.of(rStick.getHID().getPOV()))));
 
 // This fun chunk of code prints out the current location of the POV. currently unneeded.
-//  public String getPovPositionForRotation() {
-//      String position;
-//    if (rStick.getHID().getPOV() == 0) {
-//        position = "Up";
-//    } else if (rStick.getHID().getPOV() == 90) {
-//        position = "Right";
-//    } else if (rStick.getHID().getPOV() == 180) {
-//        position = "Down";
-//    } else if (rStick.getHID().getPOV() == 270) {
-//        position = "Left";
-//    } else {
-//        position = "Center";
-//    }
-//    return position;
-//  }
+  public String getPovPositionForRotation() {
+      String position;
+    if (rStick.getHID().getPOV() == 0) {
+        position = "Up";
+    } else if (rStick.getHID().getPOV() == 90) {
+        position = "Right";
+    } else if (rStick.getHID().getPOV() == 180) {
+        position = "Down";
+    } else if (rStick.getHID().getPOV() == 270) {
+        position = "Left";
+    } else {
+        position = "Center";
+    }
+    return position;
+  }
 
   // endregion
   // region | INFO METHODS |
@@ -232,7 +235,8 @@ public class Robot extends TimedRobot {
     globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
     globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
 
-      System.out.println(drive.getHeading());
+//      System.out.println(drive.getHeading());
+      System.out.println(getPeriod());
   }
   // endregion
 }
