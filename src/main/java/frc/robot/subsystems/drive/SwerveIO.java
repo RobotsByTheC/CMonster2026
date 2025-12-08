@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.logging.Issuable;
 import frc.robot.subsystems.drive.swerve.SwerveModule;
 
 /**
@@ -14,7 +15,7 @@ import frc.robot.subsystems.drive.swerve.SwerveModule;
  * higher-level goals and reading the current state of the chassis.
  */
 @Logged
-public interface SwerveIO extends AutoCloseable {
+public interface SwerveIO extends AutoCloseable, Issuable {
   SwerveModule frontLeft();
 
   SwerveModule frontRight();
@@ -26,7 +27,9 @@ public interface SwerveIO extends AutoCloseable {
   /** Gets the current heading of the chassis. */
   Rotation2d getHeading();
 
-  default void init() {}
+  default boolean isGyroConnected() {
+    return false;
+  }
 
   void resetHeading(Rotation2d heading);
 

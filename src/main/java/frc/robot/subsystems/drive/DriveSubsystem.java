@@ -7,7 +7,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -30,7 +29,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -39,7 +37,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -50,15 +48,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.logging.Issue;
+import frc.robot.logging.IssueTracker;
+import frc.robot.logging.Issuable;
 import java.util.Arrays;
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
-public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
-  private final Timer timer = new Timer();
-
+public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issuable {
   private final Voltage appliedSysidVoltage = Volts.zero();
   private final SwerveIO io;
 
@@ -86,9 +84,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   @NotLogged private final SwerveDrivePoseEstimator poseEstimator;
 
   private final Field2d field = new Field2d();
-
-  private BooleanSupplier blegg = driveController::atReference;
-  @Logged private DoubleSupplier estimatedX;
 
   public enum ReferenceFrame {
     ROBOT,
@@ -131,7 +126,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
             // Use default standard deviations of ±35" and ±52° for vision-derived position data
             VecBuilder.fill(
                 Inches.of(35).in(Meters), Inches.of(35).in(Meters), Degrees.of(52).in(Radians)));
-    estimatedX = () -> visionPoseEstimator.getEstimatedPosition().getMeasureX().in(Meters);
 
     Shuffleboard.getTab("Drive").add("Field", field);
     Shuffleboard.getTab("Drive").add("X PID", xController);
@@ -171,10 +165,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     return Commands.runOnce(() -> io.resetHeading(Rotation2d.kZero))
         .ignoringDisable(true)
         .withName("Reset Gyro");
-  }
-
-  public void registerIssues() {
-    io.init();
   }
 
   public void resetHeading() {
@@ -489,5 +479,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         Math.sqrt(
             Math.pow(getSwerveChassisSpeeds().vxMetersPerSecond, 2)
                 + Math.pow(getSwerveChassisSpeeds().vyMetersPerSecond, 2)));
+  }
+
+  @Override
+  public void registerIssues() {
+    IssueTracker.addIssue(new Issue("IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, io::isGyroConnected));
   }
 }

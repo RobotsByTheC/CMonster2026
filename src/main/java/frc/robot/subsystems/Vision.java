@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.subsystems;
 
 import static frc.robot.Constants.VisionConstants.leftOffset;
 import static frc.robot.Constants.VisionConstants.rightOffset;
@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.filter.RepetitiveDebouncer;
 import frc.robot.logging.Issue;
 import frc.robot.logging.IssueTracker;
+import frc.robot.logging.Issuable;
 import java.util.Comparator;
 import java.util.List;
 import org.photonvision.PhotonCamera;
@@ -18,7 +19,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 @Logged
-public class Vision {
+public class Vision implements Issuable {
   public static final int NO_TAG = 0;
   public static final Pose3d NO_TARGET = Pose3d.kZero;
 
@@ -34,6 +35,7 @@ public class Vision {
   private final RepetitiveDebouncer DEBOUNCER = new RepetitiveDebouncer(10, false);
   public final Trigger SEES_TAG = new Trigger(DEBOUNCER::getBoolean);
 
+  @Override
   public void registerIssues() {
     IssueTracker.addIssue(new Issue("IssueTracker", "Left Camera Disconnected", Alert.AlertType.kError, leftCamera::isConnected));
     IssueTracker.addIssue(new Issue("IssueTracker", "Right Camera Disconnected", Alert.AlertType.kError, rightCamera::isConnected));
