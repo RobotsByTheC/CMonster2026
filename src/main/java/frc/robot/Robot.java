@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
 
   private final double offsetRotationPOV = 0;
   //originally off by 30 degrees. fixed.
-  private final double top = 0 + offsetRotationPOV;
+  public final double top = 0 + offsetRotationPOV;
   private final double bottom = 90 + offsetRotationPOV;
   private final double left = 180 + offsetRotationPOV;
   private final double right = 270 + offsetRotationPOV;
@@ -110,8 +110,8 @@ public class Robot extends TimedRobot {
       //down and left are swapped. Weirdly, it works. fix later!!!
       lStick.povUp().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(top))));
       lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
-      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
-      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
+      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
 
     operatorController
         .x()
@@ -165,9 +165,25 @@ public class Robot extends TimedRobot {
             drive.driveXYTheta(
             () -> rStick.getY() * globalDriveSpeedMultiplier,
             () -> rStick.getX() * globalDriveSpeedMultiplier,
-            () -> lStick.getTwist() * globalTurnSpeedMultiplier));
+            () -> lStick.getTwist() * globalTurnSpeedMultiplier, new Rotation2d(Degrees.of(rStick.getHID().getPOV()))));
+            }
 
-  }
+// This fun chunk of code prints out the current location of the POV. currently unneeded.
+//  public String getPovPositionForRotation() {
+//      String position;
+//    if (rStick.getHID().getPOV() == 0) {
+//        position = "Up";
+//    } else if (rStick.getHID().getPOV() == 90) {
+//        position = "Right";
+//    } else if (rStick.getHID().getPOV() == 180) {
+//        position = "Down";
+//    } else if (rStick.getHID().getPOV() == 270) {
+//        position = "Left";
+//    } else {
+//        position = "Center";
+//    }
+//    return position;
+//  }
 
   // endregion
   // region | INFO METHODS |

@@ -46,6 +46,8 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -358,12 +360,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
    *     as a number from -1 (maximum clockwise speed) to +1 (maximum counter-clockwise speed).
    * @return the driving command
    */
-  public Command driveXYTheta(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega) {
+  public Command driveXYTheta(DoubleSupplier x, DoubleSupplier y, DoubleSupplier omega, Rotation2d rotation) {
     var xSpeed = MetersPerSecond.mutable(0);
     var ySpeed = MetersPerSecond.mutable(0);
     var omegaSpeed = RadiansPerSecond.mutable(0);
+    AngularVelocity rotateAsVelocity = RadiansPerSecond.of(rotation.getRadians());
+    var ultimateSpeed = omegaSpeed.plus(rotateAsVelocity);
 
-    return run(() -> {
+      return run(() -> {
           xSpeed.mut_setMagnitude(
               MathUtil.applyDeadband(-x.getAsDouble(), 0.01)
                   * DriveConstants.maxSpeed.in(MetersPerSecond));
@@ -374,7 +378,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
               MathUtil.applyDeadband(-omega.getAsDouble(), 0.15)
                   * DriveConstants.maxAngularSpeed.in(RadiansPerSecond));
 
-          drive(xSpeed, ySpeed, omegaSpeed, ReferenceFrame.FIELD);
+          drive(xSpeed, ySpeed, ultimateSpeed, ReferenceFrame.FIELD);
         })
         .finallyDo(this::setX)
         .withName("Drive With Joysticks");
@@ -469,6 +473,14 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
           drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
         }).until(() -> Math.abs(thetaController.getGoal().position-io.getHeading().getRadians())<threshold);
   }
+
+    public AngularVelocity getHeadingPower(Rotation2d heading) {
+        double output = thetaController.calculate(
+                io.getHeading().getRadians(),
+                heading.getRadians()
+        );
+        return RadiansPerSecond.of(output);
+    }
 
   private void setForward() {
     io.setDesiredStateWithoutOptimization(
