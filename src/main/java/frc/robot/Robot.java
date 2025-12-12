@@ -52,12 +52,12 @@ public class Robot extends TimedRobot {
   private double globalTurnSpeedMultiplier = 1;
   private double globalDriveSpeedMultiplier = 1;
 
-  private final double offsetRotationPOV = 0;
+  private final int offsetRotationPOV = 0;
   //originally off by 30 degrees. fixed.
-  public final double top = 0 + offsetRotationPOV;
-  private final double bottom = 90 + offsetRotationPOV;
-  private final double left = 180 + offsetRotationPOV;
-  private final double right = 270 + offsetRotationPOV;
+  public final int top = 0 + offsetRotationPOV;
+  private final int bottom = 90 + offsetRotationPOV;
+  private final int left = 180 + offsetRotationPOV;
+  private final int right = 270 + offsetRotationPOV;
 
   private final SendableChooser<Supplier<Command>> odometryTestChooser;
   private final SendableChooser<Supplier<Command>> autoChooser;
@@ -112,6 +112,7 @@ public class Robot extends TimedRobot {
 //      lStick.povRight().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(right))));
 //      lStick.povDown().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(bottom))));
 //      lStick.povLeft().onTrue(drive.rotateToHeading(new Rotation2d(Degrees.of(left))));
+      //WORKS IF ADDED, CANT USE WHILE DRIVING
 
     operatorController
         .x()
@@ -165,28 +166,51 @@ public class Robot extends TimedRobot {
               drive.driveXYTheta(
                       () -> rStick.getY() * globalDriveSpeedMultiplier,
                       () -> rStick.getX() * globalDriveSpeedMultiplier,
-                      (rStick.getHID().getPOV() == -1) ? () -> lStick.getTwist() * globalDriveSpeedMultiplier : () -> rStick.getHID().getPOV())
-      );
-  }
+//                      (rStick.getHID().getPOV() == -1) ? () -> lStick.getTwist() * globalDriveSpeedMultiplier : () -> )
+                      () -> {
 
+                        int rotationTarget;
+                        if (rStick.povUp().getAsBoolean()){
+                            rotationTarget = top;
+                        } else if (rStick.povDown().getAsBoolean()){
+                            rotationTarget = bottom;
+                        } else if (rStick.povRight().getAsBoolean()) {
+                            rotationTarget = right;
+                        } else if (rStick.povLeft().getAsBoolean()) {
+                            rotationTarget = left;
+                        } else {
+                            rotationTarget = 0;
+                        }
+
+                          int pov = rStick.getHID().getPOV();
+
+                          if (pov == -1) {
+                              return lStick.getTwist() * globalDriveSpeedMultiplier;
+                          }
+
+                          Rotation2d targetHeading = Rotation2d.fromDegrees(rotationTarget);
+                          return drive.getRotateToHeadingOutput(targetHeading);
+                      }
+      ));
+  }
             //lStick.getTwist() * globalTurnSpeedMultiplier , new Rotation2d(Degrees.of(rStick.getHID().getPOV()))));
 
 // This fun chunk of code prints out the current location of the POV. currently unneeded.
-  public String getPovPositionForRotation() {
-      String position;
-    if (rStick.getHID().getPOV() == 0) {
-        position = "Up";
-    } else if (rStick.getHID().getPOV() == 90) {
-        position = "Right";
-    } else if (rStick.getHID().getPOV() == 180) {
-        position = "Down";
-    } else if (rStick.getHID().getPOV() == 270) {
-        position = "Left";
-    } else {
-        position = "Center";
-    }
-    return position;
-  }
+//  public String getPovPositionForRotation() {
+//      String position;
+//    if (rStick.getHID().getPOV() == 0) {
+//        position = "Up";
+//    } else if (rStick.getHID().getPOV() == 90) {
+//        position = "Right";
+//    } else if (rStick.getHID().getPOV() == 180) {
+//        position = "Down";
+//    } else if (rStick.getHID().getPOV() == 270) {
+//        position = "Left";
+//    } else {
+//        position = "Center";
+//    }
+//    return position;
+//  }
 
   // endregion
   // region | INFO METHODS |

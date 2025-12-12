@@ -7,7 +7,6 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.FeetPerSecond;
-import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -30,7 +29,6 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -46,8 +44,6 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
@@ -383,7 +379,17 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         .withName("Drive With Joysticks");
   }
 
-  @Override
+    public double getRotateToHeadingOutput(Rotation2d targetHeading) {
+        double current = io.getHeading().getRadians();
+
+        double target = targetHeading.getRadians();
+
+        // PID output
+        return thetaController.calculate(current, target);
+    }
+
+
+    @Override
   public void close() {
     io.close();
   }
@@ -465,6 +471,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   public Command rotateToHeading(Rotation2d heading) {
     // Use a PID controller to control the heading of the robot
+      //Never called!! could be my issue
     return Commands.run(() -> {
           AngularVelocity velocity =
               RadiansPerSecond.of(
