@@ -188,29 +188,11 @@ public class Robot extends TimedRobot {
                               return lStick.getTwist() * globalDriveSpeedMultiplier;
                           }
 
-                          Rotation2d targetHeading = Rotation2d.fromDegrees(rotationTarget);
-                          return drive.getRotateToHeadingOutput(targetHeading);
+                              Rotation2d targetHeading = Rotation2d.fromDegrees(rotationTarget);
+                              return drive.getRotateToHeadingOutput(targetHeading);
                       }
       ));
   }
-            //lStick.getTwist() * globalTurnSpeedMultiplier , new Rotation2d(Degrees.of(rStick.getHID().getPOV()))));
-
-// This fun chunk of code prints out the current location of the POV. currently unneeded.
-//  public String getPovPositionForRotation() {
-//      String position;
-//    if (rStick.getHID().getPOV() == 0) {
-//        position = "Up";
-//    } else if (rStick.getHID().getPOV() == 90) {
-//        position = "Right";
-//    } else if (rStick.getHID().getPOV() == 180) {
-//        position = "Down";
-//    } else if (rStick.getHID().getPOV() == 270) {
-//        position = "Left";
-//    } else {
-//        position = "Center";
-//    }
-//    return position;
-//  }
 
   // endregion
   // region | INFO METHODS |

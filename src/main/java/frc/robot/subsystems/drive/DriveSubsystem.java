@@ -381,13 +381,18 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
     public double getRotateToHeadingOutput(Rotation2d targetHeading) {
         double current = io.getHeading().getRadians();
-
         double target = targetHeading.getRadians();
 
-        // PID output
-        return thetaController.calculate(current, target);
-    }
+        double output = thetaController.calculate(current, target);
+        double correctedOutputThingNameLater = (output / DriveConstants.maxAngularSpeed.in(RadiansPerSecond));
 
+        // STOP tolerance thing
+        if (thetaController.atSetpoint()) {
+            return 0.0;
+        }
+
+        return MathUtil.clamp(correctedOutputThingNameLater / DriveConstants.maxAngularSpeed.in(RadiansPerSecond), -1.0, 1.0);
+    }
 
     @Override
   public void close() {
