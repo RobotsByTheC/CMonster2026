@@ -7,7 +7,8 @@ import java.util.List;
 public class IssueTracker {
   public static final List<Issue> ALERTS = new ArrayList<>();
   private static boolean hasIssue = false;
-  private static final Issue NO_ISSUES = new Issue("IssueTracker", "No issues present", Alert.AlertType.kInfo, () -> hasIssue);
+  private static final Issue NO_ISSUES =
+      new Issue("IssueTracker", "No issues present", Alert.AlertType.kInfo, () -> hasIssue);
 
   public static void periodicUpdate() {
     hasIssue = false;
