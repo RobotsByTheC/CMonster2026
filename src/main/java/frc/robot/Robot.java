@@ -32,7 +32,6 @@ import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
 import frc.robot.subsystems.drive.SimSwerveIO;
-
 import java.util.function.Supplier;
 
 @Logged
@@ -40,12 +39,9 @@ public class Robot extends TimedRobot {
   private final DriveSubsystem drive;
   private final Vision vision;
 
-  @NotLogged
-  private final CommandXboxController operatorController;
-  @NotLogged
-  private final CommandJoystick rStick;
-  @NotLogged
-  private final CommandJoystick lStick;
+  @NotLogged private final CommandXboxController operatorController;
+  @NotLogged private final CommandJoystick rStick;
+  @NotLogged private final CommandJoystick lStick;
 
   private double globalTurnSpeedMultiplier = 1;
   private double globalDriveSpeedMultiplier = 1;
@@ -100,7 +96,7 @@ public class Robot extends TimedRobot {
     operatorController
         .x()
         .onTrue(
-            drive.myThirdAttemptAtDriveToRobotRelativePose(
+            drive.driveToRobotRelativePose(
                 () -> vision.getTargetPose().toPose2d()));
   }
 
@@ -126,13 +122,14 @@ public class Robot extends TimedRobot {
 
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
+
   // endregion
   // region | COMMANDS |
   private Command driveWithFlightSticks() {
     return drive.driveXYTheta(
-            () -> rStick.getY() * globalDriveSpeedMultiplier,
-            () -> rStick.getX() * globalDriveSpeedMultiplier,
-            () -> lStick.getTwist() * globalTurnSpeedMultiplier);
+        () -> rStick.getY() * globalDriveSpeedMultiplier,
+        () -> rStick.getX() * globalDriveSpeedMultiplier,
+        () -> lStick.getTwist() * globalTurnSpeedMultiplier);
   }
 
   // endregion
@@ -152,6 +149,7 @@ public class Robot extends TimedRobot {
   // Runs after specific periodic functions
   @Override
   public void robotPeriodic() {
+    drive.updateTargetValues();
     if (DriverStation.isFMSAttached()) {
       DriverStation.silenceJoystickConnectionWarning(false);
     }

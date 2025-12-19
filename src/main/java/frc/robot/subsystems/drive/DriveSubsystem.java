@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
@@ -44,27 +45,38 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.logging.Issuable;
 import frc.robot.logging.Issue;
 import frc.robot.logging.IssueTracker;
-import frc.robot.logging.Issuable;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
 public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issuable {
+  public double estX = 0;
+  public double targetX = 0;
+  public double estY = 0;
+  public double targetY = 0;
+  public Pose2d targetPose = Pose2d.kZero;
+  public double xAccelRaw = 0;
+  public double yAccelRaw = 0;
+  public double xAccelFinal = 0;
+  public double yAccelFinal = 0;
+  public double maxAccel = 1;
+  public double xError = 0;
+  public double yError = 0;
+
   private final Voltage appliedSysidVoltage = Volts.zero();
   private final SwerveIO io;
 
-  private final PIDController xController =
-      new PIDController(Constants.AutoConstants.pXController, 0.05, 0.2);
+  private final PIDController xController = new PIDController(3, 0, 1);
 
-  private final PIDController yController =
-      new PIDController(Constants.AutoConstants.pYController, 0.05, 0.2);
+  private final PIDController yController = new PIDController(3, 0, 1);
 
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
@@ -97,7 +109,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issu
     xController.setTolerance(Meters.convertFrom(2, Inches));
     yController.setTolerance(Meters.convertFrom(2, Inches));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
-    driveController.setTolerance(new Pose2d(Inches.of(2), Inches.of(2), new Rotation2d(Degrees.of(5))));
+    driveController.setTolerance(
+        new Pose2d(Inches.of(2), Inches.of(2), new Rotation2d(Degrees.of(5))));
     poseEstimator =
         new SwerveDrivePoseEstimator(
             driveKinematics,
@@ -215,67 +228,52 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issu
     io.setDesiredModuleStates(swerveModuleStates);
   }
 
-  public Command myThirdAttemptAtDriveToRobotRelativePose(Supplier<Pose2d> target) {
-    return Commands.runOnce(() -> {
-      visionPoseEstimator.resetPose(Pose2d.kZero);
-      System.out.println(target.get());
-        })
-        .andThen(
-            run( () -> {
-                drive(
-                    driveController.calculate(
-                        visionPoseEstimator.getEstimatedPosition(),
-                        target.get().plus(new Transform2d(Meters.of(-0.5), Meters.of(0.1), Rotation2d.kZero)),
-                        0,
-                        Rotation2d.kZero));
-            }).until(driveController::atReference)
-        );
-  }
-
-  public Command mySecondAttemptAtDriveToRobotRelativePose(
-      Supplier<Pose2d> target, Trigger canSeeTarget) {
-    return Commands.runOnce(() -> poseEstimator.resetPose(Pose2d.kZero))
-        .andThen(
-            run(() -> {
-                  drive(
-                      driveController
-                          .calculate(Pose2d.kZero, target.get(), 0, Rotation2d.kZero)
-                          .div(3));
-                })
-                .until(() -> (driveController.atReference())));
-  }
-
-  public Command myDriveToPose(Supplier<Pose2d> target) {
+  public Command driveToRobotRelativePose(Supplier<Pose2d> target) {
     return Commands.runOnce(
             () -> {
-              poseEstimator.resetPose(Pose2d.kZero);
+              visionPoseEstimator.resetPose(Pose2d.kZero);
+              targetPose = target.get();
             })
         .andThen(
-            run(
-                () -> {
-                  drive(
-                      driveController.calculate(
-                          poseEstimator.getEstimatedPosition(), target.get(), 1, Rotation2d.kZero));
-                  //          System.out.println("Trying to drive to " + target + ", currently at "
-                  // + poseEstimator.getEstimatedPosition());
-                }));
-  }
+            run(() -> {
+              updateTargetValues();
 
-  public Command driveToRobotRelativePose(Pose2d pose) {
-    Pose2d[] startingPose = new Pose2d[1];
-    return runOnce(() -> startingPose[0] = getPose())
-        //        .andThen(rotateToHeading(pose.getRotation()))
-        .andThen(
-            run(
-                () -> {
-                  Pose2d currentPose =
-                      new Pose2d(
-                          getPose().minus(startingPose[0]).getX(),
-                          getPose().minus(startingPose[0]).getY(),
-                          getPose().minus(startingPose[0]).getRotation());
-                  drive(driveController.calculate(currentPose, pose, 0, pose.getRotation()));
-                }))
-        .withName("Move to " + pose);
+                  ChassisSpeeds calculatedSpeeds =
+                      driveController.calculate(
+                          visionPoseEstimator.getEstimatedPosition(),
+                          targetPose.transformBy(VisionConstants.distanceFromAprilTag),
+                          0,
+                          Rotation2d.kZero);
+
+                  ChassisSpeeds currentSpeeds =
+                      driveKinematics.toChassisSpeeds(io.getModuleStates());
+
+                  maxAccel = VisionConstants.maxAllowedAcceleration.in(MetersPerSecondPerSecond);
+                  xAccelRaw = calculatedSpeeds.vxMetersPerSecond - currentSpeeds.vxMetersPerSecond;
+                  yAccelRaw = calculatedSpeeds.vyMetersPerSecond - currentSpeeds.vyMetersPerSecond;
+
+                  xAccelFinal = Math.max(-maxAccel, Math.min(maxAccel, xAccelRaw));
+                  yAccelFinal = Math.max(-maxAccel, Math.min(maxAccel, yAccelRaw));
+
+                  calculatedSpeeds.vxMetersPerSecond =
+                      currentSpeeds.vxMetersPerSecond + xAccelFinal;
+                  calculatedSpeeds.vyMetersPerSecond =
+                      currentSpeeds.vyMetersPerSecond + yAccelFinal;
+
+                  drive(calculatedSpeeds);
+                })
+                .until(
+                    () ->
+                        (Math.abs(
+                                    (visionPoseEstimator.getEstimatedPosition().getX()
+                                            - targetPose.getX())
+                                        / visionPoseEstimator.getEstimatedPosition().getX())
+                                < VisionConstants.tolerance
+                            && Math.abs(
+                                    (visionPoseEstimator.getEstimatedPosition().getY()
+                                            - targetPose.getY())
+                                        / visionPoseEstimator.getEstimatedPosition().getY())
+                                < VisionConstants.tolerance)));
   }
 
   /** Sets the wheels into an X formation to prevent movement. */
@@ -445,14 +443,18 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issu
 
   public Command rotateToHeading(Rotation2d heading) {
     // Use a PID controller to control the heading of the robot
-    return runOnce(() -> {
-        System.out.println("Rotating to heading " + heading);
-    }).andThen(() -> {
-          AngularVelocity velocity =
-              RadiansPerSecond.of(
-                  thetaController.calculate(io.getHeading().getRadians(), heading.getRadians()));
-          drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
-        })
+    return runOnce(
+            () -> {
+              System.out.println("Rotating to heading " + heading);
+            })
+        .andThen(
+            () -> {
+              AngularVelocity velocity =
+                  RadiansPerSecond.of(
+                      thetaController.calculate(
+                          io.getHeading().getRadians(), heading.getRadians()));
+              drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
+            })
         .until(thetaController::atSetpoint);
   }
 
@@ -483,6 +485,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issu
 
   @Override
   public void registerIssues() {
-    IssueTracker.addIssue(new Issue("IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, io::isGyroConnected));
+    IssueTracker.addIssue(
+        new Issue(
+            "IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, io::isGyroConnected));
+  }
+
+  public void updateTargetValues() {
+    targetX = targetPose.getX();
+    targetY = targetPose.getY();
+    estX = visionPoseEstimator.getEstimatedPosition().getX();
+    estY = visionPoseEstimator.getEstimatedPosition().getY();
   }
 }
