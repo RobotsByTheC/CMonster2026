@@ -69,8 +69,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
           Constants.AutoConstants.pThetaController,
-          0,
-          0,
+          0, //previously 0
+          0, //previously 0
           new TrapezoidProfile.Constraints(
               DriveConstants.maxAngularSpeed.in(RadiansPerSecond),
               RadiansPerSecondPerSecond.convertFrom(10, RotationsPerSecondPerSecond))); //speed currently set to 8, can get to around 10
@@ -370,8 +370,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
               MathUtil.applyDeadband(-y.getAsDouble(), 0.01)
                   * DriveConstants.maxSpeed.in(MetersPerSecond));
           omegaSpeed.mut_setMagnitude(
-              MathUtil.applyDeadband(-omega.getAsDouble(), 0.15)
-                  * DriveConstants.maxAngularSpeed.in(RadiansPerSecond));
+              MathUtil.applyDeadband(-omega.getAsDouble(), 0.05)); //previously 0.15
 
           drive(xSpeed, ySpeed, omegaSpeed, ReferenceFrame.FIELD);
         })
@@ -382,16 +381,19 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     public double getRotateToHeadingOutput(Rotation2d targetHeading) {
         double current = io.getHeading().getRadians();
         double target = targetHeading.getRadians();
-
         double output = thetaController.calculate(current, target);
-        double correctedOutputThingNameLater = (output / DriveConstants.maxAngularSpeed.in(RadiansPerSecond));
 
-        // STOP tolerance thing
-        if (thetaController.atSetpoint()) {
-            return 0.0;
+        //this is to get rid of tiny values or tiny oscelations
+        if (thetaController.atSetpoint() || Math.abs(output) < 0.02) {
+            output = 0.0;
         }
+        return MathUtil.clamp(output / DriveConstants.maxAngularSpeed.in(RadiansPerSecond), -1.0, 1.0);
 
-        return MathUtil.clamp(correctedOutputThingNameLater / DriveConstants.maxAngularSpeed.in(RadiansPerSecond), -1.0, 1.0);
+    }
+
+    @Logged
+    public double getCurrentIoThing() {
+        return io.getHeading().getRadians();
     }
 
     @Override

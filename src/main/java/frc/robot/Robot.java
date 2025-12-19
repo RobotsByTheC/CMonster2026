@@ -169,24 +169,31 @@ public class Robot extends TimedRobot {
 //                      (rStick.getHID().getPOV() == -1) ? () -> lStick.getTwist() * globalDriveSpeedMultiplier : () -> )
                       () -> {
 
-                        int rotationTarget;
-                        if (rStick.povUp().getAsBoolean()){
-                            rotationTarget = top;
-                        } else if (rStick.povDown().getAsBoolean()){
-                            rotationTarget = bottom;
-                        } else if (rStick.povRight().getAsBoolean()) {
-                            rotationTarget = right;
-                        } else if (rStick.povLeft().getAsBoolean()) {
-                            rotationTarget = left;
-                        } else {
-                            rotationTarget = 0;
-                        }
+                          double manualTwist = lStick.getTwist();
+                          if (Math.abs(manualTwist) > 0.1) {
+                              return manualTwist * globalTurnSpeedMultiplier;
+                          }
 
                           int pov = rStick.getHID().getPOV();
 
                           if (pov == -1) {
                               return lStick.getTwist() * globalDriveSpeedMultiplier;
                           }
+
+                        int rotationTarget;
+                        if (rStick.povUp().getAsBoolean()){
+                            rotationTarget = top;
+                        } else if (rStick.povDown().getAsBoolean()){
+                            rotationTarget = left;
+                        } else if (rStick.povRight().getAsBoolean()) {
+                            rotationTarget = right;
+                        } else if (rStick.povLeft().getAsBoolean()) {
+                            rotationTarget = bottom;
+                        } else {
+                            rotationTarget = 0;
+                        }
+
+                        //0 = 360????
 
                               Rotation2d targetHeading = Rotation2d.fromDegrees(rotationTarget);
                               return drive.getRotateToHeadingOutput(targetHeading);

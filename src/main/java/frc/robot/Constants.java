@@ -44,7 +44,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final LinearVelocity maxSpeed = MetersPerSecond.of(4.5);
-    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(1); //previosly 2
+    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(3); //previosly 2
     public static final AngularVelocity slowAngularSpeed = RotationsPerSecond.of(0.5);
 
     public static final int gyroCanID = 50;
@@ -196,7 +196,7 @@ public final class Constants {
   public static final class AutoConstants {
     public static final double pXController = 1.5;
     public static final double pYController = 1.5;
-    public static final double pThetaController = 4;
+    public static final double pThetaController = 4; // previously 4
   }
 
   public static final class NeoMotorConstants {
