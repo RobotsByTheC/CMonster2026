@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
@@ -23,12 +24,14 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 
 /**
@@ -44,7 +47,7 @@ public final class Constants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
     public static final LinearVelocity maxSpeed = MetersPerSecond.of(4.5);
-    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0);
+    public static final AngularVelocity maxAngularSpeed = RotationsPerSecond.of(2.0); // previosly 2
     public static final AngularVelocity slowAngularSpeed = RotationsPerSecond.of(0.5);
 
     public static final int gyroCanID = 50;
@@ -116,9 +119,9 @@ public final class Constants {
     public static final Current drivingCurrentLimit = Amps.of(50);
     public static final Current turningCurrentLimit = Amps.of(20);
 
-    public static final double drivingP = 0.04;
-    public static final double drivingI = 0;
-    public static final double drivingD = 0;
+    public static final double drivingP = 0.04; // 0.04 previous
+    public static final double drivingI = 0; // 0 previous
+    public static final double drivingD = 0; // 0 previous
     public static final double drivingFF = 1 / driveWheelFreeSpeed.in(MetersPerSecond);
 
     public static final double turningP = 1;
@@ -165,7 +168,7 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final Pose3d leftOffset =
+    public static final Pose3d leftCameraOffset =
         new Pose3d(
             Inches.of(10.5), // X, forward
             Inches.of(12.4), // Y, left
@@ -175,7 +178,7 @@ public final class Constants {
                 Degrees.of(30), // Pitch, up
                 Degrees.of(15) // Yaw, left
                 ));
-    public static final Pose3d rightOffset =
+    public static final Pose3d rightCameraOffset =
         new Pose3d(
             Inches.of(10.5), // X, forward
             Inches.of(-12.4), // Y, left
@@ -185,6 +188,11 @@ public final class Constants {
                 Degrees.of(30), // Pitch, up
                 Degrees.of(-15) // Yaw, left
                 ));
+    public static final Transform2d distanceFromAprilTag =
+        new Transform2d(Meters.zero(), Meters.of(0), Rotation2d.kZero);
+    public static final double tolerance = 0.01;
+    public static final LinearAcceleration maxAllowedAcceleration =
+        MetersPerSecondPerSecond.of(0.6);
   }
 
   public static final class OIConstants {
@@ -194,8 +202,6 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double pXController = 4;
-    public static final double pYController = 4;
     public static final double pThetaController = 4;
   }
 

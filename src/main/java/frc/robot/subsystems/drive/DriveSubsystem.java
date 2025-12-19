@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
@@ -37,7 +38,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -47,25 +48,36 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.VisionConstants;
+import frc.robot.logging.Issuable;
+import frc.robot.logging.Issue;
+import frc.robot.logging.IssueTracker;
 import java.util.Arrays;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 @Logged
-public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
-  private final Timer timer = new Timer();
+public class DriveSubsystem extends SubsystemBase implements AutoCloseable, Issuable {
+  public double estX = 0;
+  public double targetX = 0;
+  public double estY = 0;
+  public double targetY = 0;
+  public Pose2d targetPose = Pose2d.kZero;
+  public double xAccelRaw = 0;
+  public double yAccelRaw = 0;
+  public double xAccelFinal = 0;
+  public double yAccelFinal = 0;
+  public double maxAccel = 1;
+  public double xError = 0;
+  public double yError = 0;
 
   private final Voltage appliedSysidVoltage = Volts.zero();
   private final SwerveIO io;
 
-  @SuppressWarnings("unused")
-  private final PIDController xController =
-      new PIDController(Constants.AutoConstants.pXController, 0, 0);
+  private final PIDController xController = new PIDController(3, 0, 1);
 
-  @SuppressWarnings("unused")
-  private final PIDController yController =
-      new PIDController(Constants.AutoConstants.pYController, 0, 0);
+  private final PIDController yController = new PIDController(3, 0, 1);
 
-  @SuppressWarnings("FieldCanBeLocal")
   private final ProfiledPIDController thetaController =
       new ProfiledPIDController(
           Constants.AutoConstants.pThetaController,
@@ -78,7 +90,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   private final HolonomicDriveController driveController =
       new HolonomicDriveController(xController, yController, thetaController);
 
+  @Logged public double goal;
   // Odometry class for tracking robot pose
+  @NotLogged private final SwerveDrivePoseEstimator visionPoseEstimator;
   @NotLogged private final SwerveDrivePoseEstimator poseEstimator;
 
   private final Field2d field = new Field2d();
@@ -92,10 +106,26 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public DriveSubsystem(SwerveIO io) {
     this.io = io;
 
-    xController.setTolerance(Meters.convertFrom(0.5, Inches));
-    yController.setTolerance(Meters.convertFrom(0.5, Inches));
+    xController.setTolerance(Meters.convertFrom(2, Inches));
+    yController.setTolerance(Meters.convertFrom(2, Inches));
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    driveController.setTolerance(
+        new Pose2d(Inches.of(2), Inches.of(2), new Rotation2d(Degrees.of(5))));
     poseEstimator =
+        new SwerveDrivePoseEstimator(
+            driveKinematics,
+            Rotation2d.fromDegrees(0),
+            io.getModulePositions(),
+            new Pose2d(Feet.zero(), Feet.zero(), new Rotation2d(Degrees.zero())),
+            // Use default standard deviations of ±4" and ±6° for odometry-derived position data
+            // (i.e. 86% of results will be within 4" and 6° of the true value, and 95% will
+            // be within ±8" and ±12°)
+            VecBuilder.fill(
+                Inches.of(4).in(Meters), Inches.of(4).in(Meters), Degrees.of(6).in(Radians)),
+            // Use default standard deviations of ±35" and ±52° for vision-derived position data
+            VecBuilder.fill(
+                Inches.of(35).in(Meters), Inches.of(35).in(Meters), Degrees.of(52).in(Radians)));
+    visionPoseEstimator =
         new SwerveDrivePoseEstimator(
             driveKinematics,
             Rotation2d.fromDegrees(0),
@@ -120,6 +150,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
   public void periodic() {
     // Update the odometry in the periodic block
     poseEstimator.update(io.getHeading(), io.getModulePositions());
+    visionPoseEstimator.update(io.getHeading(), io.getModulePositions());
     field.setRobotPose(poseEstimator.getEstimatedPosition());
   }
 
@@ -147,6 +178,10 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     return Commands.runOnce(() -> io.resetHeading(Rotation2d.kZero))
         .ignoringDisable(true)
         .withName("Reset Gyro");
+  }
+
+  public void resetHeading() {
+    io.resetHeading(Rotation2d.kZero);
   }
 
   public Command driveDistance(Distance distance) {
@@ -193,21 +228,52 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
     io.setDesiredModuleStates(swerveModuleStates);
   }
 
-  public Command driveToRobotRelativePose(Pose2d pose) {
-    Pose2d[] startingPose = new Pose2d[1];
-    return runOnce(() -> startingPose[0] = getPose())
-//        .andThen(rotateToHeading(pose.getRotation()))
+  public Command driveToRobotRelativePose(Supplier<Pose2d> target) {
+    return Commands.runOnce(
+            () -> {
+              visionPoseEstimator.resetPose(Pose2d.kZero);
+              targetPose = target.get();
+            })
         .andThen(
-            run(
-                () -> {
-                  Pose2d currentPose =
-                      new Pose2d(
-                          getPose().minus(startingPose[0]).getX(),
-                          getPose().minus(startingPose[0]).getY(),
-                          getPose().minus(startingPose[0]).getRotation());
-                  drive(driveController.calculate(currentPose, pose, 0, pose.getRotation()));
-                }))
-        .withName("Move to " + pose);
+            run(() -> {
+              updateTargetValues();
+
+                  ChassisSpeeds calculatedSpeeds =
+                      driveController.calculate(
+                          visionPoseEstimator.getEstimatedPosition(),
+                          targetPose.transformBy(VisionConstants.distanceFromAprilTag),
+                          0,
+                          Rotation2d.kZero);
+
+                  ChassisSpeeds currentSpeeds =
+                      driveKinematics.toChassisSpeeds(io.getModuleStates());
+
+                  maxAccel = VisionConstants.maxAllowedAcceleration.in(MetersPerSecondPerSecond);
+                  xAccelRaw = calculatedSpeeds.vxMetersPerSecond - currentSpeeds.vxMetersPerSecond;
+                  yAccelRaw = calculatedSpeeds.vyMetersPerSecond - currentSpeeds.vyMetersPerSecond;
+
+                  xAccelFinal = Math.max(-maxAccel, Math.min(maxAccel, xAccelRaw));
+                  yAccelFinal = Math.max(-maxAccel, Math.min(maxAccel, yAccelRaw));
+
+                  calculatedSpeeds.vxMetersPerSecond =
+                      currentSpeeds.vxMetersPerSecond + xAccelFinal;
+                  calculatedSpeeds.vyMetersPerSecond =
+                      currentSpeeds.vyMetersPerSecond + yAccelFinal;
+
+                  drive(calculatedSpeeds);
+                })
+                .until(
+                    () ->
+                        (Math.abs(
+                                    (visionPoseEstimator.getEstimatedPosition().getX()
+                                            - targetPose.getX())
+                                        / visionPoseEstimator.getEstimatedPosition().getX())
+                                < VisionConstants.tolerance
+                            && Math.abs(
+                                    (visionPoseEstimator.getEstimatedPosition().getY()
+                                            - targetPose.getY())
+                                        / visionPoseEstimator.getEstimatedPosition().getY())
+                                < VisionConstants.tolerance)));
   }
 
   /** Sets the wheels into an X formation to prevent movement. */
@@ -377,12 +443,18 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
   public Command rotateToHeading(Rotation2d heading) {
     // Use a PID controller to control the heading of the robot
-    return run(() -> {
-          AngularVelocity velocity =
-              RadiansPerSecond.of(
-                  thetaController.calculate(io.getHeading().getRadians(), heading.getRadians()));
-          drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
-        })
+    return runOnce(
+            () -> {
+              System.out.println("Rotating to heading " + heading);
+            })
+        .andThen(
+            () -> {
+              AngularVelocity velocity =
+                  RadiansPerSecond.of(
+                      thetaController.calculate(
+                          io.getHeading().getRadians(), heading.getRadians()));
+              drive(MetersPerSecond.zero(), MetersPerSecond.zero(), velocity, ReferenceFrame.ROBOT);
+            })
         .until(thetaController::atSetpoint);
   }
 
@@ -409,5 +481,19 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
         Math.sqrt(
             Math.pow(getSwerveChassisSpeeds().vxMetersPerSecond, 2)
                 + Math.pow(getSwerveChassisSpeeds().vyMetersPerSecond, 2)));
+  }
+
+  @Override
+  public void registerIssues() {
+    IssueTracker.addIssue(
+        new Issue(
+            "IssueTracker", "Gyro Disconnected", Alert.AlertType.kError, io::isGyroConnected));
+  }
+
+  public void updateTargetValues() {
+    targetX = targetPose.getX();
+    targetY = targetPose.getY();
+    estX = visionPoseEstimator.getEstimatedPosition().getX();
+    estY = visionPoseEstimator.getEstimatedPosition().getY();
   }
 }

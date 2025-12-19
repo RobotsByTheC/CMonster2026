@@ -1,4 +1,4 @@
-package frc.robot.logging;
+package frc.robot.logging.epilogue;
 
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.epilogue.CustomLoggerFor;

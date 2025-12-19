@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.logging.IssueTracker;
 import frc.robot.sim.SimulationContext;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.drive.DriveSubsystem;
 import frc.robot.subsystems.drive.MAXSwerveIO;
 import frc.robot.subsystems.drive.SimSwerveIO;
@@ -64,6 +66,9 @@ public class Robot extends TimedRobot {
     odometryTestChooser = new SendableChooser<>();
     autoChooser = new SendableChooser<>();
 
+    drive.registerIssues();
+    vision.registerIssues();
+
     configureDriveDistanceChooser();
     configureAutonomous();
     configureButtonBindings();
@@ -71,6 +76,8 @@ public class Robot extends TimedRobot {
     startLogging();
 
     DriverStation.silenceJoystickConnectionWarning(true);
+
+    drive.resetHeading();
   }
 
   // region | CONFIGURE METHODS |
@@ -89,8 +96,10 @@ public class Robot extends TimedRobot {
 
   private void configureButtonBindings() {
     operatorController
-        .y()
-        .onTrue(drive.driveToRobotRelativePose(vision.getTargetPose().toPose2d()));
+        .x()
+        .onTrue(
+            drive.driveToRobotRelativePose(
+                () -> vision.getTargetPose().toPose2d()));
   }
 
   private void configureDefaultCommands() {
@@ -142,10 +151,12 @@ public class Robot extends TimedRobot {
   // Runs after specific periodic functions
   @Override
   public void robotPeriodic() {
+    drive.updateTargetValues();
     if (DriverStation.isFMSAttached()) {
       DriverStation.silenceJoystickConnectionWarning(false);
     }
 
+    IssueTracker.periodicUpdate();
     vision.update();
     Epilogue.update(this);
     CommandScheduler.getInstance().run();
@@ -168,18 +179,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    globalTurnSpeedMultiplier = 1 - (lStick.getThrottle() + 1) / 2;
-    globalDriveSpeedMultiplier = 1 - (rStick.getThrottle() + 1) / 2;
-
-    if (lStick.povUp().getAsBoolean()){
-        drive.rotateToHeading(new Rotation2d(Degrees.of(0)));
-    } else if (lStick.povRight().getAsBoolean()){
-        drive.rotateToHeading(new Rotation2d(Degrees.of(90)));
-    } else if (lStick.povDown().getAsBoolean()){
-        drive.rotateToHeading(new Rotation2d(Degrees.of(180)));
-    } else if (lStick.povLeft().getAsBoolean()){
-        drive.rotateToHeading(new Rotation2d(Degrees.of(270)));
-    }
+    globalTurnSpeedMultiplier = Math.round(1 - (lStick.getThrottle() + 1) / 2);
+    globalDriveSpeedMultiplier = Math.round(1 - (rStick.getThrottle() + 1) / 2);
   }
   // endregion
 }

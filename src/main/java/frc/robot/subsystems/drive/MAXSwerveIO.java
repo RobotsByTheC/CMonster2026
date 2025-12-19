@@ -58,6 +58,11 @@ public class MAXSwerveIO implements SwerveIO {
   private final Pigeon2 gyro = new Pigeon2(Constants.DriveConstants.gyroCanID);
 
   @Override
+  public boolean isGyroConnected() {
+    return gyro.isConnected();
+  }
+
+  @Override
   public SwerveModule frontLeft() {
     return frontLeft;
   }
