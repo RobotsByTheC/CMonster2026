@@ -11,6 +11,7 @@ public class Constants {
 
   public static class CANConstants {
     public static final int INTAKE_CAN_ID = 9;
+    public static final int WRIST_CAN_ID = 10;
   }
   public static class IntakeConstants {
     public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
