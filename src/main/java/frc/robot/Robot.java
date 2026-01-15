@@ -41,13 +41,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit() {}
-
-  @Override
   public void disabledPeriodic() {}
 
   @Override
-  public void disabledExit() {}
   public void simulationPeriodic() {
     SimulationContext.getDefault().update(getPeriod());
   }
@@ -63,9 +59,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void autonomousExit() {}
-
-  @Override
   public void teleopInit() {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
@@ -76,14 +69,5 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {}
 
   @Override
-  public void teleopExit() {}
-
-  @Override
-  public void testInit() {}
-
-  @Override
   public void testPeriodic() {}
-
-  @Override
-  public void testExit() {}
 }
