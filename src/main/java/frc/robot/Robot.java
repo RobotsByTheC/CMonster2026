@@ -23,6 +23,8 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     operatorController = new CommandXboxController(CONTROLLER_PORT);
+
+    SignalLogger.start();
     Epilogue.configure(
         config ->
             config.backend =
