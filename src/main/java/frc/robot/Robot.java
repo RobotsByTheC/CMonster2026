@@ -25,6 +25,8 @@ public class Robot extends TimedRobot {
     operatorController = new CommandXboxController(CONTROLLER_PORT);
 
     SignalLogger.start();
+    DriverStation.startDataLog(DataLogManager.getLog(), true);
+
     Epilogue.configure(
         config ->
             config.backend =
