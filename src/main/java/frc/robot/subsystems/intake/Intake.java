@@ -3,10 +3,11 @@ package frc.robot.subsystems.intake;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.IntakeConstants.*;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
+@Logged
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
 
