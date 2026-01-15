@@ -6,4 +6,6 @@ public interface ShooterIO {
 
     void stop();
 
-    void setSpeed(AngularVelocity angularVelocity);}
+    void setSpeed(AngularVelocity angularVelocity);
+
+}

@@ -7,11 +7,24 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.SimShooterIO;
 
 public class Robot extends TimedRobot {
+  final Shooter shooter;
+  final SimShooterIO simShooterIO;
+
   private Command m_autonomousCommand;
 
   public Robot() {
+    if (isSimulation()) {
+       simShooterIO = new SimShooterIO();
+       shooter = new Shooter(simShooterIO);
+     } else {
+       // Running on real hardware. We haven't made an IO for that yet
+       shooter = null;
+       simShooterIO = null;
+     }
   }
 
   @Override
@@ -64,4 +77,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {
+    if (simShooterIO != null) {
+      simShooterIO.updateSim();
+    }
+  }
 }
