@@ -5,6 +5,10 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.units.measure.Voltage;
 
 public class Constants {
+  public static class InputConstants {
+    public static final int CONTROLLER_PORT = 1;
+  }
+
   public static class CANConstants {
     public static final int INTAKE_CAN_ID = 9;
   }
