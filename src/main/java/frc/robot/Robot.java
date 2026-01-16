@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
                     new FileBackend(DataLogManager.getLog()),
                     new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.stow());
+    intake.setDefaultCommand(intake.idle());
 
     operatorController.x().onTrue(intake.extend());
   }
