@@ -2,6 +2,7 @@ package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
+import static frc.robot.Constants.IntakeConstants.*;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -13,6 +14,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 
 @Logged
 public class RealIntakeIO implements IntakeIO {
@@ -27,6 +29,7 @@ public class RealIntakeIO implements IntakeIO {
 
     wristMotor = new SparkMax(WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     SparkMaxConfig wristMotorConfig = new SparkMaxConfig();
+    wristMotorConfig.closedLoop.pid(KP, KI, KD).positionWrappingEnabled(true).positionWrappingInputRange(0, 2*Math.PI).feedForward.svag(KS, KV, KA, KG);
     wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristEncoder = wristMotor.getAbsoluteEncoder();
@@ -38,8 +41,8 @@ public class RealIntakeIO implements IntakeIO {
   }
 
   @Override
-  public void setWristVoltage(Voltage voltage) {
-    wristMotor.setVoltage(voltage);
+  public void setWristPosition(Angle angle) {
+    wristMotor.configAccessor.closedLoop;
   }
 
   @Override
