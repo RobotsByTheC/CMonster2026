@@ -48,7 +48,6 @@ public class SimIntakeIO implements IntakeIO {
       }
     };
 
-    DriverStation.silenceJoystickConnectionWarning(true);
 
     SimulationContext.getDefault().addMechanism(motorMechanismSim);
     SimulationContext.getDefault().addMechanism(wristMechanismSim);

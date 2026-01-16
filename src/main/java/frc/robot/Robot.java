@@ -41,6 +41,8 @@ public class Robot extends TimedRobot {
       intake = new Intake(new RealIntakeIO());
     }
 
+    DriverStation.silenceJoystickConnectionWarning(true);
+
     operatorController = new CommandXboxController(CONTROLLER_PORT);
 
     SignalLogger.start();
