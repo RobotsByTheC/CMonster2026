@@ -45,6 +45,14 @@ public class Intake extends SubsystemBase {
         .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())));
   }
 
+  public Command extendAndIntake() {
+    return extend().until(pidController::atGoal).alongWith(runIntakeMotor());
+  }
+
+  public Command idle() {
+    return stow().alongWith(stopIntakeMotor());
+  }
+
   public Command stow() {
     return startRun(
         () -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
