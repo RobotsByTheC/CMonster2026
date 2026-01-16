@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -58,15 +59,15 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntakeMotor() {
-    return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+    return Commands.run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
   }
 
   public Command stopIntakeMotor() {
-    return run(() -> io.setIntakeVoltage(Volts.zero()));
+    return Commands.run(() -> io.setIntakeVoltage(Volts.zero()));
   }
 
   public Command reverseIntakeMotor() {
-    return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+    return Commands.run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
   }
 
   private Voltage calculatePIDVoltage(Angle targetAngle) {
