@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
 
     intake.setDefaultCommand(intake.idle());
 
-    operatorController.x().onTrue(intake.extend());
+    operatorController.x().whileTrue(intake.extendAndIntake());
   }
 
   @Override
