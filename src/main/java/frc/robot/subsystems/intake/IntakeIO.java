@@ -32,4 +32,10 @@ public interface IntakeIO {
    * @return The velocity of the wrist.
    */
   AngularVelocity getWristVelocity();
+
+  /**
+   * Gets the voltage being applied to the wrist by the subsystem.
+   * @return The voltage being applied to the wrist.
+   */
+  Voltage getWristVoltage();
 }

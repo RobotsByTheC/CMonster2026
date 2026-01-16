@@ -1,7 +1,6 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
 
 
@@ -54,5 +53,10 @@ public class RealIntakeIO implements IntakeIO {
   @Override
   public AngularVelocity getWristVelocity() {
     return RPM.of(wristEncoder.getVelocity());
+  }
+
+  @Override
+  public Voltage getWristVoltage() {
+    return Volts.of(wristMotor.getAppliedOutput() * wristMotor.getBusVoltage());
   }
 }

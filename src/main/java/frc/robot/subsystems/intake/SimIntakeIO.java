@@ -57,7 +57,12 @@ public class SimIntakeIO implements IntakeIO {
 
   @Override
   public AngularVelocity getWristVelocity() {
-    return null;
+    return RadiansPerSecond.of(wristSim.getVelocityRadPerSec());
+  }
+
+  @Override
+  public Voltage getWristVoltage() {
+    return Volts.of(wristSim.getInput(0));
   }
 
   public AngularVelocity getMotorVelocity() {
