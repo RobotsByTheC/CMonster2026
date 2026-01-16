@@ -1,31 +1,31 @@
 package frc.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Volts;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
 import frc.robot.sim.SimulationContext;
 
+import static edu.wpi.first.units.Units.*;
+
 @Logged
 public class SimIntakeIO implements IntakeIO {
   @NotLogged private final SingleJointedArmSim wristSim;
+  @NotLogged private final MechanismSim wristMechanismSim;
   @NotLogged private final DCMotorSim motorSim;
-  @NotLogged private final MechanismSim mechanismSim;
+  @NotLogged private final MechanismSim motorMechanismSim;
 
   public SimIntakeIO() {
     wristSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 0.1, 0.3, 0, Math.PI, true, 0);
     motorSim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.1, 20), DCMotor.getNEO(1));
-    mechanismSim = new MechanismSim() {
+    motorMechanismSim = new MechanismSim() {
       @Override
       public double getCurrentDraw() {
         return motorSim.getCurrentDrawAmps();
@@ -34,28 +34,39 @@ public class SimIntakeIO implements IntakeIO {
       @Override
       public void update(double timestep) {
         motorSim.update(timestep);
+      }
+    };
+    wristMechanismSim = new MechanismSim() {
+      @Override
+      public double getCurrentDraw() {
+        return wristSim.getCurrentDrawAmps();
+      }
+
+      @Override
+      public void update(double timestep) {
         wristSim.update(timestep);
       }
     };
-    SimulationContext.getDefault().addMechanism(mechanismSim);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
+    SimulationContext.getDefault().addMechanism(motorMechanismSim);
+    SimulationContext.getDefault().addMechanism(wristMechanismSim);
   }
 
   @Override
   public void setIntakeVoltage(Voltage voltage) {
-    motorSim.setInputVoltage(mechanismSim.outputVoltage(voltage.in(Volts)));
+    motorSim.setInputVoltage(motorMechanismSim.outputVoltage(voltage.in(Volts)));
   }
 
   @Override
   public void setWristVoltage(Voltage voltage) {
-
+    wristSim.setInputVoltage(wristMechanismSim.outputVoltage(voltage.in(Volts)));
   }
 
   @Override
   public Angle getWristPosition() {
-    return null;
+    return Radians.of(wristSim.getAngleRads());
   }
 
   @Override
