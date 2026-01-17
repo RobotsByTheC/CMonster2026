@@ -7,6 +7,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 
@@ -55,10 +57,14 @@ public class Intake extends SubsystemBase {
   private final Roller roller;
   private final Extension extension;
 
+  private final Trigger atSetpoint;
+
   public Intake(IntakeIO io) {
     this.io = io;
     roller = new Roller();
     extension = new Extension();
+
+    atSetpoint = new Trigger(io::isWristAtSetpoint).debounce(1);
 
     roller.setDefaultCommand(roller.stop());
     extension.setDefaultCommand(extension.stop());
@@ -69,7 +75,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command retract() {
-    return claimCommand(extension.stow().alongWith(roller.runIntakeMotor()).until(io::isWristAtSetpoint).andThen(extension.stow()));
+    return claimCommand(extension.stow().until(atSetpoint)).deadlineFor(roller.runIntakeMotor());
+  }
+
+  public Command c_idle() {
+    return idle().alongWith(extension.stow());
   }
 
   // commands v3
