@@ -15,10 +15,23 @@ public interface IntakeIO {
   void setIntakeVoltage(Voltage voltage);
 
   /**
+   * Sets the voltage of the wrist controlling the intake.
+   * Positive voltage is clockwise (extending the intake), negative values are counterclockwise (retracting the intake).
+   * @param voltage The voltage to set the wrist to.
+   */
+  void setWristVoltage(Voltage voltage);
+
+  /**
    * Moves the wrist to the target angle by calculating the voltage that should be applied via PID.
    * @param angle The angle that the wrist should go to.
    */
   void setWristPosition(Angle angle);
+
+  /**
+   * Gets whether the wrist is at its current setpoint or not using the PID controller.
+   * @return Whether the wrist is at its setpoint
+   */
+  boolean isWristAtSetpoint();
 
   /**
    * Gets the position of the wrist using the absolute encoders on the NEOs.

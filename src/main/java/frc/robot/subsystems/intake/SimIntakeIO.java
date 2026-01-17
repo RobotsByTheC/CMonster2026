@@ -72,8 +72,18 @@ public class SimIntakeIO implements IntakeIO {
   }
 
   @Override
+  public void setWristVoltage(Voltage voltage) {
+    wristSim.setInputVoltage(wristMechanismSim.outputVoltage(voltage.in(Volts)));
+  }
+
+  @Override
   public void setWristPosition(Angle angle) {
     wristSim.setInputVoltage(wristMechanismSim.outputVoltage(pidController.calculate(wristSim.getAngleRads(), angle.in(Radians))));
+  }
+
+  @Override
+  public boolean isWristAtSetpoint() {
+    return pidController.atSetpoint();
   }
 
   @Override

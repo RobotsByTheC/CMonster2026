@@ -7,6 +7,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -41,8 +42,18 @@ public class RealIntakeIO implements IntakeIO {
   }
 
   @Override
+  public void setWristVoltage(Voltage voltage) {
+    wristMotor.setVoltage(voltage);
+  }
+
+  @Override
   public void setWristPosition(Angle angle) {
-    wristMotor.configAccessor.closedLoop;
+    wristMotor.getClosedLoopController().setSetpoint(angle.in(Radians), SparkBase.ControlType.kPosition);
+  }
+
+  @Override
+  public boolean isWristAtSetpoint() {
+    return wristMotor.getClosedLoopController().isAtSetpoint();
   }
 
   @Override

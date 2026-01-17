@@ -19,63 +19,68 @@ import frc.robot.Constants;
 
 @Logged
 public class Intake extends SubsystemBase {
+  class Roller extends SubsystemBase {
+    public Command stop() {
+      return run(() -> io.setIntakeVoltage(Volts.zero()));
+    }
+
+    public Command runIntakeMotor() {
+      return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+    }
+
+    public Command reverseIntakeMotor() {
+      return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+    }
+  }
+
+  class Extension extends SubsystemBase {
+    public Command stop() {
+      return run(() -> io.setWristVoltage(Volts.zero()));
+    }
+
+    public Command stow() {
+      return run(
+          () -> io.setWristPosition(WRIST_STOW_ANGLE)
+      ).withName("Stow intake");
+    }
+
+    public Command extend() {
+      return run(
+          () -> io.setWristPosition(WRIST_EXTEND_ANGLE)
+      ).withName("Extend intake");
+    }
+  }
+
   private final IntakeIO io;
-  private final ArmFeedforward feedforward;
-  @NotLogged private final SysIdRoutine sysIdRoutine;
+  private final Roller roller;
+  private final Extension extension;
 
   public Intake(IntakeIO io) {
     this.io = io;
+    roller = new Roller();
+    extension = new Extension();
 
-    feedforward = new ArmFeedforward(KS, KG, KV, KA);
-    sysIdRoutine =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
-            new SysIdRoutine.Mechanism(io::setWristVoltage, null, this));
-  }
-
-  public Command runSysIdRoutine() {
-    return sysIdRoutine
-        .dynamic(SysIdRoutine.Direction.kForward)
-        .until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
-        .andThen(sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward).until(() -> io.getWristPosition().gte(Radians.of(Math.PI))))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())));
+    roller.setDefaultCommand(roller.stop());
+    extension.setDefaultCommand(extension.stop());
   }
 
   public Command extendAndIntake() {
-    return extend().until(pidController::atGoal).alongWith(runIntakeMotor());
+    return claimCommand(extension.extend().alongWith(roller.runIntakeMotor()));
   }
 
-  public Command idle() {
-    return stow().alongWith(stopIntakeMotor());
+  public Command retract() {
+    return claimCommand(extension.stow().alongWith(roller.runIntakeMotor()).until(io::isWristAtSetpoint).andThen(extension.stow()));
   }
 
-  public Command stow() {
-    return startRun(
-        () -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
-        () -> io.setWristVoltage(calculatePIDVoltage(WRIST_STOW_ANGLE))
-    );
-  }
-  public Command extend() {
-    return startRun(
-        () -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
-        () -> io.setWristVoltage(calculatePIDVoltage(WRIST_EXTEND_ANGLE))
-    );
-  }
+  // commands v3
+//  public Commandv3 idle() {
+//    return run(coroutine -> {
+//      coroutine.await(extension.stow(), roller.stopIntakeMotor());
+//    }).named("Idle");
+//  }
 
-  public Command runIntakeMotor() {
-    return Commands.run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
-  }
-
-  public Command stopIntakeMotor() {
-    return Commands.run(() -> io.setIntakeVoltage(Volts.zero()));
-  }
-
-  public Command reverseIntakeMotor() {
-    return Commands.run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
-  }
-
-  private Voltage calculatePIDVoltage(Angle targetAngle) {
-    return Volts.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
+  private Command claimCommand(Command command) {
+    command.addRequirements(this);
+    return command;
   }
 }
