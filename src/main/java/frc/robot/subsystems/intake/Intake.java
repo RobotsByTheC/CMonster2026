@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
   public Intake(IntakeIO io) {
     this.io = io;
     pidController = new ProfiledPIDController(KP, KI, KD, new TrapezoidProfile.Constraints(MAX_WRIST_SPEED.in(RadiansPerSecond), MAX_WRIST_ACCELERATION.in(RadiansPerSecondPerSecond)));
-    pidController.setTolerance(WRIST_TOLERANCE.in(Radians));
+    pidController.setTolerance(0.0001);
     pidController.enableContinuousInput(0, 2*Math.PI);
     feedforward = new ArmFeedforward(KS, KG, KV, KA);
     sysIdRoutine =

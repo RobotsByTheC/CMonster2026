@@ -29,7 +29,6 @@ public class Constants {
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
     public static final AngularVelocity MAX_WRIST_SPEED = RadiansPerSecond.of(10);
     public static final AngularAcceleration MAX_WRIST_ACCELERATION = RadiansPerSecondPerSecond.of(3);
-    public static final Angle WRIST_TOLERANCE = Degrees.of(5);
     public static final Angle WRIST_STOW_ANGLE = Radians.of(Math.PI);
     public static final Angle WRIST_EXTEND_ANGLE = Degrees.of(30);
   }
