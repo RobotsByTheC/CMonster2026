@@ -88,6 +88,8 @@ public class Intake extends SubsystemBase {
         .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())));
   }
 
+  //f before a method means forever, ie no end condition, l means it will terminate once it's done.
+
   public Command f_stowAndIdle() {
     return claim(extension.stow());
   }
