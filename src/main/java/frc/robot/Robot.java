@@ -29,7 +29,6 @@ import frc.robot.subsystems.intake.SimIntakeIO;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-
   private final Intake intake;
 
   @NotLogged private final CommandXboxController operatorController;
@@ -55,9 +54,10 @@ public class Robot extends TimedRobot {
                     new FileBackend(DataLogManager.getLog()),
                     new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.idle());
+    intake.setDefaultCommand(intake.f_stowAndIdle());
 
-    operatorController.x().whileTrue(intake.extendAndIntake());
+    operatorController.x().whileTrue(intake.f_extendAndIntake());
+    operatorController.x().onFalse(intake.l_retractAndIntake());
   }
 
   @Override
