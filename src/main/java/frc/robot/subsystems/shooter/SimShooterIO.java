@@ -47,4 +47,9 @@ public class SimShooterIO implements ShooterIO{
     public AngularVelocity getSpeed() {
         return flywheelSim.getAngularVelocity();
     }
+
+  @Override
+  public Current getCurrentDraw() {
+    return Amps.of(flywheelSim.getCurrentDrawAmps());
+  }
 }
