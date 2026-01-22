@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,8 +23,8 @@ import frc.robot.sim.SimulationContext;
 
 @Logged
 public class SimShooterIO implements ShooterIO {
-	private final FlywheelSim flywheelSim;
-	private final MechanismSim flywheelMechanismSim;
+	@NotLogged private final FlywheelSim flywheelSim;
+	@NotLogged private final MechanismSim flywheelMechanismSim;
 
 	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 	private final PIDController pidController = new PIDController(KP, KI, KD);
