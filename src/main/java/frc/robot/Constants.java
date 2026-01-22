@@ -33,4 +33,12 @@ public class Constants {
 		public static final Angle WRIST_STOW_ANGLE = Radians.of(Math.PI);
 		public static final Angle WRIST_EXTEND_ANGLE = Degrees.of(30);
 	}
+
+	public static class ShooterConstants {
+		public static final double KP = 0.063;
+		public static final double KI = 0;
+		public static final double KD = 0;
+		public static final double KS = 0;
+		public static final double KV = 0.00137;
+	}
 }

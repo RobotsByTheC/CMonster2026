@@ -19,8 +19,8 @@ public class SimShooterIO implements ShooterIO {
 	private final FlywheelSim flywheelSim;
 	private final MechanismSim flywheelMechanismSim;
 
-	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(0, 0.00137);
-	private final PIDController pidController = new PIDController(0.063, 0, 0);
+	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
+	private final PIDController pidController = new PIDController(KP, KI, KD);
 
 	public SimShooterIO() {
 		flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, // convert
