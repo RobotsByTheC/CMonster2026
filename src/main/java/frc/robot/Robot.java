@@ -6,9 +6,18 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.epilogue.logging.EpilogueBackend;
+import edu.wpi.first.epilogue.logging.FileBackend;
+import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +27,8 @@ import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
+import frc.robot.subsystems.shooter.Shooter;
+import frc.robot.subsystems.shooter.SimShooterIO;
 
 @Logged
 public class Robot extends TimedRobot {
