@@ -34,14 +34,17 @@ import frc.robot.subsystems.shooter.SimShooterIO;
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
   private final Intake intake;
+  private final Shooter shooter;
 
   @NotLogged private final CommandXboxController operatorController;
 
   public Robot() {
     if (Robot.isSimulation()) {
       intake = new Intake(new SimIntakeIO());
+      shooter = new Shooter(new SimShooterIO());
     } else {
       intake = new Intake(new RealIntakeIO());
+      shooter = null;
     }
 
     DriverStation.silenceJoystickConnectionWarning(true);
