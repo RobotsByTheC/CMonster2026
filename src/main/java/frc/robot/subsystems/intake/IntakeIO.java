@@ -8,8 +8,7 @@ import edu.wpi.first.units.measure.Voltage;
 @Logged
 public interface IntakeIO {
 	/**
-	 * Sets the voltage of the intake. Positive voltage is intake, negative is
-	 * outtake.
+	 * Sets the voltage of the intake. Positive voltage is intake, negative is outtake.
 	 *
 	 * @param voltage
 	 *            The voltage to set the intake to.
@@ -17,9 +16,8 @@ public interface IntakeIO {
 	void setIntakeVoltage(Voltage voltage);
 
 	/**
-	 * Sets the voltage of the wrist controlling the intake. Positive voltage is
-	 * clockwise (extending the intake), negative values are counterclockwise
-	 * (retracting the intake).
+	 * Sets the voltage of the wrist controlling the intake. Positive voltage is clockwise (extending the intake), negative values are
+	 * counterclockwise (retracting the intake).
 	 *
 	 * @param voltage
 	 *            The voltage to set the wrist to.

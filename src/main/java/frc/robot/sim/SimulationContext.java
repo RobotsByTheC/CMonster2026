@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Responsible for coordinating periodic simulation updates. Provide a
- * {@link BatterySim battery} and a set of {@link MechanismSim mechanisms} to
- * simulate, then call {@link #update(double)} to step the simulation forward.
- * It is recommended to call {@code update} in a robot's
- * {@link TimedRobot#simulationPeriodic()} method.
+ * Responsible for coordinating periodic simulation updates. Provide a {@link BatterySim battery} and a set of {@link MechanismSim
+ * mechanisms} to simulate, then call {@link #update(double)} to step the simulation forward. It is recommended to call
+ * {@code update} in a robot's {@link TimedRobot#simulationPeriodic()} method.
  */
 public class SimulationContext {
 	private final BatterySim battery;
@@ -21,10 +19,9 @@ public class SimulationContext {
 	private static final SimulationContext defaultSimulation = new SimulationContext(PerfectBatterySim.nominal());
 
 	/**
-	 * Gets the default simulation context. Useful for convenient simulation
-	 * registration, but should not be used in unit tests. The simulation uses a
-	 * nominal 12-volt battery with no capacity loss over time, i.e. it will always
-	 * output exactly 12 volts when not under load.
+	 * Gets the default simulation context. Useful for convenient simulation registration, but should not be used in unit tests. The
+	 * simulation uses a nominal 12-volt battery with no capacity loss over time, i.e. it will always output exactly 12 volts when not
+	 * under load.
 	 */
 	public static SimulationContext getDefault() {
 		return defaultSimulation;
@@ -64,8 +61,7 @@ public class SimulationContext {
 	}
 
 	/**
-	 * Removes a mechanism from simulation. Does nothing if the mechanism is not
-	 * already in the simulation.
+	 * Removes a mechanism from simulation. Does nothing if the mechanism is not already in the simulation.
 	 *
 	 * @param mechanism
 	 *            the mechanism to remove
@@ -75,8 +71,8 @@ public class SimulationContext {
 	}
 
 	/**
-	 * Adds a generic simulation to run periodically. Mechanism simulations should
-	 * be added with {@link #addMechanism(MechanismSim)} instead of with this method
+	 * Adds a generic simulation to run periodically. Mechanism simulations should be added with {@link #addMechanism(MechanismSim)}
+	 * instead of with this method
 	 *
 	 * @param sim
 	 *            the simulation to add
@@ -88,8 +84,7 @@ public class SimulationContext {
 	}
 
 	/**
-	 * Removes a generic simulation to no longer run it as part of the periodic
-	 * update loop.
+	 * Removes a generic simulation to no longer run it as part of the periodic update loop.
 	 *
 	 * @param sim
 	 *            the simulation to remove
@@ -104,11 +99,9 @@ public class SimulationContext {
 	}
 
 	/**
-	 * Updates the simulation by moving it forward one timestep. This will update
-	 * all the mechanism simulations currently in this context and update the
-	 * robot's battery voltage to account for the voltage drop caused by the
-	 * currents drawn by all the mechanisms. The voltage can be read via
-	 * {@link RobotController#getBatteryVoltage()} or from a mechanism simulation's
+	 * Updates the simulation by moving it forward one timestep. This will update all the mechanism simulations currently in this
+	 * context and update the robot's battery voltage to account for the voltage drop caused by the currents drawn by all the
+	 * mechanisms. The voltage can be read via {@link RobotController#getBatteryVoltage()} or from a mechanism simulation's
 	 * {@link MechanismSim#getBatteryVoltage()} convenience method.
 	 *
 	 * @param timestep
