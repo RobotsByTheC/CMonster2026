@@ -7,12 +7,12 @@ import edu.wpi.first.units.measure.Current;
 @Logged
 public interface ShooterIO {
 
-    void stop();
+	void stop();
 
-    void setSpeed(AngularVelocity angularVelocity);
+	void setSpeed(AngularVelocity angularVelocity);
 
-    AngularVelocity getSpeed();
+	AngularVelocity getSpeed();
 
-    Current getCurrentDraw();
+	Current getCurrentDraw();
 
 }

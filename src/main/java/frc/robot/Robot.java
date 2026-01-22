@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 
@@ -32,78 +31,77 @@ import frc.robot.subsystems.shooter.SimShooterIO;
 
 @Logged
 public class Robot extends TimedRobot {
-  private Command autonomousCommand;
-  private final Intake intake;
-  private final Shooter shooter;
+	private Command autonomousCommand;
+	private final Intake intake;
+	private final Shooter shooter;
 
-  @NotLogged private final CommandXboxController operatorController;
+	@NotLogged private final CommandXboxController operatorController;
 
-  public Robot() {
-    if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
-      shooter = new Shooter(new SimShooterIO());
-    } else {
-      intake = new Intake(new RealIntakeIO());
-      shooter = null;
-    }
+	public Robot() {
+		if (Robot.isSimulation()) {
+			intake = new Intake(new SimIntakeIO());
+			shooter = new Shooter(new SimShooterIO());
+		} else {
+			intake = new Intake(new RealIntakeIO());
+			shooter = null;
+		}
 
-    DriverStation.silenceJoystickConnectionWarning(true);
+		DriverStation.silenceJoystickConnectionWarning(true);
 
-    operatorController = new CommandXboxController(CONTROLLER_PORT);
+		operatorController = new CommandXboxController(CONTROLLER_PORT);
 
-    SignalLogger.start();
-    DriverStation.startDataLog(DataLogManager.getLog(), true);
+		SignalLogger.start();
+		DriverStation.startDataLog(DataLogManager.getLog(), true);
 
-    Epilogue.configure(
-        config ->
-            config.backend =
-                EpilogueBackend.multi(
-                    new FileBackend(DataLogManager.getLog()),
-                    new NTEpilogueBackend(NetworkTableInstance.getDefault())));
+		Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
+				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.f_stowAndIdle());
+		intake.setDefaultCommand(intake.f_stowAndIdle());
 
-    operatorController.x().whileTrue(intake.f_extendAndIntake());
-    operatorController.x().onFalse(intake.l_retractAndIntake());
-  }
+		operatorController.x().whileTrue(intake.f_extendAndIntake());
+		operatorController.x().onFalse(intake.l_retractAndIntake());
+	}
 
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-    Epilogue.update(this);
-  }
+	@Override
+	public void robotPeriodic() {
+		CommandScheduler.getInstance().run();
+		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+		Epilogue.update(this);
+	}
 
-  @Override
-  public void disabledPeriodic() {}
+	@Override
+	public void disabledPeriodic() {
+	}
 
-  @Override
-  public void simulationPeriodic() {
-    SimulationContext.getDefault().update(getPeriod());
-  }
+	@Override
+	public void simulationPeriodic() {
+		SimulationContext.getDefault().update(getPeriod());
+	}
 
-  @Override
-  public void autonomousInit() {
-    autonomousCommand = shooter.runAtSpeed(() -> RadiansPerSecond.of(800));
-    if (autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(autonomousCommand);
-    }
-  }
+	@Override
+	public void autonomousInit() {
+		autonomousCommand = shooter.runAtSpeed(() -> RadiansPerSecond.of(800));
+		if (autonomousCommand != null) {
+			CommandScheduler.getInstance().schedule(autonomousCommand);
+		}
+	}
 
-  @Override
-  public void autonomousPeriodic() {}
+	@Override
+	public void autonomousPeriodic() {
+	}
 
-  @Override
-  public void teleopInit() {
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
-    }
-  }
+	@Override
+	public void teleopInit() {
+		if (autonomousCommand != null) {
+			autonomousCommand.cancel();
+		}
+	}
 
-  @Override
-  public void teleopPeriodic() {
-  }
+	@Override
+	public void teleopPeriodic() {
+	}
 
-  @Override
-  public void testPeriodic() {}
+	@Override
+	public void testPeriodic() {
+	}
 }

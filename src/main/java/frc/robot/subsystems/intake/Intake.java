@@ -11,99 +11,98 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 @Logged
 public class Intake extends SubsystemBase {
-  private final IntakeIO io;
-  private final Roller roller;
-  private final Extension extension;
-  private final ArmFeedforward feedforward;
-  private final ProfiledPIDController pidController;
-  @NotLogged private final SysIdRoutine sysIdRoutine;
-  class Extension extends SubsystemBase {
-    public Command extend() {
-      return rotateToAngle(WRIST_EXTEND_ANGLE);
-    }
+	private final IntakeIO io;
+	private final Roller roller;
+	private final Extension extension;
+	private final ArmFeedforward feedforward;
+	private final ProfiledPIDController pidController;
+	@NotLogged private final SysIdRoutine sysIdRoutine;
+	class Extension extends SubsystemBase {
+		public Command extend() {
+			return rotateToAngle(WRIST_EXTEND_ANGLE);
+		}
 
-    public Command stow() {
-      return rotateToAngle(WRIST_STOW_ANGLE);
-    }
+		public Command stow() {
+			return rotateToAngle(WRIST_STOW_ANGLE);
+		}
 
-    public Command stop() {
-      return run(() -> io.setWristVoltage(Volts.zero()));
-    }
+		public Command stop() {
+			return run(() -> io.setWristVoltage(Volts.zero()));
+		}
 
-    private Command rotateToAngle(Angle targetAngle) {
-      return startRun(
-          () -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
-          () -> io.setWristVoltage(calculatePIDVoltage(targetAngle))
-      );
-    }
+		private Command rotateToAngle(Angle targetAngle) {
+			return startRun(
+					() -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
+					() -> io.setWristVoltage(calculatePIDVoltage(targetAngle)));
+		}
 
-    private Voltage calculatePIDVoltage(Angle targetAngle) {
-      return Volts.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
-    }
-  }
+		private Voltage calculatePIDVoltage(Angle targetAngle) {
+			return Volts.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians))
+					+ feedforward.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
+		}
+	}
 
-  class Roller extends SubsystemBase {
-    public Command runIntakeMotor() {
-      return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
-    }
+	class Roller extends SubsystemBase {
+		public Command runIntakeMotor() {
+			return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+		}
 
-    public Command stop() {
-      return run(() -> io.setIntakeVoltage(Volts.zero()));
-    }
+		public Command stop() {
+			return run(() -> io.setIntakeVoltage(Volts.zero()));
+		}
 
-    public Command reverseIntakeMotor() {
-      return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
-    }
-  }
+		public Command reverseIntakeMotor() {
+			return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+		}
+	}
 
-  public Intake(IntakeIO io) {
-    this.io = io;
-    roller = new Roller();
-    roller.setDefaultCommand(roller.stop());
-    extension = new Extension();
-    extension.setDefaultCommand(extension.stop());
-    pidController = new ProfiledPIDController(KP, KI, KD, new TrapezoidProfile.Constraints(MAX_WRIST_SPEED.in(RadiansPerSecond), MAX_WRIST_ACCELERATION.in(RadiansPerSecondPerSecond)));
-    pidController.setTolerance(0.0001);
-    pidController.enableContinuousInput(0, 2*Math.PI);
-    feedforward = new ArmFeedforward(KS, KG, KV, KA);
-    sysIdRoutine =
-        new SysIdRoutine(
-            new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
-            new SysIdRoutine.Mechanism(io::setWristVoltage, null, this));
-  }
+	public Intake(IntakeIO io) {
+		this.io = io;
+		roller = new Roller();
+		roller.setDefaultCommand(roller.stop());
+		extension = new Extension();
+		extension.setDefaultCommand(extension.stop());
+		pidController = new ProfiledPIDController(KP, KI, KD, new TrapezoidProfile.Constraints(
+				MAX_WRIST_SPEED.in(RadiansPerSecond), MAX_WRIST_ACCELERATION.in(RadiansPerSecondPerSecond)));
+		pidController.setTolerance(0.0001);
+		pidController.enableContinuousInput(0, 2 * Math.PI);
+		feedforward = new ArmFeedforward(KS, KG, KV, KA);
+		sysIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
+				new SysIdRoutine.Mechanism(io::setWristVoltage, null, this));
+	}
 
-  public Command runSysIdRoutine() {
-    return sysIdRoutine
-        .dynamic(SysIdRoutine.Direction.kForward)
-        .until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
-        .andThen(sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward).until(() -> io.getWristPosition().gte(Radians.of(Math.PI))))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())));
-  }
+	public Command runSysIdRoutine() {
+		return sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward).until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
+				.andThen(sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse)
+						.until(() -> io.getWristPosition().lte(Radians.zero())))
+				.andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward)
+						.until(() -> io.getWristPosition().gte(Radians.of(Math.PI))))
+				.andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse)
+						.until(() -> io.getWristPosition().lte(Radians.zero())));
+	}
 
-  //f before a method means forever, ie no end condition, l means it will terminate once it's done.
+	// f before a method means forever, ie no end condition, l means it will
+	// terminate once it's done.
 
-  public Command f_stowAndIdle() {
-    return claim(extension.stow());
-  }
+	public Command f_stowAndIdle() {
+		return claim(extension.stow());
+	}
 
-  public Command f_extendAndIntake() {
-    return claim(extension.extend().alongWith(roller.runIntakeMotor()));
-  }
+	public Command f_extendAndIntake() {
+		return claim(extension.extend().alongWith(roller.runIntakeMotor()));
+	}
 
-  public Command l_retractAndIntake() {
-    return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()));
-  }
+	public Command l_retractAndIntake() {
+		return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()));
+	}
 
-  public Command claim(Command command) {
-    command.addRequirements(this);
-    return command;
-  }
+	public Command claim(Command command) {
+		command.addRequirements(this);
+		return command;
+	}
 }
