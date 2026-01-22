@@ -4,18 +4,11 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
-import edu.wpi.first.epilogue.logging.EpilogueBackend;
-import edu.wpi.first.epilogue.logging.FileBackend;
-import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,8 +70,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    if (autonomousCommand != null) {
-      CommandScheduler.getInstance().schedule(autonomousCommand);
+    m_autonomousCommand = shooter.runAtSpeed(() -> RadiansPerSecond.of(800));
+    if (m_autonomousCommand != null) {
+      CommandScheduler.getInstance().schedule(m_autonomousCommand);
     }
   }
 
@@ -93,8 +87,19 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void testExit() {}
+
+  @Override
+  public void simulationPeriodic() {
+    if (simShooterIO != null) {
+      simShooterIO.updateSim();
+    }
+  }
 }
