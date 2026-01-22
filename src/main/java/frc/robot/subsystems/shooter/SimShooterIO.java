@@ -11,8 +11,14 @@ import edu.wpi.first.epilogue.Logged;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RPM;
+import static frc.robot.Constants.ShooterConstants.KD;
+import static frc.robot.Constants.ShooterConstants.KI;
+import static frc.robot.Constants.ShooterConstants.KP;
+import static frc.robot.Constants.ShooterConstants.KS;
+import static frc.robot.Constants.ShooterConstants.KV;
 
 import frc.robot.sim.MechanismSim;
+import frc.robot.sim.SimulationContext;
 
 @Logged
 public class SimShooterIO implements ShooterIO {
@@ -23,12 +29,9 @@ public class SimShooterIO implements ShooterIO {
 	private final PIDController pidController = new PIDController(KP, KI, KD);
 
 	public SimShooterIO() {
-		flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, // convert
-																																// 6
-																																// lb-in^2
-																																// to
-																																// kg-m^2
-				1), DCMotor.getNEO(2).withReduction(1 / 1.5));
+		flywheelSim = new FlywheelSim(
+				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
+				DCMotor.getNEO(2).withReduction(1 / 1.5));
 
 		flywheelMechanismSim = new MechanismSim() {
 			@Override
@@ -41,6 +44,8 @@ public class SimShooterIO implements ShooterIO {
 				flywheelSim.update(timestep);
 			}
 		};
+
+		SimulationContext.getDefault().addMechanism(flywheelMechanismSim);
 	}
 
 	@Override
@@ -49,15 +54,13 @@ public class SimShooterIO implements ShooterIO {
 	}
 
 	@Override
-	public void setSpeed(AngularVelocity angularVelocity) {
-		double feedforwardVolts = feedforward.calculate(angularVelocity.in(RPM));
-		double pidVolts = pidController.calculate(flywheelSim.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
-		double totalVolts = feedforwardVolts + pidVolts;
-		flywheelSim.setInputVoltage(totalVolts);
+	public void setDesiredVelocity(AngularVelocity angularVelocity) {
+		flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(feedforward.calculate(angularVelocity.in(RPM))
+				+ pidController.calculate(flywheelSim.getAngularVelocity().in(RPM), angularVelocity.in(RPM))));
 	}
 
 	@Override
-	public AngularVelocity getSpeed() {
+	public AngularVelocity getVelocity() {
 		return flywheelSim.getAngularVelocity();
 	}
 
