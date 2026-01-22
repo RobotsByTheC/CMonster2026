@@ -37,13 +37,15 @@ public class Intake extends SubsystemBase {
 
 		private Command rotateToAngle(Angle targetAngle) {
 			return startRun(
-					() -> pidController.reset(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)),
+					() -> pidController.reset(io.getWristPosition().in(Radians),
+							io.getWristVelocity().in(RadiansPerSecond)),
 					() -> io.setWristVoltage(calculatePIDVoltage(targetAngle)));
 		}
 
 		private Voltage calculatePIDVoltage(Angle targetAngle) {
-			return Volts.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians))
-					+ feedforward.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
+			return Volts.of(
+					pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward
+							.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
 		}
 	}
 
@@ -77,7 +79,8 @@ public class Intake extends SubsystemBase {
 	}
 
 	public Command runSysIdRoutine() {
-		return sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward).until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
+		return sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward)
+				.until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
 				.andThen(sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse)
 						.until(() -> io.getWristPosition().lte(Radians.zero())))
 				.andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward)
@@ -86,23 +89,23 @@ public class Intake extends SubsystemBase {
 						.until(() -> io.getWristPosition().lte(Radians.zero())));
 	}
 
-	// f before a method means forever, ie no end condition, l means it will
-	// terminate once it's done.
-
-	public Command f_stowAndIdle() {
-		return claim(extension.stow());
-	}
-
-	public Command f_extendAndIntake() {
-		return claim(extension.extend().alongWith(roller.runIntakeMotor()));
-	}
-
-	public Command l_retractAndIntake() {
-		return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()));
-	}
-
 	public Command claim(Command command) {
 		command.addRequirements(this);
 		return command;
+	}
+
+	// f before a method means forever, l means it has an end condition, o means run once.
+
+	public Command f_stowAndIdle() {
+		return claim(extension.stow()).withName("Intake Stow & Idle");
+	}
+
+	public Command f_extendAndGrab() {
+		return claim(extension.extend().alongWith(roller.runIntakeMotor())).withName("Intake Extend & Grab");
+	}
+
+	public Command l_retractAndGrab() {
+		return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()))
+				.withName("Intake Retract & Grab");
 	}
 }

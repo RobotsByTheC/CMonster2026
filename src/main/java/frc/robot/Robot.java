@@ -59,8 +59,8 @@ public class Robot extends TimedRobot {
 		intake.setDefaultCommand(intake.f_stowAndIdle());
 		shooter.setDefaultCommand(shooter.o_stop());
 
-		operatorController.x().whileTrue(intake.f_extendAndIntake());
-		operatorController.x().onFalse(intake.l_retractAndIntake());
+		operatorController.x().whileTrue(intake.f_extendAndGrab());
+		operatorController.x().onFalse(intake.l_retractAndGrab());
 	}
 
 	@Override
