@@ -3,11 +3,34 @@ package frc.robot;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.LinearAcceleration;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.*;
 
 public class Constants {
+  public static class SwerveConstants {
+    public static final int FRONT_LEFT_DRIVE_CAN_ID = 1;
+    public static final int FRONT_LEFT_TURN_CAN_ID = 2;
+    public static final int FRONT_RIGHT_DRIVE_CAN_ID = 3;
+    public static final int FRONT_RIGHT_TURN_CAN_ID = 4;
+    public static final int BACK_LEFT_DRIVE_CAN_ID = 5;
+    public static final int BACK_LEFT_TURN_CAN_ID = 6;
+    public static final int BACK_RIGHT_DRIVE_CAN_ID = 7;
+    public static final int BACK_RIGHT_TURN_CAN_ID = 8;
+
+    public static final int GYRO_CAN_ID = 50;
+
+    public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(2);
+    public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
+    public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(2);
+    public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(2);
+    public static final Distance DRIVETRAIN_WIDTH = Inches.of(27);
+    public static final Distance DRIVETRAIN_HEIGHT = Inches.of(27);
+  }
+
 	public static class InputConstants {
 		public static final int CONTROLLER_PORT = 1;
 	}
