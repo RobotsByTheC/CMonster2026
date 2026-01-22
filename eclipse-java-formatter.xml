@@ -2,4 +2,33 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
   <entry key="org.eclipse.jdt.core.formatter.lineSplit">130</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_field">0</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_field">do not insert</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_method">49</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_method">insert</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_type">49</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_type">insert</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_package">49</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_package">insert</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_parameter">0</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_parameter">do not insert</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_local_variable">0</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_local_variable">do not insert</entry>
 </properties>
