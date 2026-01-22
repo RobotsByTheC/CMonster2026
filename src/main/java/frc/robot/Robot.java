@@ -81,7 +81,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		autonomousCommand = shooter.f_shoot(() -> RadiansPerSecond.of(800));
 		if (autonomousCommand != null) {
 			CommandScheduler.getInstance().schedule(autonomousCommand);
 		}
