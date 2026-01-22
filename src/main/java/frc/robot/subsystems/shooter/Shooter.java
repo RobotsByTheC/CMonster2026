@@ -19,10 +19,12 @@ public class Shooter extends SubsystemBase {
 		this.io = io;
 	}
 
-	public Command runAtSpeed(Supplier<AngularVelocity> speedsupplier) {
-		return run(() -> io.setSpeed(speedsupplier.get())).withName("ShooterRunAtSpeed");
 	public Command o_stop() {
 		return runOnce(io::stop);
 	}
 
+	public Command f_shoot(Supplier<AngularVelocity> desiredSpeed) {
+		return run(() -> io.setDesiredVelocity(desiredSpeed.get()))
+				.withName("Shooter @ " + desiredSpeed.get().in(RPM) + " RPM");
+	}
 }
