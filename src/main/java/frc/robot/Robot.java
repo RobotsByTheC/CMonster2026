@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
+		shooter.setDefaultCommand(shooter.o_stop());
 
 		operatorController.x().whileTrue(intake.f_extendAndIntake());
 		operatorController.x().onFalse(intake.l_retractAndIntake());

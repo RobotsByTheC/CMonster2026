@@ -17,14 +17,12 @@ public class Shooter extends SubsystemBase {
 	private final ShooterIO io;
 	public Shooter(ShooterIO io) {
 		this.io = io;
-		setDefaultCommand(stop());
-	}
-	public Command stop() {
-		return run(() -> io.stop()).withName("ShooterStop");
 	}
 
 	public Command runAtSpeed(Supplier<AngularVelocity> speedsupplier) {
 		return run(() -> io.setSpeed(speedsupplier.get())).withName("ShooterRunAtSpeed");
+	public Command o_stop() {
+		return runOnce(io::stop);
 	}
 
 }
