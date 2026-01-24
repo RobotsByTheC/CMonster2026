@@ -43,8 +43,8 @@ public class Intake extends SubsystemBase {
 		}
 
 		private Voltage calculatePIDVoltage(Angle targetAngle) {
-			return Volts.of(
-					pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward
+			return Volts
+					.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward
 							.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
 		}
 	}
