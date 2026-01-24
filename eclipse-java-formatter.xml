@@ -3,7 +3,7 @@
 <properties>
   <entry key="org.eclipse.jdt.core.formatter.lineSplit">121</entry>
 
-  <entry key="org.eclipse.jdt.core.formatter.comment.line_length">130</entry>
+  <entry key="org.eclipse.jdt.core.formatter.comment.line_length">121</entry>
 
   <entry
     key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_field">0</entry>
