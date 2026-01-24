@@ -16,8 +16,8 @@ public interface IntakeIO {
 	void setIntakeVoltage(Voltage voltage);
 
 	/**
-	 * Sets the voltage of the wrist controlling the intake. Positive voltage is clockwise (extending the intake), negative values are
-	 * counterclockwise (retracting the intake).
+	 * Sets the voltage of the wrist controlling the intake. Positive voltage is clockwise (extending the intake),
+	 * negative values are counterclockwise (retracting the intake).
 	 *
 	 * @param voltage
 	 *            The voltage to set the wrist to.
