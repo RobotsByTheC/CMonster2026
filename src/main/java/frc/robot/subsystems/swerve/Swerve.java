@@ -1,45 +1,71 @@
 package frc.robot.subsystems.swerve;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static frc.robot.Constants.SwerveConstants.DRIVETRAIN_HEIGHT;
-import static frc.robot.Constants.SwerveConstants.DRIVETRAIN_WIDTH;
-import static frc.robot.Constants.SwerveConstants.MAX_DRIVE_SPEED;
-import static frc.robot.Constants.SwerveConstants.MAX_TURN_SPEED;
+import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static frc.robot.Constants.SwerveConstants.DriveConstants;
+import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.Supplier;
 
+@Logged
 public class Swerve extends SubsystemBase {
-  private final SwerveIO io;
-  private final SwerveDriveKinematics kinematics;
+	private final SwerveIO io;
 
-  public Swerve(SwerveIO io) {
-    this.io = io;
+	private final PIDController xController;
+	private final PIDController yController;
+	private final ProfiledPIDController thetaController;
+	private final HolonomicDriveController driveController;
+	private final SwerveDrivePoseEstimator poseEstimator;
 
-    kinematics = new SwerveDriveKinematics(
-        new Translation2d(DRIVETRAIN_HEIGHT.in(Meters) / 2, DRIVETRAIN_WIDTH.in(Meters) / 2),
-        new Translation2d(DRIVETRAIN_HEIGHT.in(Meters) / 2, -DRIVETRAIN_WIDTH.in(Meters) / 2),
-        new Translation2d(-DRIVETRAIN_HEIGHT.in(Meters) / 2, DRIVETRAIN_WIDTH.in(Meters) / 2),
-        new Translation2d(-DRIVETRAIN_HEIGHT.in(Meters) / 2, -DRIVETRAIN_WIDTH.in(Meters) / 2)
-    );
-  }
+	public Pose2d targetPose = Pose2d.kZero;
 
-  public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-    double xSpeedDelivered = xSpeed * MAX_DRIVE_SPEED.in(MetersPerSecond);
-    double ySpeedDelivered = ySpeed * MAX_DRIVE_SPEED.in(MetersPerSecond);
-    double rotDelivered = rot * MAX_TURN_SPEED.in(RadiansPerSecond);
+	public Swerve(SwerveIO io) {
+		this.io = io;
 
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-            io.getHeading())
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-    SwerveDriveKinematics.desaturateWheelSpeeds(
-        swerveModuleStates, MAX_DRIVE_SPEED);
-    io.setDesiredStates(swerveModuleStates);
-  }
+		xController = new PIDController(DriveConstants.DISTANCE_P, DriveConstants.DISTANCE_I, DriveConstants.DISTANCE_D);
+		yController = new PIDController(DriveConstants.DISTANCE_P, DriveConstants.DISTANCE_I, DriveConstants.DISTANCE_D);
+		thetaController = new ProfiledPIDController(TurnConstants.DISTANCE_P, TurnConstants.DISTANCE_I,
+				TurnConstants.DISTANCE_D,
+				new TrapezoidProfile.Constraints(TurnConstants.MAX_TURN_SPEED.in(RadiansPerSecond),
+						TurnConstants.MAX_TURN_ACCELERATION.in(RadiansPerSecondPerSecond)));
+		driveController = new HolonomicDriveController(xController, yController, thetaController);
+
+		poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.KINEMATICS, Rotation2d.kZero,
+				io.getModulePositions(), Pose2d.kZero);
+	}
+
+	@Override
+	public void periodic() {
+		poseEstimator.update(io.getHeading(), io.getModulePositions());
+	}
+
+	public Command o_zeroGyro() {
+		return Commands.runOnce(() -> io.setGyro(Rotation2d.kZero));
+	}
+
+	public Command f_drive(Supplier<LinearVelocity> xSpeed, Supplier<LinearVelocity> ySpeed, Supplier<AngularVelocity> rotSpeed) {
+		return run(
+				() -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed.get(), ySpeed.get(), rotSpeed.get(), io.getHeading())));
+	}
+
+	public Command l_driveToPose(Pose2d relativePose) {
+		return startRun(
+        () -> targetPose = relativePose,
+        () -> io.driveSpeeds(driveController.calculate(
+            poseEstimator.getEstimatedPosition(), targetPose, 0, relativePose.getRotation()))).until(driveController::atReference);
+	}
 }

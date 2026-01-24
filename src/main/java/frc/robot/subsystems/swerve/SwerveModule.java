@@ -1,73 +1,92 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.Rotations;
+import static frc.robot.Constants.SwerveConstants.DriveConstants;
+import static frc.robot.Constants.SwerveConstants.TOLERANCE;
+import static frc.robot.Constants.SwerveConstants.TurnConstants;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
+@Logged
 public class SwerveModule {
-  private final SparkMax driveSpark;
-  private final SparkMax turnSpark;
-  private final RelativeEncoder driveEncoder;
-  private final AbsoluteEncoder turnEncoder;
+	private final SparkMax driveSpark;
+	private final SparkMax turnSpark;
+	private final RelativeEncoder driveEncoder;
+	private final AbsoluteEncoder turnEncoder;
 
-  private final SparkClosedLoopController driveController;
-  private final SparkClosedLoopController turnController;
+	private final SparkClosedLoopController driveController;
+	private final SparkClosedLoopController turnController;
 
-  private final double offset;
-  private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
+	private final double offset;
+	private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
 
-  public SwerveModule(int drivingCan, int turningCan, double offset) {
-    driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
-    turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
+	public SwerveModule(int drivingCan, int turningCan, double offset) {
+		driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
+		turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
 
-    driveEncoder = driveSpark.getEncoder();
-    turnEncoder = turnSpark.getAbsoluteEncoder();
+		driveEncoder = driveSpark.getEncoder();
+		turnEncoder = turnSpark.getAbsoluteEncoder();
 
-    driveController = driveSpark.getClosedLoopController();
-    turnController = turnSpark.getClosedLoopController();
+		driveController = driveSpark.getClosedLoopController();
+		turnController = turnSpark.getClosedLoopController();
 
-    driveSpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    turnSpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		SparkMaxConfig driveConfig = new SparkMaxConfig();
+		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
+				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
+		SparkMaxConfig turnConfig = new SparkMaxConfig();
+		turnConfig.closedLoop.pid(TurnConstants.kP, TurnConstants.kI, TurnConstants.kD)
+				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
 
-    this.offset = offset;
-    desiredState.angle = new Rotation2d(turnEncoder.getPosition());
-    driveEncoder.setPosition(0);
-  }
+		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-  public SwerveModuleState getState() {
-    return new SwerveModuleState(driveEncoder.getVelocity(),
-        new Rotation2d(turnEncoder.getPosition() - offset));
-  }
+		this.offset = offset;
+		desiredState.angle = new Rotation2d(turnEncoder.getPosition());
+		driveEncoder.setPosition(0);
+	}
 
-  public SwerveModulePosition getPosition() {
-    return new SwerveModulePosition(
-        driveEncoder.getPosition(),
-        new Rotation2d(turnEncoder.getPosition() - offset));
-  }
+	public SwerveModuleState getState() {
+		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition() - offset));
+	}
 
-  public void setDesiredState(SwerveModuleState desiredState) {
-    SwerveModuleState correctedDesiredState = new SwerveModuleState();
-    correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-    correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(offset));
+	public SwerveModulePosition getPosition() {
+		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition() - offset));
+	}
 
-    correctedDesiredState.optimize(new Rotation2d(turnEncoder.getPosition()));
+	public void setDesiredState(SwerveModuleState desiredState) {
+		SwerveModuleState correctedDesiredState = new SwerveModuleState();
+		correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
+		correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(offset));
 
-    driveController.setSetpoint(correctedDesiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
-    turnController.setSetpoint(correctedDesiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
+		correctedDesiredState.optimize(new Rotation2d(turnEncoder.getPosition()));
 
-    this.desiredState = desiredState;
-  }
+		driveController.setSetpoint(correctedDesiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
+		turnController.setSetpoint(correctedDesiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
 
-  public void resetEncoders() {
-    driveEncoder.setPosition(0);
-  }
+		this.desiredState = desiredState;
+	}
+
+	public void resetEncoders() {
+		driveEncoder.setPosition(0);
+	}
+
+	public void stop() {
+		driveSpark.setVoltage(0);
+		turnSpark.setVoltage(0);
+		driveController.setSetpoint(0, SparkBase.ControlType.kVoltage);
+		turnController.setSetpoint(0, SparkBase.ControlType.kVoltage);
+	}
 }
