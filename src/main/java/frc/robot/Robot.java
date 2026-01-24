@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
 
-    operatorController.y().whileTrue(shooter.f_shoot(() -> RadiansPerSecond.of(20)));
+		operatorController.y().whileTrue(shooter.f_shoot(() -> RadiansPerSecond.of(20)));
 	}
 
 	@Override
