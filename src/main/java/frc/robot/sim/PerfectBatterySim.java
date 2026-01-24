@@ -1,8 +1,8 @@
 package frc.robot.sim;
 
 /**
- * A simulation of a perfect battery that always has a open-circuit voltage of 12 volts, and only loses voltage output from
- * current draw.
+ * A simulation of a perfect battery that always has a open-circuit voltage of 12 volts, and only loses voltage output
+ * from current draw.
  */
 public class PerfectBatterySim implements BatterySim {
 	private final double nominalVoltage;
@@ -29,8 +29,8 @@ public class PerfectBatterySim implements BatterySim {
 	}
 
 	/**
-	 * Creates a simulation of the ideal 12-volt battery with no internal resistance. This battery will output a constant 12 volts
-	 * regardless of load.
+	 * Creates a simulation of the ideal 12-volt battery with no internal resistance. This battery will output a constant
+	 * 12 volts regardless of load.
 	 */
 	public static PerfectBatterySim ideal() {
 		return new PerfectBatterySim(12, 0);
