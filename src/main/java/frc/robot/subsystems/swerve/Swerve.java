@@ -61,10 +61,9 @@ public class Swerve extends SubsystemBase {
 		return Commands.runOnce(() -> io.setGyro(Rotation2d.kZero));
 	}
 
-	public Command f_drive(Supplier<LinearVelocity> xSpeed, Supplier<LinearVelocity> ySpeed,
-			Supplier<AngularVelocity> rotSpeed) {
-		return run(() -> io.driveSpeeds(
-				ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed.get(), ySpeed.get(), rotSpeed.get(), io.getHeading())));
+	public Command f_drive(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<AngularVelocity> vTheta) {
+		return run(() -> io
+				.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading())));
 	}
 
 	public Command l_driveToPose(Pose2d relativePose) {
