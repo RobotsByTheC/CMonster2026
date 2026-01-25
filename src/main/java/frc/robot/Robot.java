@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -28,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.SwerveConstants.DriveConstants;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
@@ -43,28 +41,28 @@ public class Robot extends TimedRobot {
 	private Command autonomousCommand;
 	private final Intake intake;
 	private final Shooter shooter;
-  private final Swerve swerve;
+	private final Swerve swerve;
 
 	@NotLogged private final CommandXboxController operatorController;
-  @NotLogged private final CommandJoystick leftFlightStick;
-  @NotLogged private final CommandJoystick rightFlightStick;
+	@NotLogged private final CommandJoystick leftFlightStick;
+	@NotLogged private final CommandJoystick rightFlightStick;
 
 	public Robot() {
 		if (Robot.isSimulation()) {
 			intake = new Intake(new SimIntakeIO());
 			shooter = new Shooter(new SimShooterIO());
-      swerve = null;
+			swerve = null;
 		} else {
 			intake = new Intake(new RealIntakeIO());
 			shooter = null;
-      swerve = new Swerve(new RealSwerveIO());
+			swerve = new Swerve(new RealSwerveIO());
 		}
 
 		DriverStation.silenceJoystickConnectionWarning(true);
 
 		operatorController = new CommandXboxController(CONTROLLER_PORT);
-    leftFlightStick = new CommandJoystick(LEFT_JOYSTICK_PORT);
-    rightFlightStick = new CommandJoystick(RIGHT_JOYSTICK_PORT);
+		leftFlightStick = new CommandJoystick(LEFT_JOYSTICK_PORT);
+		rightFlightStick = new CommandJoystick(RIGHT_JOYSTICK_PORT);
 
 		SignalLogger.start();
 		DriverStation.startDataLog(DataLogManager.getLog(), true);
@@ -74,7 +72,7 @@ public class Robot extends TimedRobot {
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
 		shooter.setDefaultCommand(shooter.o_stop());
-    swerve.setDefaultCommand(f_driveWithFlightSticks());
+		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
@@ -90,7 +88,8 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
-	public void disabledPeriodic() {}
+	public void disabledPeriodic() {
+	}
 
 	@Override
 	public void simulationPeriodic() {
@@ -105,7 +104,8 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
-	public void autonomousPeriodic() {}
+	public void autonomousPeriodic() {
+	}
 
 	@Override
 	public void teleopInit() {
@@ -115,16 +115,16 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
-	public void teleopPeriodic() {}
+	public void teleopPeriodic() {
+	}
 
 	@Override
-	public void testPeriodic() {}
+	public void testPeriodic() {
+	}
 
-  public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(
-        () -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()),
-        () -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()),
-        () -> MAX_TURN_SPEED.times(leftFlightStick.getTwist())
-    );
-  }
+	public Command f_driveWithFlightSticks() {
+		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()),
+				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()),
+				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()));
+	}
 }
