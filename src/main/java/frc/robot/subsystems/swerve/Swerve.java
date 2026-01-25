@@ -19,6 +19,8 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.data.ChassisSpeedsFilter;
+
 import java.util.function.Supplier;
 
 @Logged
@@ -30,6 +32,7 @@ public class Swerve extends SubsystemBase {
 	private final ProfiledPIDController thetaController;
 	private final HolonomicDriveController driveController;
 	private final SwerveDrivePoseEstimator poseEstimator;
+	private final ChassisSpeedsFilter filter;
 
 	public Pose2d targetPose = Pose2d.kZero;
 
@@ -46,6 +49,7 @@ public class Swerve extends SubsystemBase {
 
 		poseEstimator = new SwerveDrivePoseEstimator(DriveConstants.KINEMATICS, Rotation2d.kZero,
 				io.getModulePositions(), Pose2d.kZero);
+		filter = new ChassisSpeedsFilter(DriveConstants.MAX_DRIVE_ACCELERATION, TurnConstants.MAX_TURN_ACCELERATION);
 	}
 
 	@Override
@@ -64,9 +68,10 @@ public class Swerve extends SubsystemBase {
 	}
 
 	public Command l_driveToPose(Pose2d relativePose) {
-		return startRun(
-        () -> targetPose = relativePose,
-        () -> io.driveSpeeds(driveController.calculate(
-            poseEstimator.getEstimatedPosition(), targetPose, 0, targetPose.getRotation()))).until(driveController::atReference);
+		return startRun(() -> {
+			targetPose = relativePose;
+			filter.reset();
+		}, () -> io.driveSpeeds(filter.calculate(driveController.calculate(poseEstimator.getEstimatedPosition(),
+				targetPose, 0, targetPose.getRotation())))).until(driveController::atReference);
 	}
 }
