@@ -66,6 +66,6 @@ public class Swerve extends SubsystemBase {
 		return startRun(
         () -> targetPose = relativePose,
         () -> io.driveSpeeds(driveController.calculate(
-            poseEstimator.getEstimatedPosition(), targetPose, 0, relativePose.getRotation()))).until(driveController::atReference);
+            poseEstimator.getEstimatedPosition(), targetPose, 0, targetPose.getRotation()))).until(driveController::atReference);
 	}
 }
