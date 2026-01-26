@@ -13,8 +13,6 @@ public interface ShooterIO {
 	 */
 	void stopFlywheel();
 
-	void stopIntermediary();
-
 	void stopHood();
 
 	/**
@@ -40,8 +38,6 @@ public interface ShooterIO {
 	 *            The speed that the flywheel should go to.
 	 */
 	void setFlywheelVelocity(AngularVelocity velocity);
-
-	void setIntermediaryVoltage(Voltage voltage);
 
 	void setHoodAngle(Angle angle);
 }

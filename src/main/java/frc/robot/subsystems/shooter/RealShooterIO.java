@@ -26,7 +26,6 @@ public class RealShooterIO implements ShooterIO {
 	private final SparkMax rightShooterSparkA;
 	private final SparkMax rightShooterSparkB;
 	private final SparkMax hoodSpark;
-	private final SparkMax intermediarySpark;
 
 	private final SparkClosedLoopController leftShooterController;
 	private final SparkClosedLoopController rightShooterController;
@@ -57,10 +56,6 @@ public class RealShooterIO implements ShooterIO {
 		leftShooterEncoder = leftShooterSparkA.getEncoder();
 		rightShooterEncoder = rightShooterSparkA.getEncoder();
 
-		intermediarySpark = new SparkMax(INTERMEDIARY_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		intermediarySpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters,
-				PersistMode.kPersistParameters);
-
 		hoodSpark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		hoodSpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		hoodController = hoodSpark.getClosedLoopController();
@@ -75,11 +70,6 @@ public class RealShooterIO implements ShooterIO {
 		rightShooterSparkB.setVoltage(0);
 		leftShooterController.setSetpoint(0, SparkBase.ControlType.kVoltage);
 		rightShooterController.setSetpoint(0, SparkBase.ControlType.kVoltage);
-	}
-
-	@Override
-	public void stopIntermediary() {
-		intermediarySpark.setVoltage(0);
 	}
 
 	@Override
@@ -107,11 +97,6 @@ public class RealShooterIO implements ShooterIO {
 	public void setFlywheelVelocity(AngularVelocity velocity) {
 		leftShooterController.setSetpoint(velocity.in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
 		rightShooterController.setSetpoint(velocity.in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
-	}
-
-	@Override
-	public void setIntermediaryVoltage(Voltage voltage) {
-		intermediarySpark.setVoltage(voltage);
 	}
 
 	@Override

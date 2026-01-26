@@ -28,9 +28,6 @@ public class SimShooterIO implements ShooterIO {
 	@NotLogged private final MechanismSim flywheelMechanismSimA;
 	@NotLogged private final MechanismSim flywheelMechanismSimB;
 
-	@NotLogged private final DCMotorSim intermediarySim;
-	@NotLogged private final MechanismSim intermediaryMechanismSim;
-
 	@NotLogged private final SingleJointedArmSim hoodSim;
 	@NotLogged private final MechanismSim hoodMechanismSim;
 
@@ -46,8 +43,6 @@ public class SimShooterIO implements ShooterIO {
 		flywheelSimB = new FlywheelSim(
 				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
 				DCMotor.getNEO(2).withReduction(1 / 1.5));
-		intermediarySim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.1, 1),
-				DCMotor.getNEO(1));
 		hoodSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 0.1, 0.3, 0, Math.PI, true, 0);
 
 		flywheelMechanismSimA = new MechanismSim() {
@@ -72,17 +67,6 @@ public class SimShooterIO implements ShooterIO {
 				flywheelSimB.update(timestep);
 			}
 		};
-		intermediaryMechanismSim = new MechanismSim() {
-			@Override
-			public double getCurrentDraw() {
-				return intermediarySim.getCurrentDrawAmps();
-			}
-
-			@Override
-			public void update(double timestep) {
-				intermediarySim.update(timestep);
-			}
-		};
 		hoodMechanismSim = new MechanismSim() {
 			@Override
 			public double getCurrentDraw() {
@@ -101,7 +85,6 @@ public class SimShooterIO implements ShooterIO {
 
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);
-		SimulationContext.getDefault().addMechanism(intermediaryMechanismSim);
 		SimulationContext.getDefault().addMechanism(hoodMechanismSim);
 	}
 
@@ -109,11 +92,6 @@ public class SimShooterIO implements ShooterIO {
 	public void stopFlywheel() {
 		flywheelSimA.setInputVoltage(0);
 		flywheelSimB.setInputVoltage(0);
-	}
-
-	@Override
-	public void stopIntermediary() {
-		intermediarySim.setInputVoltage(0);
 	}
 
 	@Override
@@ -128,11 +106,6 @@ public class SimShooterIO implements ShooterIO {
 
 		flywheelSimA.setInputVoltage(flywheelMechanismSimA.outputVoltage(pid + feedForward));
 		flywheelSimB.setInputVoltage(flywheelMechanismSimB.outputVoltage(pid + feedForward));
-	}
-
-	@Override
-	public void setIntermediaryVoltage(Voltage voltage) {
-		intermediarySim.setInputVoltage(intermediaryMechanismSim.outputVoltage(voltage.in(Volts)));
 	}
 
 	@Override
