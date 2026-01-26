@@ -36,6 +36,12 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public Command stop() {
+  public Command f_holdPos() {
+    return run(() -> {
+      io.setFlywheelVelocity(RPM.zero());
+      io.setHoodAngle(Degrees.zero());
+    });
+  }
 		return runOnce(io::stopFlywheel).andThen(run(io::stopHood));
 	}
 }
