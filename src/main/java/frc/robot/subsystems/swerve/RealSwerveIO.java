@@ -3,6 +3,7 @@ package frc.robot.subsystems.swerve;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
+import static frc.robot.Constants.CANConstants.*;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.epilogue.Logged;
@@ -21,10 +22,10 @@ public class RealSwerveIO implements SwerveIO {
 	private final Pigeon2 gyro;
 
 	public RealSwerveIO() {
-		frontLeft = new SwerveModule(DriveConstants.FRONT_LEFT_CAN_ID, TurnConstants.FRONT_LEFT_CAN_ID, -Math.PI / 2);
-		frontRight = new SwerveModule(DriveConstants.FRONT_RIGHT_CAN_ID, TurnConstants.FRONT_RIGHT_CAN_ID, 0);
-		backLeft = new SwerveModule(DriveConstants.BACK_LEFT_CAN_ID, TurnConstants.BACK_LEFT_CAN_ID, Math.PI);
-		backRight = new SwerveModule(DriveConstants.BACK_RIGHT_CAN_ID, TurnConstants.BACK_RIGHT_CAN_ID, Math.PI / 2);
+		frontLeft = new SwerveModule(FRONT_LEFT_DRIVE_CAN_ID, FRONT_LEFT_TURN_CAN_ID, -Math.PI / 2);
+		frontRight = new SwerveModule(FRONT_RIGHT_DRIVE_CAN_ID, FRONT_RIGHT_TURN_CAN_ID, 0);
+		backLeft = new SwerveModule(BACK_LEFT_DRIVE_CAN_ID, BACK_LEFT_TURN_CAN_ID, Math.PI);
+		backRight = new SwerveModule(BACK_RIGHT_DRIVE_CAN_ID, BACK_RIGHT_TURN_CAN_ID, Math.PI / 2);
 
 		gyro = new Pigeon2(GYRO_CAN_ID);
 	}
