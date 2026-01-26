@@ -22,10 +22,10 @@ public class Shooter extends SubsystemBase {
 	}
 
 	private void updateTarget(Distance distanceToTarget) {
-		int newDistance = (int) Math.round(distanceToTarget.in(Meters) * 10);
+		int newDistance = (int) (Math.round(distanceToTarget.in(Meters) * 10) / 10d);
 		if (newDistance == lastDistanceToTarget)
 			return;
-		Pair<AngularVelocity, Angle> lookup = LookupTable.SHOOTER_LOOKUP_TABLE.get(newDistance);
+		Pair<AngularVelocity, Angle> lookup = LookupTable.SHOOTER_LOOKUP_TABLE.get(Meters.of(newDistance));
 		io.setFlywheelVelocity(lookup.getFirst());
 		io.setHoodAngle(lookup.getSecond());
 		lastDistanceToTarget = newDistance;
