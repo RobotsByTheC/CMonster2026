@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
 		}
 
 		public Command stop() {
-			return run(() -> io.setWristVoltage(Volts.zero()));
+			return runOnce(() -> io.setWristVoltage(Volts.zero()));
 		}
 
 		private Command rotateToAngle(Angle targetAngle) {
@@ -51,15 +51,15 @@ public class Intake extends SubsystemBase {
 
 	class Roller extends SubsystemBase {
 		public Command runIntakeMotor() {
-			return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+			return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
 		}
 
 		public Command stop() {
-			return run(() -> io.setIntakeVoltage(Volts.zero()));
+			return runOnce(() -> io.setIntakeVoltage(Volts.zero()));
 		}
 
 		public Command reverseIntakeMotor() {
-			return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+			return runOnce(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
 		}
 	}
 
