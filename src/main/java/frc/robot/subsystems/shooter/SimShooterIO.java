@@ -15,6 +15,7 @@ import edu.wpi.first.epilogue.Logged;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ShooterConstants.FlywheelConstants.*;
+import static frc.robot.Constants.ShooterConstants.HoodConstants;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
@@ -94,6 +95,7 @@ public class SimShooterIO implements ShooterIO {
 
 		flywheelFeedForward = new SimpleMotorFeedforward(KS, KV);
 		flywheelPIDController = new PIDController(KP, KI, KD);
+		hoodPIDController = new PIDController(HoodConstants.KP, HoodConstants.KI, HoodConstants.KD);
 
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);

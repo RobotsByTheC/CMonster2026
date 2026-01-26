@@ -94,12 +94,10 @@ public class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static class Hood {
+		public static class HoodConstants {
 			public static final double KP = 1;
 			public static final double KI = 0;
 			public static final double KD = 0;
-			public static final double KS = 0;
-			public static final double KV = 0;
 		}
 
 		public static class FlywheelConstants {
