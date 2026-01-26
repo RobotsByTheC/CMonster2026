@@ -95,7 +95,7 @@ public class Constants {
 
 	public static class ShooterConstants {
 		public static class HoodConstants {
-			public static final double KP = 1;
+			public static final double KP = 5;
 			public static final double KI = 0;
 			public static final double KD = 0;
 		}
