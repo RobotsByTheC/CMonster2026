@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.epilogue.Logged;
 
@@ -18,6 +17,8 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
 import frc.robot.sim.SimulationContext;
 
+import java.util.function.Supplier;
+
 @Logged
 public class SimShooterIO implements ShooterIO {
 	@NotLogged private final FlywheelSim flywheelSim;
@@ -27,10 +28,10 @@ public class SimShooterIO implements ShooterIO {
 
 	private final SimpleMotorFeedforward flywheelFeedForward;
 	private final PIDController flywheelPIDController;
-
 	private final PIDController hoodPIDController;
 
-	private final MutAngularVelocity targetVelocity = RadiansPerSecond.mutable(0);
+	private final MutAngularVelocity targetFlywheelSpeed = RPM.mutable(0);
+	private final MutAngle targetHoodAngle = Radians.mutable(0);
 
 	public SimShooterIO() {
 		flywheelSim = new FlywheelSim(
@@ -46,6 +47,11 @@ public class SimShooterIO implements ShooterIO {
 
 			@Override
 			public void update(double timestep) {
+				double feedForward = flywheelFeedForward.calculate(targetFlywheelSpeed.in(RPM));
+				double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM), targetFlywheelSpeed.in(RPM));
+				flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(pid + feedForward));
+
+				System.out.println("flywheel: " + targetFlywheelSpeed);
 				flywheelSim.update(timestep);
 			}
 		};
@@ -57,6 +63,10 @@ public class SimShooterIO implements ShooterIO {
 
 			@Override
 			public void update(double timestep) {
+
+				hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(hoodPIDController.calculate(hoodSim.getAngleRads(), targetHoodAngle.in(Radians))));
+
+				System.out.println("hood: " + targetHoodAngle);
 				hoodSim.update(timestep);
 			}
 		};
@@ -71,26 +81,22 @@ public class SimShooterIO implements ShooterIO {
 
 	@Override
 	public void stopFlywheel() {
-		flywheelSim.setInputVoltage(0);
+		targetFlywheelSpeed.mut_setMagnitude(0);
 	}
 
 	@Override
 	public void stopHood() {
-		hoodSim.setInputVoltage(0);
+		targetHoodAngle.mut_setMagnitude(0);
 	}
 
 	@Override
-	public void setFlywheelVelocity(AngularVelocity angularVelocity) {
-		double feedForward = flywheelFeedForward.calculate(angularVelocity.in(RPM));
-		double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
-
-		flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(pid + feedForward));
+	public void setFlywheelVelocity(Supplier<AngularVelocity> angularVelocity) {
+		targetFlywheelSpeed.mut_setMagnitude(angularVelocity.get().in(RPM));
 	}
 
 	@Override
-	public void setHoodAngle(Angle angle) {
-		hoodSim.setInputVoltage(
-				hoodMechanismSim.outputVoltage(hoodPIDController.calculate(hoodSim.getAngleRads(), angle.in(Radians))));
+	public void setHoodAngle(Supplier<Angle> angle) {
+		targetHoodAngle.mut_setMagnitude(angle.get().in(Radians));
 	}
 
 	@Override
