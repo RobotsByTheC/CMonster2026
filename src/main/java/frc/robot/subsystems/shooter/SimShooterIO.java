@@ -21,9 +21,8 @@ import frc.robot.sim.SimulationContext;
 @Logged
 public class SimShooterIO implements ShooterIO {
 	@NotLogged private final FlywheelSim flywheelSim;
-	@NotLogged private final MechanismSim flywheelMechanismSim;
-
 	@NotLogged private final SingleJointedArmSim hoodSim;
+	@NotLogged private final MechanismSim flywheelMechanismSim;
 	@NotLogged private final MechanismSim hoodMechanismSim;
 
 	private final SimpleMotorFeedforward flywheelFeedForward;
