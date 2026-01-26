@@ -17,12 +17,12 @@ public class Shooter extends SubsystemBase {
 		this.io = io;
 	}
 
-	public Command o_stop() {
-		return runOnce(io::stop);
+	public Command o_stopFlywheel() {
+		return runOnce(io::stopFlywheel);
 	}
 
 	public Command f_shoot(Supplier<AngularVelocity> desiredSpeed) {
-		return run(() -> io.setDesiredVelocity(desiredSpeed.get()))
+		return run(() -> io.setFlywheelVelocity(desiredSpeed.get()))
 				.withName("Shooter @ " + desiredSpeed.get().in(RPM) + " RPM");
 	}
 }
