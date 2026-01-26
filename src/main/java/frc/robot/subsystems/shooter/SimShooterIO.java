@@ -96,8 +96,8 @@ public class SimShooterIO implements ShooterIO {
 			}
 		};
 
-    flywheelFeedForward = new SimpleMotorFeedforward(KS, KV);
-    flywheelPIDController = new PIDController(KP, KI, KD);
+		flywheelFeedForward = new SimpleMotorFeedforward(KS, KV);
+		flywheelPIDController = new PIDController(KP, KI, KD);
 
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);

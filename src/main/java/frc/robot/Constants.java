@@ -55,26 +55,26 @@ public class Constants {
 		public static final int RIGHT_JOYSTICK_PORT = 3;
 	}
 
-  public static class CANConstants {
-    public static final int FRONT_LEFT_DRIVE_CAN_ID = 1;
-    public static final int FRONT_LEFT_TURN_CAN_ID = 2;
-    public static final int FRONT_RIGHT_DRIVE_CAN_ID = 3;
-    public static final int FRONT_RIGHT_TURN_CAN_ID = 4;
-    public static final int BACK_LEFT_DRIVE_CAN_ID = 5;
-    public static final int BACK_LEFT_TURN_CAN_ID = 6;
-    public static final int BACK_RIGHT_DRIVE_CAN_ID = 7;
-    public static final int BACK_RIGHT_TURN_CAN_ID = 8;
-    public static final int INTAKE_MOTOR_CAN_ID = 9;
-    public static final int INTAKE_WRIST_CAN_ID = 10;
-    public static final int FLYWHEEL_LEFT_A_CAN_ID = 11;
-    public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
-    public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
-    public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
-    public static final int INTERMEDIARY_CAN_ID = 15;
-    public static final int HOOD_CAN_ID = 16;
+	public static class CANConstants {
+		public static final int FRONT_LEFT_DRIVE_CAN_ID = 1;
+		public static final int FRONT_LEFT_TURN_CAN_ID = 2;
+		public static final int FRONT_RIGHT_DRIVE_CAN_ID = 3;
+		public static final int FRONT_RIGHT_TURN_CAN_ID = 4;
+		public static final int BACK_LEFT_DRIVE_CAN_ID = 5;
+		public static final int BACK_LEFT_TURN_CAN_ID = 6;
+		public static final int BACK_RIGHT_DRIVE_CAN_ID = 7;
+		public static final int BACK_RIGHT_TURN_CAN_ID = 8;
+		public static final int INTAKE_MOTOR_CAN_ID = 9;
+		public static final int INTAKE_WRIST_CAN_ID = 10;
+		public static final int FLYWHEEL_LEFT_A_CAN_ID = 11;
+		public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
+		public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
+		public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
+		public static final int INTERMEDIARY_CAN_ID = 15;
+		public static final int HOOD_CAN_ID = 16;
 
-    public static final int GYRO_CAN_ID = 50;
-  }
+		public static final int GYRO_CAN_ID = 50;
+	}
 
 	public static class IntakeConstants {
 		public static final double KP = 5;
@@ -94,21 +94,21 @@ public class Constants {
 	}
 
 	public static class ShooterConstants {
-    public static class Hood {
-      public static final double KP = 1;
-      public static final double KI = 0;
-      public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KV = 0;
-    }
+		public static class Hood {
+			public static final double KP = 1;
+			public static final double KI = 0;
+			public static final double KD = 0;
+			public static final double KS = 0;
+			public static final double KV = 0;
+		}
 
-    public static class FlywheelConstants {
-      public static final double KP = 0.006;
-      public static final double KI = 0;
-      public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KV = 0.00137;
-    }
+		public static class FlywheelConstants {
+			public static final double KP = 0.006;
+			public static final double KI = 0;
+			public static final double KD = 0;
+			public static final double KS = 0;
+			public static final double KV = 0.00137;
+		}
 		public static final AngularVelocity SHOOTER_SPEED = RPM.of(5000);
 	}
 }

@@ -1,8 +1,6 @@
 package frc.robot.subsystems.swerve;
 
-import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.KINEMATICS;
-import static frc.robot.Constants.SwerveConstants.TurnConstants;
 import static frc.robot.Constants.CANConstants.*;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
