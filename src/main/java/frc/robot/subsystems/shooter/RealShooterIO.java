@@ -83,6 +83,7 @@ public class RealShooterIO implements ShooterIO {
 	@Override
 	public void stopHood() {
 		hoodSpark.setVoltage(0);
+		hoodController.setSetpoint(0, SparkBase.ControlType.kVoltage);
 	}
 
 	@Override
