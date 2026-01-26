@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
-    shooter.setDefaultCommand(shooter.f_holdPos());
+    shooter.setDefaultCommand(shooter.idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
