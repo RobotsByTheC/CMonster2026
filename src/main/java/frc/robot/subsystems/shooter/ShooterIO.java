@@ -6,6 +6,8 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
+import java.util.function.Supplier;
+
 @Logged
 public interface ShooterIO {
 	/**
@@ -37,7 +39,7 @@ public interface ShooterIO {
 	 * @param velocity
 	 *            The speed that the flywheel should go to.
 	 */
-	void setFlywheelVelocity(AngularVelocity velocity);
+	void setFlywheelVelocity(Supplier<AngularVelocity> velocity);
 
-	void setHoodAngle(Angle angle);
+	void setHoodAngle(Supplier<Angle> angle);
 }
