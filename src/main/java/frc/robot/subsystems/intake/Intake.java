@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
 		}
 
 		public Command stop() {
-			return run(() -> io.setWristVoltage(Volts.zero()));
+			return runOnce(() -> io.setWristVoltage(Volts.zero()));
 		}
 
 		private Command rotateToAngle(Angle targetAngle) {
@@ -43,23 +43,23 @@ public class Intake extends SubsystemBase {
 		}
 
 		private Voltage calculatePIDVoltage(Angle targetAngle) {
-			return Volts.of(
-					pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward
+			return Volts
+					.of(pidController.calculate(io.getWristPosition().in(Radians), targetAngle.in(Radians)) + feedforward
 							.calculate(io.getWristPosition().in(Radians), io.getWristVelocity().in(RadiansPerSecond)));
 		}
 	}
 
 	class Roller extends SubsystemBase {
 		public Command runIntakeMotor() {
-			return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+			return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
 		}
 
 		public Command stop() {
-			return run(() -> io.setIntakeVoltage(Volts.zero()));
+			return runOnce(() -> io.setIntakeVoltage(Volts.zero()));
 		}
 
 		public Command reverseIntakeMotor() {
-			return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+			return runOnce(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
 		}
 	}
 

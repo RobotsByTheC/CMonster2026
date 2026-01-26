@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-  <entry key="org.eclipse.jdt.core.formatter.lineSplit">120</entry>
+  <entry key="org.eclipse.jdt.core.formatter.lineSplit">121</entry>
 
-  <entry key="org.eclipse.jdt.core.formatter.comment.line_length">130</entry>
+  <entry key="org.eclipse.jdt.core.formatter.comment.line_length">121</entry>
 
   <entry
     key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_field">0</entry>
@@ -33,4 +33,8 @@
     key="org.eclipse.jdt.core.formatter.alignment_for_annotations_on_local_variable">0</entry>
   <entry
     key="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_local_variable">do not insert</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.keep_empty_enclosed_body_on_one_line">true</entry>
+  <entry
+    key="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_method_body">do not insert</entry>
 </properties>

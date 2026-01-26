@@ -21,13 +21,11 @@ public class RealIntakeIO implements IntakeIO {
 	private final SparkAbsoluteEncoder wristEncoder;
 
 	public RealIntakeIO() {
-		intakeMotor = new SparkMax(INTAKE_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
-		intakeMotor.configure(intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		intakeMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		wristMotor = new SparkMax(WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		SparkMaxConfig wristMotorConfig = new SparkMaxConfig();
-		wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		wristEncoder = wristMotor.getAbsoluteEncoder();
 	}
