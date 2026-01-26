@@ -142,6 +142,11 @@ public class SimShooterIO implements ShooterIO {
 	}
 
 	@Override
+	public Angle getHoodAngle() {
+		return Radians.of(hoodSim.getAngleRads());
+	}
+
+	@Override
 	public Current getCurrentDraw() {
 		return Amps.of(flywheelSimA.getCurrentDrawAmps());
 	}

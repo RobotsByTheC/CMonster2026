@@ -24,6 +24,8 @@ public interface ShooterIO {
 	 */
 	AngularVelocity getFlywheelVelocity();
 
+	Angle getHoodAngle();
+
 	/**
 	 * Returns the current draw that the mechanism is currently consuming.
 	 *

@@ -34,6 +34,7 @@ public class RealShooterIO implements ShooterIO {
 
 	private final RelativeEncoder leftShooterEncoder;
 	private final RelativeEncoder rightShooterEncoder;
+	private final RelativeEncoder hoodEncoder;
 
 	public RealShooterIO() {
 		leftShooterSparkA = new SparkMax(FLYWHEEL_LEFT_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
@@ -63,6 +64,7 @@ public class RealShooterIO implements ShooterIO {
 		hoodSpark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		hoodSpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		hoodController = hoodSpark.getClosedLoopController();
+		hoodEncoder = hoodSpark.getEncoder();
 	}
 
 	@Override
@@ -89,6 +91,11 @@ public class RealShooterIO implements ShooterIO {
 	@Override
 	public AngularVelocity getFlywheelVelocity() {
 		return RPM.of((leftShooterEncoder.getVelocity() + rightShooterEncoder.getVelocity()) / 2);
+	}
+
+	@Override
+	public Angle getHoodAngle() {
+		return Radians.of(hoodEncoder.getPosition());
 	}
 
 	@Override
