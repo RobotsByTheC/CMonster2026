@@ -47,7 +47,7 @@ public class SwerveModule {
 		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
 				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
-		turnConfig.closedLoop.pid(TurnConstants.kP, TurnConstants.kI, TurnConstants.kD)
+		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
 				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
 
 		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
