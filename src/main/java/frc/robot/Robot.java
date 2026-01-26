@@ -34,6 +34,7 @@ import frc.robot.subsystems.intake.SimIntakeIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.SimShooterIO;
 import frc.robot.subsystems.swerve.RealSwerveIO;
+import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 
 @Logged
@@ -51,7 +52,7 @@ public class Robot extends TimedRobot {
 		if (Robot.isSimulation()) {
 			intake = new Intake(new SimIntakeIO());
 			shooter = new Shooter(new SimShooterIO());
-			swerve = null;
+			swerve = new Swerve(new SimSwerveIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
 			shooter = null;
