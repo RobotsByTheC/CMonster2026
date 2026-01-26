@@ -133,9 +133,7 @@ public class SimShooterIO implements ShooterIO {
 	}
 
 	@Override
-	public void setHoodAngle(Angle angle) {
-		hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(voltage.in(Volts)));
-	}
+	public void setHoodAngle(Angle angle) {}
 
 	@Override
 	public AngularVelocity getFlywheelVelocity() {
