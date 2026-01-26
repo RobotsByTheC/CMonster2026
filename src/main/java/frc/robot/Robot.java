@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Meters;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -71,13 +71,13 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
-		shooter.setDefaultCommand(shooter.o_stopFlywheel());
+		shooter.setDefaultCommand(shooter.stop());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
 
-		operatorController.y().whileTrue(shooter.f_shoot(() -> RadiansPerSecond.of(20)));
+		operatorController.y().whileTrue(shooter.f_shootAtTarget(() -> Meters.of(1)));
 	}
 
 	@Override
