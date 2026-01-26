@@ -5,6 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -132,7 +133,7 @@ public class SimShooterIO implements ShooterIO {
   }
 
   @Override
-  public void setHoodVoltage(Voltage voltage) {
+  public void setHoodAngle(Angle angle) {
     hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(voltage.in(Volts)));
   }
 

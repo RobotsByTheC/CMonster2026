@@ -37,5 +37,5 @@ public interface ShooterIO {
 
   void setIntermediaryVoltage(Voltage voltage);
 
-  void setHoodVoltage(Voltage voltage);
+  void setHoodAngle(Angle angle);
 }

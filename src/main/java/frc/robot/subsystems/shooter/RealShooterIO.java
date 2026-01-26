@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import com.revrobotics.PersistMode;
@@ -14,6 +13,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -29,6 +29,8 @@ public class RealShooterIO implements ShooterIO {
 
   private final SparkClosedLoopController leftShooterController;
   private final SparkClosedLoopController rightShooterController;
+  private final SparkClosedLoopController hoodController;
+
   private final RelativeEncoder leftShooterEncoder;
   private final RelativeEncoder rightShooterEncoder;
 
@@ -58,6 +60,7 @@ public class RealShooterIO implements ShooterIO {
 
     hoodSpark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     hoodSpark.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    hoodController = hoodSpark.getClosedLoopController();
   }
 
   @Override
@@ -102,7 +105,7 @@ public class RealShooterIO implements ShooterIO {
   }
 
   @Override
-  public void setHoodVoltage(Voltage voltage) {
-    hoodSpark.setVoltage(voltage);
+  public void setHoodAngle(Angle angle) {
+    hoodController.setSetpoint(angle.in(Radians), SparkBase.ControlType.kPosition);
   }
 }
