@@ -36,6 +36,6 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public Command stop() {
-		return runOnce(io::stopFlywheel).alongWith(run(io::stopHood));
+		return runOnce(io::stopFlywheel).andThen(run(io::stopHood));
 	}
 }
