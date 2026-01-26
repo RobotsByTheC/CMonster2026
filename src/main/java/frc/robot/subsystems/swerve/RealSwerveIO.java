@@ -3,7 +3,6 @@ package frc.robot.subsystems.swerve;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.KINEMATICS;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
-import static frc.robot.Constants.SwerveConstants.GYRO_CAN_ID;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.epilogue.Logged;

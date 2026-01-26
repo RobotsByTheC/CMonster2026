@@ -44,7 +44,6 @@ public class Constants {
 			public static final int AUTO_D = 0;
 		}
 
-		public static final int GYRO_CAN_ID = 50;
 		public static final Distance DRIVETRAIN_WIDTH = Inches.of(27);
 		public static final Distance DRIVETRAIN_HEIGHT = Inches.of(27);
 		public static final Angle TOLERANCE = Degrees.of(2);
@@ -73,6 +72,8 @@ public class Constants {
     public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
     public static final int INTERMEDIARY_CAN_ID = 15;
     public static final int HOOD_CAN_ID = 16;
+
+    public static final int GYRO_CAN_ID = 50;
   }
 
 	public static class IntakeConstants {
