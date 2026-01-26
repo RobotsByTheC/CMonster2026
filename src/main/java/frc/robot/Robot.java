@@ -84,7 +84,8 @@ public class Robot extends TimedRobot {
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
 
-		operatorController.y().whileTrue(shooter.f_shootAtTarget(() -> shooterSimDistance));
+		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance));
+		operatorController.y().onFalse(shooter.o_stop());
     operatorController.a().onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters)+0.1)));
 	}
 
