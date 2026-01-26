@@ -1,7 +1,8 @@
 package frc.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.CANConstants.*;
+import static frc.robot.Constants.IntakeConstants.INTAKE_CAN_ID;
+import static frc.robot.Constants.IntakeConstants.WRIST_CAN_ID;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
@@ -22,12 +23,10 @@ public class RealIntakeIO implements IntakeIO {
 
 	public RealIntakeIO() {
 		intakeMotor = new SparkMax(INTAKE_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		SparkMaxConfig intakeMotorConfig = new SparkMaxConfig();
-		intakeMotor.configure(intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		intakeMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		wristMotor = new SparkMax(WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		SparkMaxConfig wristMotorConfig = new SparkMaxConfig();
-		wristMotor.configure(wristMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
 		wristEncoder = wristMotor.getAbsoluteEncoder();
 	}
