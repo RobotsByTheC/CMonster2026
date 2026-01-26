@@ -15,8 +15,11 @@ import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 public class InterpolatingShooterTreeMap extends InterpolatingTreeMap<Distance, Pair<AngularVelocity, Angle>> {
+  private static final Interpolator<Pair<AngularVelocity, Angle>> INTERPOLATOR = (startValue, endValue, t) -> new Pair<>(
+      RadiansPerSecond.of(MathUtil.interpolate(startValue.getFirst().in(RadiansPerSecond), endValue.getFirst().in(RadiansPerSecond), t)),
+      Radians.of(MathUtil.interpolate(startValue.getSecond().in(Radians), endValue.getSecond().in(Radians), t)));
 
   public InterpolatingShooterTreeMap() {
-    super(null, null, Comparator.naturalOrder());
+    super(null, INTERPOLATOR, Comparator.naturalOrder());
   }
 }
