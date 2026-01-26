@@ -5,10 +5,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.epilogue.Logged;
@@ -23,10 +20,8 @@ import frc.robot.sim.SimulationContext;
 
 @Logged
 public class SimShooterIO implements ShooterIO {
-	@NotLogged private final FlywheelSim flywheelSimA;
-	@NotLogged private final FlywheelSim flywheelSimB;
-	@NotLogged private final MechanismSim flywheelMechanismSimA;
-	@NotLogged private final MechanismSim flywheelMechanismSimB;
+	@NotLogged private final FlywheelSim flywheelSim;
+	@NotLogged private final MechanismSim flywheelMechanismSim;
 
 	@NotLogged private final SingleJointedArmSim hoodSim;
 	@NotLogged private final MechanismSim hoodMechanismSim;
@@ -36,35 +31,23 @@ public class SimShooterIO implements ShooterIO {
 
 	private final PIDController hoodPIDController;
 
+	private final MutAngularVelocity targetVelocity = RadiansPerSecond.mutable(0);
+
 	public SimShooterIO() {
-		flywheelSimA = new FlywheelSim(
-				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
-				DCMotor.getNEO(2).withReduction(1 / 1.5));
-		flywheelSimB = new FlywheelSim(
-				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
-				DCMotor.getNEO(2).withReduction(1 / 1.5));
+		flywheelSim = new FlywheelSim(
+				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(4).withReduction(1 / 1.5), 6 / 3417.2, 1),
+				DCMotor.getNEO(4).withReduction(1 / 1.5));
 		hoodSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 0.1, 0.3, 0, Math.PI, true, 0);
 
-		flywheelMechanismSimA = new MechanismSim() {
+		flywheelMechanismSim = new MechanismSim() {
 			@Override
 			public double getCurrentDraw() {
-				return flywheelSimA.getCurrentDrawAmps();
+				return flywheelSim.getCurrentDrawAmps();
 			}
 
 			@Override
 			public void update(double timestep) {
-				flywheelSimA.update(timestep);
-			}
-		};
-		flywheelMechanismSimB = new MechanismSim() {
-			@Override
-			public double getCurrentDraw() {
-				return flywheelSimB.getCurrentDrawAmps();
-			}
-
-			@Override
-			public void update(double timestep) {
-				flywheelSimB.update(timestep);
+				flywheelSim.update(timestep);
 			}
 		};
 		hoodMechanismSim = new MechanismSim() {
@@ -83,15 +66,13 @@ public class SimShooterIO implements ShooterIO {
 		flywheelPIDController = new PIDController(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		hoodPIDController = new PIDController(HoodConstants.KP, HoodConstants.KI, HoodConstants.KD);
 
-		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
-		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);
+		SimulationContext.getDefault().addMechanism(flywheelMechanismSim);
 		SimulationContext.getDefault().addMechanism(hoodMechanismSim);
 	}
 
 	@Override
 	public void stopFlywheel() {
-		flywheelSimA.setInputVoltage(0);
-		flywheelSimB.setInputVoltage(0);
+		flywheelSim.setInputVoltage(0);
 	}
 
 	@Override
@@ -102,10 +83,9 @@ public class SimShooterIO implements ShooterIO {
 	@Override
 	public void setFlywheelVelocity(AngularVelocity angularVelocity) {
 		double feedForward = flywheelFeedForward.calculate(angularVelocity.in(RPM));
-		double pid = flywheelPIDController.calculate(flywheelSimA.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
+		double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
 
-		flywheelSimA.setInputVoltage(flywheelMechanismSimA.outputVoltage(pid + feedForward));
-		flywheelSimB.setInputVoltage(flywheelMechanismSimB.outputVoltage(pid + feedForward));
+		flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(pid + feedForward));
 	}
 
 	@Override
@@ -116,7 +96,7 @@ public class SimShooterIO implements ShooterIO {
 
 	@Override
 	public AngularVelocity getFlywheelVelocity() {
-		return flywheelSimA.getAngularVelocity().plus(flywheelSimB.getAngularVelocity()).div(2);
+		return flywheelSim.getAngularVelocity();
 	}
 
 	@Override
@@ -126,6 +106,6 @@ public class SimShooterIO implements ShooterIO {
 
 	@Override
 	public Current getCurrentDraw() {
-		return Amps.of(flywheelSimA.getCurrentDrawAmps());
+		return Amps.of(flywheelSim.getCurrentDrawAmps());
 	}
 }
