@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.epilogue.Logged;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.ShooterConstants.FlywheelConstants.*;
+import static frc.robot.Constants.ShooterConstants.FlywheelConstants;
 import static frc.robot.Constants.ShooterConstants.HoodConstants;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -36,6 +36,8 @@ public class SimShooterIO implements ShooterIO {
 
 	private final SimpleMotorFeedforward flywheelFeedForward;
 	private final PIDController flywheelPIDController;
+
+	private final PIDController hoodPIDController;
 
 	public SimShooterIO() {
 		flywheelSimA = new FlywheelSim(
@@ -93,8 +95,8 @@ public class SimShooterIO implements ShooterIO {
 			}
 		};
 
-		flywheelFeedForward = new SimpleMotorFeedforward(KS, KV);
-		flywheelPIDController = new PIDController(KP, KI, KD);
+		flywheelFeedForward = new SimpleMotorFeedforward(FlywheelConstants.KS, FlywheelConstants.KV);
+		flywheelPIDController = new PIDController(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		hoodPIDController = new PIDController(HoodConstants.KP, HoodConstants.KI, HoodConstants.KD);
 
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
@@ -134,7 +136,10 @@ public class SimShooterIO implements ShooterIO {
 	}
 
 	@Override
-	public void setHoodAngle(Angle angle) {}
+	public void setHoodAngle(Angle angle) {
+		hoodSim.setInputVoltage(
+				hoodMechanismSim.outputVoltage(hoodPIDController.calculate(hoodSim.getAngleRads(), angle.in(Radians))));
+	}
 
 	@Override
 	public AngularVelocity getFlywheelVelocity() {
