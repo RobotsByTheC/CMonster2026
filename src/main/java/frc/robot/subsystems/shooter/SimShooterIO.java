@@ -14,11 +14,7 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.epilogue.Logged;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.ShooterConstants.KD;
-import static frc.robot.Constants.ShooterConstants.KI;
-import static frc.robot.Constants.ShooterConstants.KP;
-import static frc.robot.Constants.ShooterConstants.KS;
-import static frc.robot.Constants.ShooterConstants.KV;
+import static frc.robot.Constants.ShooterConstants.FlywheelConstants.*;
 
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
