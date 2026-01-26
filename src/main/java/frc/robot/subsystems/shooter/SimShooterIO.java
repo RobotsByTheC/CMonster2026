@@ -27,29 +27,29 @@ import frc.robot.sim.SimulationContext;
 @Logged
 public class SimShooterIO implements ShooterIO {
 	@NotLogged private final FlywheelSim flywheelSimA;
-  @NotLogged private final FlywheelSim flywheelSimB;
-  @NotLogged private final MechanismSim flywheelMechanismSimA;
-  @NotLogged private final MechanismSim flywheelMechanismSimB;
+	@NotLogged private final FlywheelSim flywheelSimB;
+	@NotLogged private final MechanismSim flywheelMechanismSimA;
+	@NotLogged private final MechanismSim flywheelMechanismSimB;
 
-  @NotLogged private final DCMotorSim intermediarySim;
-  @NotLogged private final MechanismSim intermediaryMechanismSim;
+	@NotLogged private final DCMotorSim intermediarySim;
+	@NotLogged private final MechanismSim intermediaryMechanismSim;
 
-  @NotLogged private final SingleJointedArmSim hoodSim;
-  @NotLogged private final MechanismSim hoodMechanismSim;
+	@NotLogged private final SingleJointedArmSim hoodSim;
+	@NotLogged private final MechanismSim hoodMechanismSim;
 
-
-  private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
+	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
 	private final PIDController pidController = new PIDController(KP, KI, KD);
 
 	public SimShooterIO() {
 		flywheelSimA = new FlywheelSim(
 				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
 				DCMotor.getNEO(2).withReduction(1 / 1.5));
-    flywheelSimB = new FlywheelSim(
-        LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
-        DCMotor.getNEO(2).withReduction(1 / 1.5));
-    intermediarySim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.1, 1), DCMotor.getNEO(1));
-    hoodSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 0.1, 0.3, 0, Math.PI, true, 0);
+		flywheelSimB = new FlywheelSim(
+				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2).withReduction(1 / 1.5), 6 / 3417.2, 1),
+				DCMotor.getNEO(2).withReduction(1 / 1.5));
+		intermediarySim = new DCMotorSim(LinearSystemId.createDCMotorSystem(DCMotor.getNEO(1), 0.1, 1),
+				DCMotor.getNEO(1));
+		hoodSim = new SingleJointedArmSim(DCMotor.getNEO(1), 60, 0.1, 0.3, 0, Math.PI, true, 0);
 
 		flywheelMechanismSimA = new MechanismSim() {
 			@Override
@@ -62,82 +62,82 @@ public class SimShooterIO implements ShooterIO {
 				flywheelSimA.update(timestep);
 			}
 		};
-    flywheelMechanismSimB = new MechanismSim() {
-      @Override
-      public double getCurrentDraw() {
-        return flywheelSimB.getCurrentDrawAmps();
-      }
+		flywheelMechanismSimB = new MechanismSim() {
+			@Override
+			public double getCurrentDraw() {
+				return flywheelSimB.getCurrentDrawAmps();
+			}
 
-      @Override
-      public void update(double timestep) {
-        flywheelSimB.update(timestep);
-      }
-    };
-    intermediaryMechanismSim = new MechanismSim() {
-      @Override
-      public double getCurrentDraw() {
-        return intermediarySim.getCurrentDrawAmps();
-      }
+			@Override
+			public void update(double timestep) {
+				flywheelSimB.update(timestep);
+			}
+		};
+		intermediaryMechanismSim = new MechanismSim() {
+			@Override
+			public double getCurrentDraw() {
+				return intermediarySim.getCurrentDrawAmps();
+			}
 
-      @Override
-      public void update(double timestep) {
-        intermediarySim.update(timestep);
-      }
-    };
-    hoodMechanismSim = new MechanismSim() {
-      @Override
-      public double getCurrentDraw() {
-        return hoodSim.getCurrentDrawAmps();
-      }
+			@Override
+			public void update(double timestep) {
+				intermediarySim.update(timestep);
+			}
+		};
+		hoodMechanismSim = new MechanismSim() {
+			@Override
+			public double getCurrentDraw() {
+				return hoodSim.getCurrentDrawAmps();
+			}
 
-      @Override
-      public void update(double timestep) {
-        hoodSim.update(timestep);
-      }
-    };
+			@Override
+			public void update(double timestep) {
+				hoodSim.update(timestep);
+			}
+		};
 
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
-    SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);
-    SimulationContext.getDefault().addMechanism(intermediaryMechanismSim);
-    SimulationContext.getDefault().addMechanism(hoodMechanismSim);
+		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);
+		SimulationContext.getDefault().addMechanism(intermediaryMechanismSim);
+		SimulationContext.getDefault().addMechanism(hoodMechanismSim);
 	}
 
 	@Override
 	public void stopFlywheel() {
 		flywheelSimA.setInputVoltage(0);
-    flywheelSimB.setInputVoltage(0);
+		flywheelSimB.setInputVoltage(0);
 	}
 
-  @Override
-  public void stopIntermediary() {
-    intermediarySim.setInputVoltage(0);
-  }
+	@Override
+	public void stopIntermediary() {
+		intermediarySim.setInputVoltage(0);
+	}
 
-  @Override
-  public void stopHood() {
-    hoodSim.setInputVoltage(0);
-  }
+	@Override
+	public void stopHood() {
+		hoodSim.setInputVoltage(0);
+	}
 
-  @Override
+	@Override
 	public void setFlywheelVelocity(AngularVelocity angularVelocity) {
-    double feedForward = feedforward.calculate(angularVelocity.in(RPM));
-    double pid = pidController.calculate(flywheelSimA.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
+		double feedForward = feedforward.calculate(angularVelocity.in(RPM));
+		double pid = pidController.calculate(flywheelSimA.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
 
 		flywheelSimA.setInputVoltage(flywheelMechanismSimA.outputVoltage(pid + feedForward));
-    flywheelSimB.setInputVoltage(flywheelMechanismSimB.outputVoltage(pid + feedForward));
-  }
+		flywheelSimB.setInputVoltage(flywheelMechanismSimB.outputVoltage(pid + feedForward));
+	}
 
-  @Override
-  public void setIntermediaryVoltage(Voltage voltage) {
-    intermediarySim.setInputVoltage(intermediaryMechanismSim.outputVoltage(voltage.in(Volts)));
-  }
+	@Override
+	public void setIntermediaryVoltage(Voltage voltage) {
+		intermediarySim.setInputVoltage(intermediaryMechanismSim.outputVoltage(voltage.in(Volts)));
+	}
 
-  @Override
-  public void setHoodAngle(Angle angle) {
-    hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(voltage.in(Volts)));
-  }
+	@Override
+	public void setHoodAngle(Angle angle) {
+		hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(voltage.in(Volts)));
+	}
 
-  @Override
+	@Override
 	public AngularVelocity getFlywheelVelocity() {
 		return flywheelSimA.getAngularVelocity().plus(flywheelSimB.getAngularVelocity()).div(2);
 	}

@@ -82,19 +82,19 @@ public class Constants {
 		public static final Angle WRIST_STOW_ANGLE = Radians.of(Math.PI);
 		public static final Angle WRIST_EXTEND_ANGLE = Degrees.of(30);
 
-    public static final int INTAKE_CAN_ID = 9;
-    public static final int WRIST_CAN_ID = 10;
+		public static final int INTAKE_CAN_ID = 9;
+		public static final int WRIST_CAN_ID = 10;
 	}
 
 	public static class ShooterConstants {
-    public static final int LEFT_SHOOTER_A_CAN_ID = 11;
-    public static final int LEFT_SHOOTER_B_CAN_ID = 12;
-    public static final int RIGHT_SHOOTER_A_CAN_ID = 13;
-    public static final int RIGHT_SHOOTER_B_CAN_ID = 14;
-    public static final int INTERMEDIARY_CAN_ID = 15;
-    public static final int HOOD_CAN_ID = 16;
+		public static final int LEFT_SHOOTER_A_CAN_ID = 11;
+		public static final int LEFT_SHOOTER_B_CAN_ID = 12;
+		public static final int RIGHT_SHOOTER_A_CAN_ID = 13;
+		public static final int RIGHT_SHOOTER_B_CAN_ID = 14;
+		public static final int INTERMEDIARY_CAN_ID = 15;
+		public static final int HOOD_CAN_ID = 16;
 
-    public static final AngularVelocity SHOOTER_SPEED = RPM.of(5000);
+		public static final AngularVelocity SHOOTER_SPEED = RPM.of(5000);
 
 		public static final double KP = 0.006;
 		public static final double KI = 0;

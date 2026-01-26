@@ -13,29 +13,33 @@ public interface ShooterIO {
 	 */
 	void stopFlywheel();
 
-  void stopIntermediary();
+	void stopIntermediary();
 
-  void stopHood();
+	void stopHood();
 
-  /**
-   * Returns the current velocity that the flywheel in the shooter is running at.
-   * @return The flywheel's velocity.
-   */
-  AngularVelocity getFlywheelVelocity();
+	/**
+	 * Returns the current velocity that the flywheel in the shooter is running at.
+	 *
+	 * @return The flywheel's velocity.
+	 */
+	AngularVelocity getFlywheelVelocity();
 
-  /**
-   * Returns the current draw that the mechanism is currently consuming.
-   * @return The mechanism's current draw.
-   */
-  Current getCurrentDraw();
+	/**
+	 * Returns the current draw that the mechanism is currently consuming.
+	 *
+	 * @return The mechanism's current draw.
+	 */
+	Current getCurrentDraw();
 
 	/**
 	 * Set the desired velocity of the flywheel, to be reached via PID and FeedForward within the implementations.
-	 * @param velocity The speed that the flywheel should go to.
+	 *
+	 * @param velocity
+	 *            The speed that the flywheel should go to.
 	 */
 	void setFlywheelVelocity(AngularVelocity velocity);
 
-  void setIntermediaryVoltage(Voltage voltage);
+	void setIntermediaryVoltage(Voltage voltage);
 
-  void setHoodAngle(Angle angle);
+	void setHoodAngle(Angle angle);
 }
