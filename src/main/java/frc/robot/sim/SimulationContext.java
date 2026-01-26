@@ -74,8 +74,7 @@ public class SimulationContext {
 	 * Adds a generic simulation to run periodically. Mechanism simulations should be added with
 	 * {@link #addMechanism(MechanismSim)} instead of with this method
 	 *
-	 * @param sim
-	 *            the simulation to add
+	 * @param sim the simulation to add
 	 */
 	public void addPeriodic(Simulation sim) {
 		if (!simulations.contains(sim)) {
