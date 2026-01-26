@@ -66,11 +66,6 @@ public class Constants {
 		public static final int RIGHT_JOYSTICK_PORT = 3;
 	}
 
-	public static class CANConstants {
-		public static final int INTAKE_CAN_ID = 9;
-		public static final int WRIST_CAN_ID = 10;
-	}
-
 	public static class IntakeConstants {
 		public static final double KP = 5;
 		public static final double KI = 0;
@@ -86,6 +81,9 @@ public class Constants {
 		public static final AngularAcceleration MAX_WRIST_ACCELERATION = RadiansPerSecondPerSecond.of(3);
 		public static final Angle WRIST_STOW_ANGLE = Radians.of(Math.PI);
 		public static final Angle WRIST_EXTEND_ANGLE = Degrees.of(30);
+
+    public static final int INTAKE_CAN_ID = 9;
+    public static final int WRIST_CAN_ID = 10;
 	}
 
 	public static class ShooterConstants {
