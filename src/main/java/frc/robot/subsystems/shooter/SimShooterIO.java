@@ -37,8 +37,8 @@ public class SimShooterIO implements ShooterIO {
 	@NotLogged private final SingleJointedArmSim hoodSim;
 	@NotLogged private final MechanismSim hoodMechanismSim;
 
-	private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(KS, KV);
-	private final PIDController pidController = new PIDController(KP, KI, KD);
+	private final SimpleMotorFeedforward flywheelFeedForward;
+	private final PIDController flywheelPIDController;
 
 	public SimShooterIO() {
 		flywheelSimA = new FlywheelSim(
@@ -96,6 +96,9 @@ public class SimShooterIO implements ShooterIO {
 			}
 		};
 
+    flywheelFeedForward = new SimpleMotorFeedforward(KS, KV);
+    flywheelPIDController = new PIDController(KP, KI, KD);
+
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimA);
 		SimulationContext.getDefault().addMechanism(flywheelMechanismSimB);
 		SimulationContext.getDefault().addMechanism(intermediaryMechanismSim);
@@ -120,8 +123,8 @@ public class SimShooterIO implements ShooterIO {
 
 	@Override
 	public void setFlywheelVelocity(AngularVelocity angularVelocity) {
-		double feedForward = feedforward.calculate(angularVelocity.in(RPM));
-		double pid = pidController.calculate(flywheelSimA.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
+		double feedForward = flywheelFeedForward.calculate(angularVelocity.in(RPM));
+		double pid = flywheelPIDController.calculate(flywheelSimA.getAngularVelocity().in(RPM), angularVelocity.in(RPM));
 
 		flywheelSimA.setInputVoltage(flywheelMechanismSimA.outputVoltage(pid + feedForward));
 		flywheelSimB.setInputVoltage(flywheelMechanismSimB.outputVoltage(pid + feedForward));
