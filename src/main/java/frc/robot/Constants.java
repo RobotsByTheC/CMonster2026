@@ -94,6 +94,8 @@ public class Constants {
     public static final int INTERMEDIARY_CAN_ID = 15;
     public static final int HOOD_CAN_ID = 16;
 
+    public static final AngularVelocity SHOOTER_SPEED = RPM.of(5000);
+
 		public static final double KP = 0.006;
 		public static final double KI = 0;
 		public static final double KD = 0;
