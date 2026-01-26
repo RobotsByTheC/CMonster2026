@@ -34,4 +34,8 @@ public class Shooter extends SubsystemBase {
 	public Command f_shootAtTarget(Supplier<Distance> distance) {
 		return run(() -> updateTarget(distance.get()));
 	}
+
+	public Command stop() {
+		return runOnce(io::stopFlywheel).alongWith(run(io::stopHood));
+	}
 }
