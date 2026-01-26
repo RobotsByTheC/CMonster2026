@@ -19,12 +19,15 @@ import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.sim.SimulationContext;
@@ -44,6 +47,8 @@ public class Robot extends TimedRobot {
 	private final Intake intake;
 	private final Shooter shooter;
 	private final Swerve swerve;
+
+  public MutDistance shooterSimDistance = Meters.mutable(1);
 
 	@NotLogged private final CommandXboxController operatorController;
 	@NotLogged private final CommandJoystick leftFlightStick;
@@ -73,13 +78,13 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
-		shooter.setDefaultCommand(shooter.stop());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
 
-		operatorController.y().whileTrue(shooter.f_shootAtTarget(() -> Meters.of(1)));
+		operatorController.y().whileTrue(shooter.f_shootAtTarget(() -> shooterSimDistance));
+    operatorController.a().onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters)+0.1)));
 	}
 
 	@Override
