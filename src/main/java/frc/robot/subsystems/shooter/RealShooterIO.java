@@ -1,7 +1,8 @@
 package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.CANConstants.*;
+import static frc.robot.Constants.ShooterConstants.FlywheelConstants;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -35,18 +36,18 @@ public class RealShooterIO implements ShooterIO {
 	private final RelativeEncoder rightShooterEncoder;
 
 	public RealShooterIO() {
-		leftShooterSparkA = new SparkMax(LEFT_SHOOTER_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		leftShooterSparkA = new SparkMax(FLYWHEEL_LEFT_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig leftConfigA = new SparkMaxConfig();
-		leftConfigA.closedLoop.pid(KP, KI, KD);
+		leftConfigA.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		leftShooterSparkA.configure(leftConfigA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		leftShooterSparkB = new SparkMax(LEFT_SHOOTER_B_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		leftShooterSparkB = new SparkMax(FLYWHEEL_LEFT_B_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig leftConfigB = new SparkMaxConfig().follow(leftShooterSparkA, true);
 		leftShooterSparkB.configure(leftConfigB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		rightShooterSparkA = new SparkMax(RIGHT_SHOOTER_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		rightShooterSparkA = new SparkMax(FLYWHEEL_RIGHT_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		SparkMaxConfig rightConfigA = new SparkMaxConfig();
-		rightConfigA.closedLoop.pid(KP, KI, KD);
+		rightConfigA.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		rightShooterSparkA.configure(rightConfigA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		rightShooterSparkB = new SparkMax(RIGHT_SHOOTER_B_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+		rightShooterSparkB = new SparkMax(FLYWHEEL_RIGHT_B_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig rightConfigB = new SparkMaxConfig().follow(rightShooterSparkA, true);
 		rightShooterSparkB.configure(rightConfigB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
