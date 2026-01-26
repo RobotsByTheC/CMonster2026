@@ -87,6 +87,13 @@ public class Constants {
 	}
 
 	public static class ShooterConstants {
+    public static final int LEFT_SHOOTER_A_CAN_ID = 11;
+    public static final int LEFT_SHOOTER_B_CAN_ID = 12;
+    public static final int RIGHT_SHOOTER_A_CAN_ID = 13;
+    public static final int RIGHT_SHOOTER_B_CAN_ID = 14;
+    public static final int INTERMEDIARY_CAN_ID = 15;
+    public static final int HOOD_CAN_ID = 16;
+
 		public static final double KP = 0.006;
 		public static final double KI = 0;
 		public static final double KD = 0;
