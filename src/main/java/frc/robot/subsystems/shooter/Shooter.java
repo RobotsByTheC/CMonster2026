@@ -21,10 +21,28 @@ import frc.robot.Robot;
 @Logged
 public class Shooter extends SubsystemBase {
 	private final ShooterIO io;
+  private final Flywheel flywheel;
+  private final Hood hood;
 
   private MutDistance lastDistanceToTarget = Meters.mutable(0);
 
+  class Flywheel extends SubsystemBase {
+    public Command stop() {
+      return runOnce(io::stopFlywheel);
+    }
+  }
+
+  class Hood extends SubsystemBase {
+    public Command stop() {
+      return runOnce(io::stopHood);
+    }
+  }
+
 	public Shooter(ShooterIO io) {
-		this.io = io;
-	}
+    this.io = io;
+    flywheel = new Flywheel();
+    hood = new Hood();
+  }
+
+  
 }
