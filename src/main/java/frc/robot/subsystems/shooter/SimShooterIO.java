@@ -51,7 +51,6 @@ public class SimShooterIO implements ShooterIO {
 				double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM), targetFlywheelSpeed.in(RPM));
 				flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(pid + feedForward));
 
-				System.out.println("flywheel: " + targetFlywheelSpeed);
 				flywheelSim.update(timestep);
 			}
 		};
@@ -66,7 +65,6 @@ public class SimShooterIO implements ShooterIO {
 
 				hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(hoodPIDController.calculate(hoodSim.getAngleRads(), targetHoodAngle.in(Radians))));
 
-				System.out.println("hood: " + targetHoodAngle);
 				hoodSim.update(timestep);
 			}
 		};
