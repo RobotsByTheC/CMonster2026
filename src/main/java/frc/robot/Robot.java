@@ -18,6 +18,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutDistance;
@@ -40,6 +41,8 @@ import frc.robot.subsystems.shooter.SimShooterIO;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
+
+import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -78,10 +81,13 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
+		shooter.setDefaultCommand(shooter.f_idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
 		operatorController.x().whileTrue(intake.f_extendAndGrab());
 		operatorController.x().onFalse(intake.l_retractAndGrab());
+		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance));
+		operatorController.y().onFalse(shooter.o_resetDistance());
 
     operatorController.a().onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters)+0.1)));
 	}
@@ -128,5 +134,9 @@ public class Robot extends TimedRobot {
 		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()),
 				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()),
 				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()));
+	}
+
+	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
+		return swerve.f_driveLockedOn(relativePose).alongWith(shooter.f_shootDistance(() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
 	}
 }
