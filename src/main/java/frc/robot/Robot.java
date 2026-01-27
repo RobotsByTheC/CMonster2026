@@ -20,7 +20,6 @@ import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -52,6 +51,7 @@ public class Robot extends TimedRobot {
 	private final Swerve swerve;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
+	private double childLockMultiplier = 1;
 
 	@NotLogged private final CommandXboxController operatorController;
 	@NotLogged private final CommandJoystick leftFlightStick;
@@ -88,6 +88,8 @@ public class Robot extends TimedRobot {
 		operatorController.x().onFalse(intake.l_retractAndGrab());
 		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance));
 		operatorController.y().onFalse(shooter.o_resetDistance());
+		operatorController.leftBumper().onTrue(Commands.runOnce(() -> childLockMultiplier = 0.2d))
+				.onFalse(Commands.runOnce(() -> childLockMultiplier = 1));
 
     operatorController.a().onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters)+0.1)));
 	}
@@ -131,9 +133,9 @@ public class Robot extends TimedRobot {
 	public void testPeriodic() {}
 
 	public Command f_driveWithFlightSticks() {
-		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()),
-				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()),
-				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()));
+		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()).times(childLockMultiplier),
+				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()).times(childLockMultiplier),
+				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()).times(childLockMultiplier));
 	}
 
 	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
