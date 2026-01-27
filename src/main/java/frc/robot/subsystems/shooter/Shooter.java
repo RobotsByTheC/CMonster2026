@@ -21,28 +21,31 @@ import frc.robot.Robot;
 @Logged
 public class Shooter extends SubsystemBase {
 	private final ShooterIO io;
-  private final Flywheel flywheel;
-  private final Hood hood;
 
-  private MutDistance lastDistanceToTarget = Meters.mutable(0);
-
-  class Flywheel extends SubsystemBase {
-    public Command stop() {
-      return runOnce(io::stopFlywheel);
-    }
-  }
-
-  class Hood extends SubsystemBase {
-    public Command stop() {
-      return runOnce(io::stopHood);
-    }
-  }
+  private final MutDistance lastDistanceToTarget = Meters.mutable(0);
 
 	public Shooter(ShooterIO io) {
     this.io = io;
-    flywheel = new Flywheel();
-    hood = new Hood();
   }
 
-  
+  public Command f_shootDistance(Supplier<Distance> distance) {
+    return run(() -> {
+      if (!lastDistanceToTarget.isNear(distance.get(), Inches.of(0.5)) || lastDistanceToTarget.magnitude() == 0) {
+        io.setFlywheelVelocity(LookupTable.SPEED_TABLE.get(distance.get()));
+        io.setHoodAngle(LookupTable.ANGLE_TABLE.get(distance.get()));
+        lastDistanceToTarget.mut_setMagnitude(distance.get().magnitude());
+      }
+    });
+  }
+
+  public Command o_resetDistance() {
+    return runOnce(() -> lastDistanceToTarget.mut_setMagnitude(0));
+  }
+
+  public Command f_idle() {
+    return run(() -> {
+      io.stopFlywheel();
+      io.stopHood();
+    });
+  }
 }
