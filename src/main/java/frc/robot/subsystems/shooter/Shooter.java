@@ -21,13 +21,18 @@ public class Shooter extends SubsystemBase {
   private Distance lastDistanceToTarget = Meters.zero();
 
   class Flywheel extends SubsystemBase {
-    
+    public Command setTargetVelocity(AngularVelocity velocity) {
+      return runOnce(() -> io.setFlywheelVelocity(velocity));
+    }
     public Command stop() {
       return runOnce(io::stopFlywheel);
     }
   }
 
   class Hood extends SubsystemBase {
+    public Command setTargetAngle(Angle angle) {
+      return runOnce(() -> io.setHoodAngle(angle));
+    }
     public Command stop() {
       return runOnce(io::stopHood);
     }
