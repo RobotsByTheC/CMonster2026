@@ -96,13 +96,13 @@ public class RealShooterIO implements ShooterIO {
 	}
 
 	@Override
-	public void setFlywheelVelocity(Supplier<AngularVelocity> velocity) {
-		leftShooterController.setSetpoint(velocity.get().in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
-		rightShooterController.setSetpoint(velocity.get().in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
+	public void setFlywheelVelocity(AngularVelocity velocity) {
+		leftShooterController.setSetpoint(velocity.in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
+		rightShooterController.setSetpoint(velocity.in(RadiansPerSecond), SparkBase.ControlType.kVelocity);
 	}
 
 	@Override
-	public void setHoodAngle(Supplier<Angle> angle) {
-		hoodController.setSetpoint(angle.get().in(Radians), SparkBase.ControlType.kPosition);
+	public void setHoodAngle(Angle angle) {
+		hoodController.setSetpoint(angle.in(Radians), SparkBase.ControlType.kPosition);
 	}
 }

@@ -39,7 +39,7 @@ public interface ShooterIO {
 	 * @param velocity
 	 *            The speed that the flywheel should go to.
 	 */
-	void setFlywheelVelocity(Supplier<AngularVelocity> velocity);
+	void setFlywheelVelocity(AngularVelocity velocity);
 
-	void setHoodAngle(Supplier<Angle> angle);
+	void setHoodAngle(Angle angle);
 }

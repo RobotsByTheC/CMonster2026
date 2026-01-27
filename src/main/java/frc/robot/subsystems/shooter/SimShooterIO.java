@@ -90,13 +90,13 @@ public class SimShooterIO implements ShooterIO {
 	}
 
 	@Override
-	public void setFlywheelVelocity(Supplier<AngularVelocity> angularVelocity) {
-		targetFlywheelSpeed.mut_setMagnitude(angularVelocity.get().in(RPM));
+	public void setFlywheelVelocity(AngularVelocity angularVelocity) {
+		targetFlywheelSpeed.mut_setMagnitude(angularVelocity.in(RPM));
 	}
 
 	@Override
-	public void setHoodAngle(Supplier<Angle> angle) {
-		targetHoodAngle.mut_setMagnitude(angle.get().in(Radians));
+	public void setHoodAngle(Angle angle) {
+		targetHoodAngle.mut_setMagnitude(angle.in(Radians));
 	}
 
 	@Override
