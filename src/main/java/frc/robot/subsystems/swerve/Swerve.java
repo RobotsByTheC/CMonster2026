@@ -72,4 +72,8 @@ public class Swerve extends SubsystemBase {
 		}, () -> io.driveSpeeds(filter.calculate(driveController.calculate(poseEstimator.getEstimatedPosition(),
 				targetPose, 0, targetPose.getRotation())))).until(driveController::atReference);
 	}
+
+	public Command f_driveLockedOn(Supplier<Pose2d> relativePose) {
+		return Commands.none();
+	}
 }
