@@ -34,7 +34,8 @@ public class Swerve extends SubsystemBase {
 	private final SwerveDrivePoseEstimator poseEstimator;
 	private final ChassisSpeedsFilter filter;
 
-	public Pose2d targetPose = Pose2d.kZero;
+	private Pose2d targetPose = Pose2d.kZero;
+	private Rotation2d lockedTargetPose = Rotation2d.kZero;
 
 	public Swerve(SwerveIO io) {
 		this.io = io;
@@ -71,5 +72,14 @@ public class Swerve extends SubsystemBase {
 			filter.reset();
 		}, () -> io.driveSpeeds(filter.calculate(driveController.calculate(poseEstimator.getEstimatedPosition(),
 				targetPose, 0, targetPose.getRotation())))).until(driveController::atReference);
+	}
+
+	public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Pose2d> lockedPose) {
+		return startRun(() -> lockedTargetPose = io.getHeading(),
+				() -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(),
+						RadiansPerSecond
+								.of(thetaController.calculate(io.getHeading().minus(lockedTargetPose).getRadians(),
+										Math.atan2(lockedPose.get().getY(), lockedPose.get().getX()))),
+						io.getHeading())));
 	}
 }
