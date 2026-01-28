@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
 import frc.robot.sim.SimulationContext;
 
-import java.util.function.Supplier;
-
 @Logged
 public class SimShooterIO implements ShooterIO {
 	@NotLogged private final FlywheelSim flywheelSim;
