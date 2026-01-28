@@ -14,30 +14,30 @@ import java.util.function.Supplier;
 public class Shooter extends SubsystemBase {
 	private final ShooterIO io;
 
-  private final MutDistance lastDistanceToTarget = Meters.mutable(0);
+	private final MutDistance lastDistanceToTarget = Meters.mutable(0);
 
 	public Shooter(ShooterIO io) {
-    this.io = io;
-  }
+		this.io = io;
+	}
 
-  public Command f_shootDistance(Supplier<Distance> distance) {
-    return run(() -> {
-      if (!lastDistanceToTarget.isNear(distance.get(), Inches.of(0.5)) || lastDistanceToTarget.magnitude() == 0) {
-        io.setFlywheelVelocity(LookupTable.SPEED_TABLE.get(distance.get()));
-        io.setHoodAngle(LookupTable.ANGLE_TABLE.get(distance.get()));
-        lastDistanceToTarget.mut_setMagnitude(distance.get().magnitude());
-      }
-    });
-  }
+	public Command f_shootDistance(Supplier<Distance> distance) {
+		return run(() -> {
+			if (!lastDistanceToTarget.isNear(distance.get(), Inches.of(0.5)) || lastDistanceToTarget.magnitude() == 0) {
+				io.setFlywheelVelocity(LookupTable.SPEED_TABLE.get(distance.get()));
+				io.setHoodAngle(LookupTable.ANGLE_TABLE.get(distance.get()));
+				lastDistanceToTarget.mut_setMagnitude(distance.get().magnitude());
+			}
+		});
+	}
 
-  public Command o_resetDistance() {
-    return runOnce(() -> lastDistanceToTarget.mut_setMagnitude(0));
-  }
+	public Command o_resetDistance() {
+		return runOnce(() -> lastDistanceToTarget.mut_setMagnitude(0));
+	}
 
-  public Command f_idle() {
-    return run(() -> {
-      io.stopFlywheel();
-      io.stopHood();
-    });
-  }
+	public Command f_idle() {
+		return run(() -> {
+			io.stopFlywheel();
+			io.stopHood();
+		});
+	}
 }
