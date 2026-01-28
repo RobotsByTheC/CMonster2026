@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
 	private final Shooter shooter;
 	private final Swerve swerve;
 
-  public MutDistance shooterSimDistance = Meters.mutable(1);
+	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
 
 	@NotLogged private final CommandXboxController operatorController;
@@ -84,10 +84,11 @@ public class Robot extends TimedRobot {
 		shooter.setDefaultCommand(shooter.f_idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 
-		operatorController.x().whileTrue(intake.f_extendAndGrab());
-		operatorController.x().onFalse(intake.l_retractAndGrab());
-		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance));
-		operatorController.y().onFalse(shooter.o_resetDistance());
+		operatorController.x().whileTrue(intake.f_extendAndGrab()).onFalse(intake.l_retractAndGrab());
+
+		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance))
+				.onFalse(shooter.o_resetDistance());
+
 		operatorController.leftBumper().onTrue(Commands.runOnce(() -> childLockMultiplier = 0.2d))
 				.onFalse(Commands.runOnce(() -> childLockMultiplier = 1));
 
