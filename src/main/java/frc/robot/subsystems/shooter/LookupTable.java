@@ -11,8 +11,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
 
-import java.util.Comparator;
-
 import static edu.wpi.first.units.Units.*;
 
 public record LookupTable() {
