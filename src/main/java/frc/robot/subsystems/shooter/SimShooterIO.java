@@ -46,7 +46,8 @@ public class SimShooterIO implements ShooterIO {
 			@Override
 			public void update(double timestep) {
 				double feedForward = flywheelFeedForward.calculate(targetFlywheelSpeed.in(RPM));
-				double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM), targetFlywheelSpeed.in(RPM));
+				double pid = flywheelPIDController.calculate(flywheelSim.getAngularVelocity().in(RPM),
+						targetFlywheelSpeed.in(RPM));
 				flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(pid + feedForward));
 
 				flywheelSim.update(timestep);
@@ -61,7 +62,8 @@ public class SimShooterIO implements ShooterIO {
 			@Override
 			public void update(double timestep) {
 
-				hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(hoodPIDController.calculate(hoodSim.getAngleRads(), targetHoodAngle.in(Radians))));
+				hoodSim.setInputVoltage(hoodMechanismSim.outputVoltage(
+						hoodPIDController.calculate(hoodSim.getAngleRads(), targetHoodAngle.in(Radians))));
 
 				hoodSim.update(timestep);
 			}
