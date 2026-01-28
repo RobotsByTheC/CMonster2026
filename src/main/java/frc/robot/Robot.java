@@ -92,7 +92,8 @@ public class Robot extends TimedRobot {
 		operatorController.leftBumper().onTrue(Commands.runOnce(() -> childLockMultiplier = 0.2d))
 				.onFalse(Commands.runOnce(() -> childLockMultiplier = 1));
 
-    operatorController.a().onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters)+0.1)));
+		operatorController.a().onTrue(
+				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
 	}
 
 	@Override
