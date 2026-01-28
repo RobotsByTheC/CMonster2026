@@ -20,6 +20,8 @@ import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -134,13 +136,24 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {}
 
+	private LinearVelocity getLinearJoystickVelocity(double rawValue) {
+		return MAX_DRIVE_SPEED.times(rawValue).times(childLockMultiplier);
+	}
+	private AngularVelocity getAngularJoystickVelocity(double rawValue) {
+		return MAX_TURN_SPEED.times(rawValue).times(childLockMultiplier);
+	}
+
 	public Command f_driveWithFlightSticks() {
-		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()).times(childLockMultiplier),
-				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()).times(childLockMultiplier),
-				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()).times(childLockMultiplier));
+		return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()),
+				() -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
 	}
 
 	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
-		return swerve.f_driveLockedOn(relativePose).alongWith(shooter.f_shootDistance(() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
+		return swerve
+				.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+						() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose)
+				.alongWith(shooter.f_shootDistance(
+						() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
 	}
 }
