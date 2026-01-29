@@ -1,6 +1,9 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Second;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
@@ -10,10 +13,12 @@ import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -44,11 +49,23 @@ public class SwerveModule {
 		turnController = turnSpark.getClosedLoopController();
 
 		SparkMaxConfig driveConfig = new SparkMaxConfig();
+		driveConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50);
+		driveConfig.encoder
+				.positionConversionFactor(
+						DriveConstants.WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
+				.velocityConversionFactor(DriveConstants.WHEEL_DIAMETER
+						.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
 		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
-				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
+				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0).outputRange(-1, -1)
+				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
+		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
+		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI);
 		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
-				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
+				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0)
+				.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
+				.positionWrappingInputRange(0, 2 * Math.PI);
 
 		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
