@@ -108,4 +108,9 @@ public class Constants {
 			public static final double KV = 0.00137;
 		}
 	}
+
+	public static class HopperConstants {
+		public static final Voltage IntakeVoltage = Volts.of(5);
+		public static final Voltage ReverseVoltage = Volts.of(-5);
+	}
 }
