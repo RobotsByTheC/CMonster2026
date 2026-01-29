@@ -42,6 +42,9 @@ import frc.robot.subsystems.shooter.SimShooterIO;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.RealHopperIO;
+import frc.robot.subsystems.hopper.SimHopperIO;
 
 import java.util.function.Supplier;
 
@@ -51,6 +54,7 @@ public class Robot extends TimedRobot {
 	private final Intake intake;
 	private final Shooter shooter;
 	private final Swerve swerve;
+	private final Hopper hopper;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -64,10 +68,12 @@ public class Robot extends TimedRobot {
 			intake = new Intake(new SimIntakeIO());
 			shooter = new Shooter(new SimShooterIO());
 			swerve = new Swerve(new SimSwerveIO());
+			hopper = new Hopper(new SimHopperIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
 			shooter = new Shooter(new RealShooterIO());
 			swerve = new Swerve(new RealSwerveIO());
+			hopper = new Hopper(new RealHopperIO());
 		}
 
 		DriverStation.silenceJoystickConnectionWarning(true);
@@ -85,8 +91,10 @@ public class Robot extends TimedRobot {
 		intake.setDefaultCommand(intake.f_stowAndIdle());
 		shooter.setDefaultCommand(shooter.f_idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
+		hopper.setDefaultCommand(hopper.f_idle());
 
-		operatorController.x().whileTrue(intake.f_extendAndGrab()).onFalse(intake.l_retractAndGrab());
+		operatorController.x().whileTrue(intake.f_extendAndGrab().alongWith(hopper.f_hopperIntake()))
+				.onFalse(intake.l_retractAndGrab().deadlineFor(hopper.f_hopperIntake()));
 
 		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance))
 				.onFalse(shooter.o_resetDistance());
