@@ -57,9 +57,9 @@ public class SwerveModule {
 		driveConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50);
 		driveConfig.encoder
 				.positionConversionFactor(
-						DriveConstants.WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
-				.velocityConversionFactor(DriveConstants.WHEEL_DIAMETER
-						.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
+						WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
+				.velocityConversionFactor(WHEEL_DIAMETER
+						.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Minute).in(MetersPerSecond));
 		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
 				.outputRange(-1, 1)
 				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
