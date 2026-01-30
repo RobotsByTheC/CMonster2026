@@ -35,10 +35,9 @@ public class SwerveModule {
 	private final SparkClosedLoopController driveController;
 	private final SparkClosedLoopController turnController;
 
-	private final double offset;
 	private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
 
-	public SwerveModule(int drivingCan, int turningCan, double offset) {
+	public SwerveModule(int drivingCan, int turningCan) {
 		driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
 		turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
 
@@ -70,17 +69,16 @@ public class SwerveModule {
 		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		this.offset = offset;
 		desiredState.angle = new Rotation2d(turnEncoder.getPosition());
 		driveEncoder.setPosition(0);
 	}
 
 	public SwerveModuleState getState() {
-		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition() - offset));
+		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition()));
 	}
 
 	public SwerveModulePosition getPosition() {
-		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition() - offset));
+		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition()));
 	}
 
 	public void setDesiredState(SwerveModuleState desiredState) {
