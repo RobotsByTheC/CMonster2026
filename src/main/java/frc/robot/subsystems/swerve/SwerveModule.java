@@ -96,10 +96,6 @@ public class SwerveModule {
 		this.desiredState = desiredState;
 	}
 
-	public void resetEncoders() {
-		driveEncoder.setPosition(0);
-	}
-
 	public void stop() {
 		driveSpark.setVoltage(0);
 		turnSpark.setVoltage(0);
