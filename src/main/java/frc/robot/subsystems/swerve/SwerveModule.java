@@ -90,10 +90,8 @@ public class SwerveModule {
 	public void setDesiredState(SwerveModuleState desiredState) {
 		desiredState.optimize(Rotation2d.fromRadians(turnEncoder.getPosition()));
 
-		correctedDesiredState.optimize(new Rotation2d(turnEncoder.getPosition()));
-
-		driveController.setSetpoint(correctedDesiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
-		turnController.setSetpoint(correctedDesiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
+		driveController.setSetpoint(desiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
+		turnController.setSetpoint(desiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
 
 		this.desiredState = desiredState;
 	}
