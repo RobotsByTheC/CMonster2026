@@ -63,6 +63,7 @@ public class SwerveModule {
 		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
 				.outputRange(-1, 1)
 				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    driveConfig.closedLoop.feedForward.kV(1/WHEEL_DIAMETER.times(Math.PI).times(RPM.of(5676).in(RotationsPerSecond)).div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
 
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
 		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
