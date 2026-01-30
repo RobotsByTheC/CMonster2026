@@ -61,7 +61,7 @@ public class SwerveModule {
 				.velocityConversionFactor(DriveConstants.WHEEL_DIAMETER
 						.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
 		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
-				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0).outputRange(-1, -1)
+				.outputRange(-1, 1)
 				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
 
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
