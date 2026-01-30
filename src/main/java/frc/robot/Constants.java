@@ -36,9 +36,8 @@ public class Constants {
 		}
 
 		public static class TurnConstants {
-			public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(2);
-			public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(2);
-
+			public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(10);
+			public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(10);
 
 			public static final double KP = 1;
 			public static final double KI = 0;
