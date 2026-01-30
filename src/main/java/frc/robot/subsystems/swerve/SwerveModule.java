@@ -67,7 +67,7 @@ public class SwerveModule {
 
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
 		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
-		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI);
+		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI).inverted(true);
 		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
 				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0)
 				.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
