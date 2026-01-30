@@ -39,7 +39,6 @@ public class Constants {
 			public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(2);
 			public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(2);
 
-			public static final double TURN_MOTOR_REDUCTION = 9424.0 / 203;
 
 			public static final double KP = 1;
 			public static final double KI = 0;
