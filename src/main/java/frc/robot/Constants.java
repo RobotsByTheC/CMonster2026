@@ -41,7 +41,7 @@ public class Constants {
 
 			public static final double TURN_MOTOR_REDUCTION = 9424.0 / 203;
 
-			public static final double KP = 0;
+			public static final double KP = 1;
 			public static final double KI = 0;
 			public static final double KD = 0;
 			public static final double AUTO_P = 0;
