@@ -88,9 +88,7 @@ public class SwerveModule {
 	}
 
 	public void setDesiredState(SwerveModuleState desiredState) {
-		SwerveModuleState correctedDesiredState = new SwerveModuleState();
-		correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-		correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(offset));
+		desiredState.optimize(Rotation2d.fromRadians(turnEncoder.getPosition()));
 
 		correctedDesiredState.optimize(new Rotation2d(turnEncoder.getPosition()));
 
