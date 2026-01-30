@@ -18,8 +18,7 @@ public class Constants {
 			public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(2);
 			public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
 			public static final Distance WHEEL_DIAMETER = Inches.of(3);
-			public static final Distance WHEEL_CIRCUMFERENCE = WHEEL_DIAMETER.times(Math.PI);
-			public static final double DRIVE_MOTOR_REDUCTION = (45.0 * 22) / (14 * 15);
+			public static final double DRIVE_MOTOR_REDUCTION = 4.71428571;
 
 			public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
 					new Translation2d(DRIVETRAIN_HEIGHT.in(Meters) / 2, DRIVETRAIN_WIDTH.in(Meters) / 2),
