@@ -1,4 +1,4 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.data;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
@@ -14,11 +14,10 @@ import edu.wpi.first.units.measure.Distance;
 import static edu.wpi.first.units.Units.*;
 
 public record LookupTable() {
+	@SuppressWarnings("unchecked")
 	public static <U extends Unit, M extends Measure<U>> Interpolator<M> unitInterpolator() {
-		return (startValue, endValue, t) -> {
-			// ((end - start) * t) + start
-			return (M) endValue.minus(startValue).times(MathUtil.clamp(t, 0, 1)).plus(startValue);
-		};
+		return (startValue, endValue,
+				t) -> (M) endValue.minus(startValue).times(MathUtil.clamp(t, 0, 1)).plus(startValue);
 	}
 
 	public static <U extends Unit, M extends Measure<U>> InverseInterpolator<M> inverseUnitInterpolator() {

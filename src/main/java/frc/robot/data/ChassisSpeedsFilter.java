@@ -1,4 +1,4 @@
-package frc.robot.subsystems.data;
+package frc.robot.data;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;

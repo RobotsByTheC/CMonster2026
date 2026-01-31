@@ -8,6 +8,7 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.data.LookupTable;
 import java.util.function.Supplier;
 
 @Logged
