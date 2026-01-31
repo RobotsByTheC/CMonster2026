@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
@@ -50,11 +51,12 @@ import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
+
 	private Command autonomousCommand;
-	private final Intake intake;
-	private final Shooter shooter;
+//	private final Intake intake;
+//	private final Shooter shooter;
 	private final Swerve swerve;
-	private final Hopper hopper;
+//	private final Hopper hopper;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -65,15 +67,15 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		if (Robot.isSimulation()) {
-			intake = new Intake(new SimIntakeIO());
-			shooter = new Shooter(new SimShooterIO());
+//			intake = new Intake(new SimIntakeIO());
+//			shooter = new Shooter(new SimShooterIO());
 			swerve = new Swerve(new SimSwerveIO());
-			hopper = new Hopper(new SimHopperIO());
+//			hopper = new Hopper(new SimHopperIO());
 		} else {
-			intake = new Intake(new RealIntakeIO());
-			shooter = new Shooter(new RealShooterIO());
+//			intake = new Intake(new RealIntakeIO());
+//			shooter = new Shooter(new RealShooterIO());
 			swerve = new Swerve(new RealSwerveIO());
-			hopper = new Hopper(new RealHopperIO());
+//			hopper = new Hopper(new RealHopperIO());
 		}
 
 		DriverStation.silenceJoystickConnectionWarning(true);
@@ -88,16 +90,16 @@ public class Robot extends TimedRobot {
 		Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-		intake.setDefaultCommand(intake.f_stowAndIdle());
-		shooter.setDefaultCommand(shooter.f_idle());
+//		intake.setDefaultCommand(intake.f_stowAndIdle());
+//		shooter.setDefaultCommand(shooter.f_idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
-		hopper.setDefaultCommand(hopper.f_idle());
+//		hopper.setDefaultCommand(hopper.f_idle());
 
-		operatorController.x().whileTrue(intake.f_extendAndGrab().alongWith(hopper.f_hopperIntake()))
-				.onFalse(intake.l_retractAndGrab().deadlineFor(hopper.f_hopperIntake()));
-
-		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance))
-				.onFalse(shooter.o_resetDistance());
+//		operatorController.x().whileTrue(intake.f_extendAndGrab().alongWith(hopper.f_hopperIntake()))
+//				.onFalse(intake.l_retractAndGrab().deadlineFor(hopper.f_hopperIntake()));
+//
+//		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance))
+//				.onFalse(shooter.o_resetDistance());
 
 		operatorController.leftBumper().onTrue(Commands.runOnce(() -> childLockMultiplier = 0.2d))
 				.onFalse(Commands.runOnce(() -> childLockMultiplier = 1));
@@ -157,11 +159,15 @@ public class Robot extends TimedRobot {
 				() -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
 	}
 
-	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
-		return swerve
-				.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-						() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose)
-				.alongWith(shooter.f_shootDistance(
-						() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
-	}
+//	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
+//		return swerve
+//				.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+//						() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose)
+//				.alongWith(shooter.f_shootDistance(
+//						() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
+//	}
+
+  public void updateDashboard() {
+
+  }
 }
