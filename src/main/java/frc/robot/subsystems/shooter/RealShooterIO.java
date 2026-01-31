@@ -45,6 +45,7 @@ public class RealShooterIO implements ShooterIO {
 		leftShooterSparkB.configure(leftConfigB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		rightShooterSparkA = new SparkMax(FLYWHEEL_RIGHT_A_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		SparkMaxConfig rightConfigA = new SparkMaxConfig();
+		rightConfigA.inverted(true);
 		rightConfigA.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		rightShooterSparkA.configure(rightConfigA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		rightShooterSparkB = new SparkMax(FLYWHEEL_RIGHT_B_CAN_ID, SparkLowLevel.MotorType.kBrushless);
