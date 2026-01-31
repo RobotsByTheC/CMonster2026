@@ -4,7 +4,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
 
 @Logged
 public interface ShooterIO {
@@ -12,8 +11,6 @@ public interface ShooterIO {
 	 * Stop the flywheel of the shooter.
 	 */
 	void stopFlywheel();
-
-	void stopIntermediary();
 
 	void stopHood();
 
@@ -23,6 +20,8 @@ public interface ShooterIO {
 	 * @return The flywheel's velocity.
 	 */
 	AngularVelocity getFlywheelVelocity();
+
+	Angle getHoodAngle();
 
 	/**
 	 * Returns the current draw that the mechanism is currently consuming.
@@ -38,8 +37,6 @@ public interface ShooterIO {
 	 *            The speed that the flywheel should go to.
 	 */
 	void setFlywheelVelocity(AngularVelocity velocity);
-
-	void setIntermediaryVoltage(Voltage voltage);
 
 	void setHoodAngle(Angle angle);
 }

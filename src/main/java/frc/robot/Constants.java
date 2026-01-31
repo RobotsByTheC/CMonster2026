@@ -94,12 +94,10 @@ public class Constants {
 	}
 
 	public static class ShooterConstants {
-		public static class Hood {
-			public static final double KP = 1;
+		public static class HoodConstants {
+			public static final double KP = 5;
 			public static final double KI = 0;
 			public static final double KD = 0;
-			public static final double KS = 0;
-			public static final double KV = 0;
 		}
 
 		public static class FlywheelConstants {
@@ -109,6 +107,10 @@ public class Constants {
 			public static final double KS = 0;
 			public static final double KV = 0.00137;
 		}
-		public static final AngularVelocity SHOOTER_SPEED = RPM.of(5000);
+	}
+
+	public static class HopperConstants {
+		public static final Voltage IntakeVoltage = Volts.of(5);
+		public static final Voltage ReverseVoltage = Volts.of(-5);
 	}
 }

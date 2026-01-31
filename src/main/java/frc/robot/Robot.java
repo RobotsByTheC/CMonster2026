@@ -18,23 +18,35 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
+import frc.robot.subsystems.shooter.RealShooterIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.shooter.SimShooterIO;
 import frc.robot.subsystems.swerve.RealSwerveIO;
+import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.RealHopperIO;
+import frc.robot.subsystems.hopper.SimHopperIO;
+
+import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -42,6 +54,10 @@ public class Robot extends TimedRobot {
 	private final Intake intake;
 	private final Shooter shooter;
 	private final Swerve swerve;
+	private final Hopper hopper;
+
+	public MutDistance shooterSimDistance = Meters.mutable(1);
+	private double childLockMultiplier = 1;
 
 	@NotLogged private final CommandXboxController operatorController;
 	@NotLogged private final CommandJoystick leftFlightStick;
@@ -51,11 +67,13 @@ public class Robot extends TimedRobot {
 		if (Robot.isSimulation()) {
 			intake = new Intake(new SimIntakeIO());
 			shooter = new Shooter(new SimShooterIO());
-			swerve = null;
+			swerve = new Swerve(new SimSwerveIO());
+			hopper = new Hopper(new SimHopperIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
-			shooter = null;
+			shooter = new Shooter(new RealShooterIO());
 			swerve = new Swerve(new RealSwerveIO());
+			hopper = new Hopper(new RealHopperIO());
 		}
 
 		DriverStation.silenceJoystickConnectionWarning(true);
@@ -71,13 +89,21 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
-		shooter.setDefaultCommand(shooter.stop());
+		shooter.setDefaultCommand(shooter.f_idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
+		hopper.setDefaultCommand(hopper.f_idle());
 
-		operatorController.x().whileTrue(intake.f_extendAndGrab());
-		operatorController.x().onFalse(intake.l_retractAndGrab());
+		operatorController.x().whileTrue(intake.f_extendAndGrab().alongWith(hopper.f_hopperIntake()))
+				.onFalse(intake.l_retractAndGrab().deadlineFor(hopper.f_hopperIntake()));
 
-		operatorController.y().whileTrue(shooter.f_shootAtTarget(() -> Meters.of(1)));
+		operatorController.y().whileTrue(shooter.f_shootDistance(() -> shooterSimDistance))
+				.onFalse(shooter.o_resetDistance());
+
+		operatorController.leftBumper().onTrue(Commands.runOnce(() -> childLockMultiplier = 0.2d))
+				.onFalse(Commands.runOnce(() -> childLockMultiplier = 1));
+
+		operatorController.a().onTrue(
+				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
 	}
 
 	@Override
@@ -118,9 +144,24 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {}
 
+	private LinearVelocity getLinearJoystickVelocity(double rawValue) {
+		return MAX_DRIVE_SPEED.times(rawValue).times(childLockMultiplier);
+	}
+	private AngularVelocity getAngularJoystickVelocity(double rawValue) {
+		return MAX_TURN_SPEED.times(rawValue).times(childLockMultiplier);
+	}
+
 	public Command f_driveWithFlightSticks() {
-		return swerve.f_drive(() -> MAX_DRIVE_SPEED.times(rightFlightStick.getX()),
-				() -> MAX_DRIVE_SPEED.times(rightFlightStick.getY()),
-				() -> MAX_TURN_SPEED.times(leftFlightStick.getTwist()));
+		return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()),
+				() -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
+	}
+
+	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
+		return swerve
+				.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+						() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose)
+				.alongWith(shooter.f_shootDistance(
+						() -> Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY()))));
 	}
 }
