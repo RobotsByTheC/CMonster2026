@@ -13,7 +13,17 @@ public class SimSwerveIO implements SwerveIO {
 		return Rotation2d.kZero;
 	}
 
-	@Override
+  @Override
+  public boolean isGyroConnected() {
+    return true;
+  }
+
+  @Override
+  public boolean[] getSwerveStatuses() {
+    return new boolean[0];
+  }
+
+  @Override
 	public void setGyro(Rotation2d heading) {}
 
 	@Override

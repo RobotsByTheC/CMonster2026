@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.data.ChassisSpeedsFilter;
 
+import java.util.Collections;
 import java.util.function.Supplier;
 
 @Logged
@@ -56,6 +57,13 @@ public class Swerve extends SubsystemBase {
 	public void periodic() {
 		poseEstimator.update(io.getHeading(), io.getModulePositions());
 	}
+
+  public boolean isGyroConnected() {
+    return io.isGyroConnected();
+  }
+  public boolean[] getStatus() {
+    return io.getSwerveStatuses();
+  }
 
 	public Command o_zeroGyro() {
 		return Commands.runOnce(() -> io.setGyro(Rotation2d.kZero));

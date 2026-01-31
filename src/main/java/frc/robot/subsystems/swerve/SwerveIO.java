@@ -19,6 +19,14 @@ public interface SwerveIO {
 	 */
 	Rotation2d getHeading();
 
+  /**
+   * Checks whether the gyro is connected to the robot using the built-in Pigeon libraries.
+   * @return True if the gyro is connected, false if not.
+   */
+  boolean isGyroConnected();
+
+  boolean[] getSwerveStatuses();
+
 	/**
 	 * Set the gyro to a passed in heading, can be reset to zero by passing in {@link Rotation2d#kZero}
 	 *

@@ -7,6 +7,7 @@ import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.ClosedLoopSlot;
@@ -89,4 +90,11 @@ public class SwerveModule {
 		driveController.setSetpoint(0, SparkBase.ControlType.kVoltage);
 		turnController.setSetpoint(0, SparkBase.ControlType.kVoltage);
 	}
+
+  public boolean isDriveConnected() {
+    return driveSpark.clearFaults().equals(REVLibError.kCANDisconnected);
+  }
+  public boolean isTurnConnected() {
+    return turnSpark.clearFaults().equals(REVLibError.kCANDisconnected);
+  }
 }
