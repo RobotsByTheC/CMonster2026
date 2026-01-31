@@ -4,21 +4,17 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Minute;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.DRIVE_MOTOR_REDUCTION;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.WHEEL_DIAMETER;
-import static frc.robot.Constants.SwerveConstants.TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -58,16 +54,17 @@ public class SwerveModule {
 		driveConfig.encoder
 				.positionConversionFactor(
 						WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
-				.velocityConversionFactor(WHEEL_DIAMETER
-						.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Minute).in(MetersPerSecond));
-		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
-				.outputRange(-1, 1)
+				.velocityConversionFactor(WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION)
+						.per(Minute).in(MetersPerSecond));
+		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD).outputRange(-1, 1)
 				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-    driveConfig.closedLoop.feedForward.kV(1/WHEEL_DIAMETER.times(Math.PI).times(RPM.of(5676).in(RotationsPerSecond)).div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
+		driveConfig.closedLoop.feedForward.kV(1 / WHEEL_DIAMETER.times(Math.PI)
+				.times(RPM.of(5676).in(RotationsPerSecond)).div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
 
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
 		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
-		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI).inverted(true);
+		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI)
+				.inverted(true);
 		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
 				.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
 				.positionWrappingInputRange(0, 2 * Math.PI);
