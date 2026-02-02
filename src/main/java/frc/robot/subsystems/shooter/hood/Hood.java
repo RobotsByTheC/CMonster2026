@@ -38,4 +38,8 @@ public class Hood extends SubsystemBase {
 		return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
 				() -> io.setVoltage(calculatePIDVoltage(target.get())));
 	}
+
+	public Command o_stop() {
+		return runOnce(io::stop);
+	}
 }
