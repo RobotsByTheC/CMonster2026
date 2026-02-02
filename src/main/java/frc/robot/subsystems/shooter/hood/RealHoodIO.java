@@ -45,4 +45,9 @@ public class RealHoodIO implements HoodIO {
 	public void setVoltage(Voltage voltage) {
 		spark.setVoltage(voltage);
 	}
+
+	@Override
+	public boolean atBottom() {
+		return limitSwitch.isPressed();
+	}
 }

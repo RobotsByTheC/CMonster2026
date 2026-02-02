@@ -53,4 +53,9 @@ public class SimHoodIO implements HoodIO {
 	public void setVoltage(Voltage voltage) {
 		sim.setInputVoltage(mechanism.outputVoltage(voltage.in(Volts)));
 	}
+
+	@Override
+	public boolean atBottom() {
+		return sim.hasHitLowerLimit();
+	}
 }

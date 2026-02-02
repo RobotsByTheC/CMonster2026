@@ -11,4 +11,5 @@ public interface HoodIO {
 	Angle getAngle();
 	AngularVelocity getVelocity();
 	void setVoltage(Voltage voltage);
+	boolean atBottom();
 }
