@@ -17,6 +17,7 @@ public class LookupTable {
 	private static Angle angle = Radians.zero();
 	private static AngularVelocity velocity = RadiansPerSecond.zero();
 
+	@SuppressWarnings("unchecked")
 	private static <U extends Unit, M extends Measure<U>> Interpolator<M> unitInterpolator() {
 		return (startValue, endValue,
 				t) -> (M) endValue.minus(startValue).times(MathUtil.clamp(t, 0, 1)).plus(startValue);
