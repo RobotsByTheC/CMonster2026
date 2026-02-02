@@ -22,4 +22,8 @@ public class Flywheel extends SubsystemBase {
 	public Command f_shoot(Supplier<AngularVelocity> target) {
 		return run(() -> io.setVelocity(target.get()));
 	}
+
+	public Command f_idle() {
+		return o_stop().andThen(idle());
+	}
 }
