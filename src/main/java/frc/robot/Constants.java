@@ -70,7 +70,6 @@ public class Constants {
 		public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
 		public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
 		public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
-		public static final int INTERMEDIARY_CAN_ID = 15;
 		public static final int HOOD_CAN_ID = 16;
 
 		public static final int GYRO_CAN_ID = 50;
@@ -98,6 +97,12 @@ public class Constants {
 			public static final double KP = 5;
 			public static final double KI = 0;
 			public static final double KD = 0;
+			public static final double KS = 0;
+			public static final double KG = 0;
+			public static final double KV = 0;
+			public static final double KA = 0;
+			public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
+			public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
 		}
 
 		public static class FlywheelConstants {
