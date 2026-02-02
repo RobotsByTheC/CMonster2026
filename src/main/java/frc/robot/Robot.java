@@ -80,8 +80,10 @@ public class Robot extends TimedRobot {
 			hood = new Hood(new SimHoodIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
-			leftShooter = new Flywheel(new RealFlywheelIO(false, Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID,  Constants.CANConstants.FLYWHEEL_LEFT_B_CAN_ID));
-			rightShooter = new Flywheel(new RealFlywheelIO(true, Constants.CANConstants.FLYWHEEL_RIGHT_A_CAN_ID, Constants.CANConstants.FLYWHEEL_RIGHT_B_CAN_ID));
+			leftShooter = new Flywheel(new RealFlywheelIO(false, Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID,
+					Constants.CANConstants.FLYWHEEL_LEFT_B_CAN_ID));
+			rightShooter = new Flywheel(new RealFlywheelIO(true, Constants.CANConstants.FLYWHEEL_RIGHT_A_CAN_ID,
+					Constants.CANConstants.FLYWHEEL_RIGHT_B_CAN_ID));
 			swerve = new Swerve(new RealSwerveIO());
 			hopper = new Hopper(new RealHopperIO());
 			hood = new Hood(new RealHoodIO());
@@ -163,7 +165,8 @@ public class Robot extends TimedRobot {
 	}
 
 	public Command f_shoot() {
-		return leftShooter.f_shoot(LookupTable::getVelocity).alongWith(rightShooter.f_shoot(LookupTable::getVelocity)).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
+		return leftShooter.f_shoot(LookupTable::getVelocity).alongWith(rightShooter.f_shoot(LookupTable::getVelocity))
+				.alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
 	}
 
 	public Command f_driveWithFlightSticks() {
@@ -173,9 +176,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
-		return swerve
-				.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-						() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose)
-				.alongWith(f_shoot());
+		return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose).alongWith(f_shoot());
 	}
 }
