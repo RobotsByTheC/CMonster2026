@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.CANConstants.HOOD_CAN_ID;
 
 @Logged
@@ -23,6 +24,11 @@ public class RealHoodIO implements HoodIO {
 		spark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 		encoder = spark.getEncoder();
 		limitSwitch = spark.getForwardLimitSwitch();
+	}
+
+	@Override
+	public void stop() {
+		spark.setVoltage(Volts.zero());
 	}
 
 	@Override

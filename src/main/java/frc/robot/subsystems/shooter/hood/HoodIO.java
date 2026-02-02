@@ -7,6 +7,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 @Logged
 public interface HoodIO {
+	void stop();
 	Angle getAngle();
 	AngularVelocity getVelocity();
 	void setVoltage(Voltage voltage);

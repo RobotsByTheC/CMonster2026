@@ -35,6 +35,11 @@ public class SimHoodIO implements HoodIO {
 	}
 
 	@Override
+	public void stop() {
+		sim.setInputVoltage(0);
+	}
+
+	@Override
 	public Angle getAngle() {
 		return Radians.of(sim.getAngleRads());
 	}
