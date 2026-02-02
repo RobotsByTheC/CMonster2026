@@ -28,8 +28,6 @@ public class Hopper extends SubsystemBase {
 	}
 
 	public Command f_idle() {
-		return run(() -> {
-			io.stop();
-		});
+		return run(io::stop);
 	}
 }
