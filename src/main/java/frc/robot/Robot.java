@@ -37,12 +37,7 @@ import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
-import frc.robot.subsystems.shooter.flywheel.Flywheel;
-import frc.robot.subsystems.shooter.flywheel.RealFlywheelIO;
-import frc.robot.subsystems.shooter.flywheel.SimFlywheelIO;
-import frc.robot.subsystems.shooter.hood.Hood;
-import frc.robot.subsystems.shooter.hood.RealHoodIO;
-import frc.robot.subsystems.shooter.hood.SimHoodIO;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
@@ -57,11 +52,9 @@ public class Robot extends TimedRobot {
 	private Command autonomousCommand;
 	private final Intake intake;
 	private final Swerve swerve;
-	private final Hood hood;
+	private final Shooter shooter;
+	private final Vision vision;
 	private final Hopper hopper;
-
-	private final Flywheel leftShooter;
-	private final Flywheel rightShooter;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -73,21 +66,17 @@ public class Robot extends TimedRobot {
 	public Robot() {
 		if (Robot.isSimulation()) {
 			intake = new Intake(new SimIntakeIO());
-			leftShooter = new Flywheel(new SimFlywheelIO());
-			rightShooter = new Flywheel(new SimFlywheelIO());
 			swerve = new Swerve(new SimSwerveIO());
+			shooter = new Shooter(false);
 			hopper = new Hopper(new SimHopperIO());
-			hood = new Hood(new SimHoodIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
-			leftShooter = new Flywheel(new RealFlywheelIO(false, Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID,
-					Constants.CANConstants.FLYWHEEL_LEFT_B_CAN_ID));
-			rightShooter = new Flywheel(new RealFlywheelIO(true, Constants.CANConstants.FLYWHEEL_RIGHT_A_CAN_ID,
-					Constants.CANConstants.FLYWHEEL_RIGHT_B_CAN_ID));
 			swerve = new Swerve(new RealSwerveIO());
+			shooter = new Shooter(true);
 			hopper = new Hopper(new RealHopperIO());
-			hood = new Hood(new RealHoodIO());
 		}
+
+		vision = new Vision();
 
 		DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -102,11 +91,9 @@ public class Robot extends TimedRobot {
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
 		intake.setDefaultCommand(intake.f_stowAndIdle());
-		leftShooter.setDefaultCommand(leftShooter.idle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
+		shooter.setDefaultCommand(shooter.f_idle());
 		hopper.setDefaultCommand(hopper.f_idle());
-
-		operatorController.x().whileTrue(f_shoot());
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
@@ -164,19 +151,18 @@ public class Robot extends TimedRobot {
 		return MAX_TURN_SPEED.times(rawValue).times(childLockMultiplier);
 	}
 
-	public Command f_shoot() {
-		return leftShooter.f_shoot(LookupTable::getVelocity).alongWith(rightShooter.f_shoot(LookupTable::getVelocity))
-				.alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
-	}
-
 	public Command f_driveWithFlightSticks() {
 		return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
 				() -> getLinearJoystickVelocity(rightFlightStick.getY()),
 				() -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
 	}
 
-	public Command f_lockOnAndRev(Supplier<Pose2d> relativePose) {
+	public Command f_driveLockedOn() {
 		return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-				() -> getLinearJoystickVelocity(rightFlightStick.getY()), relativePose).alongWith(f_shoot());
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getRelativeTarget);
+	}
+
+	public Command f_lockOnAndRev() {
+		return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
 	}
 }
