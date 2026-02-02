@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -50,11 +51,11 @@ import java.util.function.Supplier;
 @Logged
 public class Robot extends TimedRobot {
 	private Command autonomousCommand;
-	private final Intake intake;
+//	private final Intake intake;
 	private final Swerve swerve;
 	private final Shooter shooter;
 	private final Vision vision;
-	private final Hopper hopper;
+//	private final Hopper hopper;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -65,15 +66,15 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		if (Robot.isSimulation()) {
-			intake = new Intake(new SimIntakeIO());
+//			intake = new Intake(new SimIntakeIO());
 			swerve = new Swerve(new SimSwerveIO());
 			shooter = new Shooter(false);
-			hopper = new Hopper(new SimHopperIO());
+//			hopper = new Hopper(new SimHopperIO());
 		} else {
-			intake = new Intake(new RealIntakeIO());
+//			intake = new Intake(new RealIntakeIO());
 			swerve = new Swerve(new RealSwerveIO());
 			shooter = new Shooter(true);
-			hopper = new Hopper(new RealHopperIO());
+//			hopper = new Hopper(new RealHopperIO());
 		}
 
 		vision = new Vision();
@@ -90,10 +91,12 @@ public class Robot extends TimedRobot {
 		Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
 				new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-		intake.setDefaultCommand(intake.f_stowAndIdle());
+//		intake.setDefaultCommand(intake.f_stowAndIdle());
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
-		shooter.setDefaultCommand(shooter.f_idle());
-		hopper.setDefaultCommand(hopper.f_idle());
+//		shooter.setDefaultCommand(shooter.f_idle());
+//		hopper.setDefaultCommand(hopper.f_idle());
+
+    operatorController.x().whileTrue(shooter.synchronizedRev(() -> RotationsPerSecond.of(10)));
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
@@ -104,11 +107,10 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().run();
 		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 		Epilogue.update(this);
-		Supplier<Pose2d> relativePose = Pose2d::new;
 		if (Robot.isSimulation()) {
 			LookupTable.update(shooterSimDistance);
 		} else {
-			LookupTable.update(Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY())));
+			LookupTable.update(Meters.of(Math.hypot(vision.getRelativeTarget().getX(), vision.getRelativeTarget().getY())));
 		}
 
 	}
