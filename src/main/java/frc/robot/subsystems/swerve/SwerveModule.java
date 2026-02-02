@@ -1,19 +1,26 @@
 package frc.robot.subsystems.swerve;
 
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Minute;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
-import static frc.robot.Constants.SwerveConstants.TOLERANCE;
+import static frc.robot.Constants.SwerveConstants.DriveConstants.DRIVE_MOTOR_REDUCTION;
+import static frc.robot.Constants.SwerveConstants.DriveConstants.WHEEL_DIAMETER;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,10 +37,9 @@ public class SwerveModule {
 	private final SparkClosedLoopController driveController;
 	private final SparkClosedLoopController turnController;
 
-	private final double offset;
 	private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
 
-	public SwerveModule(int drivingCan, int turningCan, double offset) {
+	public SwerveModule(int drivingCan, int turningCan) {
 		driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
 		turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
 
@@ -44,43 +50,47 @@ public class SwerveModule {
 		turnController = turnSpark.getClosedLoopController();
 
 		SparkMaxConfig driveConfig = new SparkMaxConfig();
-		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD)
-				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
+		driveConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50);
+		driveConfig.encoder
+				.positionConversionFactor(
+						WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
+				.velocityConversionFactor(WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION)
+						.per(Minute).in(MetersPerSecond));
+		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD).outputRange(-1, 1)
+				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+		driveConfig.closedLoop.feedForward.kV(1 / WHEEL_DIAMETER.times(Math.PI)
+				.times(RPM.of(5676).in(RotationsPerSecond)).div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
+
 		SparkMaxConfig turnConfig = new SparkMaxConfig();
+		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
+		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI)
+				.inverted(true);
 		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
-				.allowedClosedLoopError(TOLERANCE.in(Rotations), ClosedLoopSlot.kSlot0);
+				.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
+				.positionWrappingInputRange(0, 2 * Math.PI);
 
 		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		this.offset = offset;
 		desiredState.angle = new Rotation2d(turnEncoder.getPosition());
 		driveEncoder.setPosition(0);
 	}
 
 	public SwerveModuleState getState() {
-		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition() - offset));
+		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition()));
 	}
 
 	public SwerveModulePosition getPosition() {
-		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition() - offset));
+		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition()));
 	}
 
 	public void setDesiredState(SwerveModuleState desiredState) {
-		SwerveModuleState correctedDesiredState = new SwerveModuleState();
-		correctedDesiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond;
-		correctedDesiredState.angle = desiredState.angle.plus(Rotation2d.fromRadians(offset));
+		desiredState.optimize(Rotation2d.fromRadians(turnEncoder.getPosition()));
 
-		correctedDesiredState.optimize(new Rotation2d(turnEncoder.getPosition()));
-
-		driveController.setSetpoint(correctedDesiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
-		turnController.setSetpoint(correctedDesiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
+		driveController.setSetpoint(desiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
+		turnController.setSetpoint(desiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
 
 		this.desiredState = desiredState;
-	}
-
-	public void resetEncoders() {
-		driveEncoder.setPosition(0);
 	}
 
 	public void stop() {

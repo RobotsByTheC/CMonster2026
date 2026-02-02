@@ -17,6 +17,8 @@ public class Constants {
 		public static class DriveConstants {
 			public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(2);
 			public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
+			public static final Distance WHEEL_DIAMETER = Inches.of(3);
+			public static final double DRIVE_MOTOR_REDUCTION = 4.71428571;
 
 			public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
 					new Translation2d(DRIVETRAIN_HEIGHT.in(Meters) / 2, DRIVETRAIN_WIDTH.in(Meters) / 2),
@@ -24,24 +26,24 @@ public class Constants {
 					new Translation2d(-DRIVETRAIN_HEIGHT.in(Meters) / 2, DRIVETRAIN_WIDTH.in(Meters) / 2),
 					new Translation2d(-DRIVETRAIN_HEIGHT.in(Meters) / 2, -DRIVETRAIN_WIDTH.in(Meters) / 2));
 
-			public static final int KP = 1;
-			public static final int KI = 0;
-			public static final int KD = 0;
-			public static final int AUTO_P = 1;
-			public static final int AUTO_I = 0;
-			public static final int AUTO_D = 0;
+			public static final double KP = 0.04;
+			public static final double KI = 0;
+			public static final double KD = 0;
+			public static final double AUTO_P = 0;
+			public static final double AUTO_I = 0;
+			public static final double AUTO_D = 0;
 		}
 
 		public static class TurnConstants {
-			public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(2);
-			public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(2);
+			public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(10);
+			public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(10);
 
-			public static final int KP = 1;
-			public static final int KI = 0;
-			public static final int KD = 0;
-			public static final int AUTO_P = 1;
-			public static final int AUTO_I = 0;
-			public static final int AUTO_D = 0;
+			public static final double KP = 1;
+			public static final double KI = 0;
+			public static final double KD = 0;
+			public static final double AUTO_P = 0;
+			public static final double AUTO_I = 0;
+			public static final double AUTO_D = 0;
 		}
 
 		public static final Distance DRIVETRAIN_WIDTH = Inches.of(27);
@@ -56,14 +58,14 @@ public class Constants {
 	}
 
 	public static class CANConstants {
-		public static final int FRONT_LEFT_DRIVE_CAN_ID = 1;
-		public static final int FRONT_LEFT_TURN_CAN_ID = 2;
-		public static final int FRONT_RIGHT_DRIVE_CAN_ID = 3;
-		public static final int FRONT_RIGHT_TURN_CAN_ID = 4;
-		public static final int BACK_LEFT_DRIVE_CAN_ID = 5;
-		public static final int BACK_LEFT_TURN_CAN_ID = 6;
-		public static final int BACK_RIGHT_DRIVE_CAN_ID = 7;
-		public static final int BACK_RIGHT_TURN_CAN_ID = 8;
+		public static final int FRONT_LEFT_TURN_CAN_ID = 1;
+		public static final int FRONT_LEFT_DRIVE_CAN_ID = 2;
+		public static final int FRONT_RIGHT_TURN_CAN_ID = 3;
+		public static final int FRONT_RIGHT_DRIVE_CAN_ID = 4;
+		public static final int BACK_LEFT_TURN_CAN_ID = 5;
+		public static final int BACK_LEFT_DRIVE_CAN_ID = 6;
+		public static final int BACK_RIGHT_TURN_CAN_ID = 7;
+		public static final int BACK_RIGHT_DRIVE_CAN_ID = 8;
 		public static final int INTAKE_MOTOR_CAN_ID = 9;
 		public static final int INTAKE_WRIST_CAN_ID = 10;
 		public static final int FLYWHEEL_LEFT_A_CAN_ID = 11;

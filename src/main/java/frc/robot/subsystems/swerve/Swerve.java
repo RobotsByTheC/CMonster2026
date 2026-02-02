@@ -19,7 +19,7 @@ import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.data.ChassisSpeedsFilter;
+import frc.robot.data.ChassisSpeedsFilter;
 
 import java.util.function.Supplier;
 

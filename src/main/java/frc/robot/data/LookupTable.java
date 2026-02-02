@@ -1,4 +1,4 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.data;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
@@ -6,7 +6,10 @@ import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Unit;
-import edu.wpi.first.units.measure.*;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Dimensionless;
+import edu.wpi.first.units.measure.Distance;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -14,6 +17,7 @@ public class LookupTable {
 	private static Angle angle = Radians.zero();
 	private static AngularVelocity velocity = RadiansPerSecond.zero();
 
+	@SuppressWarnings("unchecked")
 	private static <U extends Unit, M extends Measure<U>> Interpolator<M> unitInterpolator() {
 		return (startValue, endValue,
 				t) -> (M) endValue.minus(startValue).times(MathUtil.clamp(t, 0, 1)).plus(startValue);
