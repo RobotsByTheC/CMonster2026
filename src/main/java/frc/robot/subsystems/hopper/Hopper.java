@@ -4,8 +4,8 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.HopperConstants.IntakeVoltage;
-import static frc.robot.Constants.HopperConstants.ReverseVoltage;
+import static frc.robot.Constants.HopperConstants.INTAKE_VOLTAGE;
+import static frc.robot.Constants.HopperConstants.OUTTAKE_VOLTAGE;
 
 @Logged
 public class Hopper extends SubsystemBase {
@@ -17,14 +17,13 @@ public class Hopper extends SubsystemBase {
 
 	public Command f_hopperIntake() {
 		return run(() -> {
-			io.setVoltage(IntakeVoltage);
+			io.setVoltage(INTAKE_VOLTAGE);
 		});
 	}
 
 	public Command f_hopperReverse() {
 		return run(() -> {
-			// Set this to negative velocity
-			io.setVoltage(ReverseVoltage);
+			io.setVoltage(OUTTAKE_VOLTAGE);
 		});
 	}
 
