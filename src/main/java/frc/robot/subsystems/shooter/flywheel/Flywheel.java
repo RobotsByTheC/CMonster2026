@@ -1,0 +1,21 @@
+package frc.robot.subsystems.shooter.flywheel;
+
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Supplier;
+
+@Logged
+public class Flywheel extends SubsystemBase {
+	private final FlywheelIO io;
+
+	public Flywheel(FlywheelIO io) {
+		this.io = io;
+	}
+
+	public Command f_shoot(Supplier<AngularVelocity> target) {
+		return run(() -> io.setVelocity(target.get()));
+	}
+}
