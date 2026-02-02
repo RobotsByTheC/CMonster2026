@@ -42,4 +42,8 @@ public class Hood extends SubsystemBase {
 	public Command o_stop() {
 		return runOnce(io::stop);
 	}
+
+	public Command f_idle() {
+		return o_stop().andThen(idle());
+	}
 }
