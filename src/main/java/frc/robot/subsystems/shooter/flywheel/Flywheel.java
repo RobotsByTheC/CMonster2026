@@ -15,6 +15,10 @@ public class Flywheel extends SubsystemBase {
 		this.io = io;
 	}
 
+	public Command o_stop() {
+		return runOnce(io::stop);
+	}
+
 	public Command f_shoot(Supplier<AngularVelocity> target) {
 		return run(() -> io.setVelocity(target.get()));
 	}
