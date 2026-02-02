@@ -13,14 +13,16 @@ import edu.wpi.first.units.measure.Distance;
 
 import static edu.wpi.first.units.Units.*;
 
-public record LookupTable() {
-	@SuppressWarnings("unchecked")
-	public static <U extends Unit, M extends Measure<U>> Interpolator<M> unitInterpolator() {
+public class LookupTable {
+	private static Angle angle = Radians.zero();
+	private static AngularVelocity velocity = RadiansPerSecond.zero();
+
+	private static <U extends Unit, M extends Measure<U>> Interpolator<M> unitInterpolator() {
 		return (startValue, endValue,
 				t) -> (M) endValue.minus(startValue).times(MathUtil.clamp(t, 0, 1)).plus(startValue);
 	}
 
-	public static <U extends Unit, M extends Measure<U>> InverseInterpolator<M> inverseUnitInterpolator() {
+	private static <U extends Unit, M extends Measure<U>> InverseInterpolator<M> inverseUnitInterpolator() {
 		return (startValue, endValue, q) -> {
 			var totalRange = endValue.minus(startValue);
 			if (totalRange.baseUnitMagnitude() <= 0) {
@@ -46,6 +48,19 @@ public record LookupTable() {
 		ANGLE_TABLE.put(dist, angle);
 	}
 
+	public static void update(Distance distance) {
+		velocity = SPEED_TABLE.get(distance);
+		angle = ANGLE_TABLE.get(distance);
+	}
+
+	public static Angle getAngle() {
+		return angle;
+	}
+
+	public static AngularVelocity getVelocity() {
+		return velocity;
+	}
+
 	static {
 		fill(Meters.of(1), RPM.of(1000), Degrees.of(80));
 		fill(Meters.of(1.1), RPM.of(1100), Degrees.of(75));
@@ -58,6 +73,5 @@ public record LookupTable() {
 		fill(Meters.of(1.8), RPM.of(1800), Degrees.of(40));
 		fill(Meters.of(1.9), RPM.of(1900), Degrees.of(35));
 		fill(Meters.of(2), RPM.of(2000), Degrees.of(30));
-
 	}
 }
