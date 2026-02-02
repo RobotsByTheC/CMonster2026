@@ -1,27 +1,22 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.shooter.flywheel;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 
 @Logged
-public interface ShooterIO {
+public interface FlywheelIO {
 	/**
 	 * Stop the flywheel of the shooter.
 	 */
-	void stopFlywheel();
-
-	void stopHood();
+	void stop();
 
 	/**
 	 * Returns the current velocity that the flywheel in the shooter is running at.
 	 *
 	 * @return The flywheel's velocity.
 	 */
-	AngularVelocity getFlywheelVelocity();
-
-	Angle getHoodAngle();
+	AngularVelocity getVelocity();
 
 	/**
 	 * Returns the current draw that the mechanism is currently consuming.
@@ -36,7 +31,5 @@ public interface ShooterIO {
 	 * @param velocity
 	 *            The speed that the flywheel should go to.
 	 */
-	void setFlywheelVelocity(AngularVelocity velocity);
-
-	void setHoodAngle(Angle angle);
+	void setVelocity(AngularVelocity velocity);
 }

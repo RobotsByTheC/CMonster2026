@@ -22,6 +22,7 @@ public class Intake extends SubsystemBase {
 	private final ArmFeedforward feedforward;
 	private final ProfiledPIDController pidController;
 	@NotLogged private final SysIdRoutine sysIdRoutine;
+
 	class Extension extends SubsystemBase {
 		public Command extend() {
 			return rotateToAngle(WRIST_EXTEND_ANGLE);
