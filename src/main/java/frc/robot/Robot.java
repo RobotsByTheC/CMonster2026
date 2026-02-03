@@ -18,7 +18,6 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -157,7 +156,6 @@ public class Robot extends TimedRobot {
 
 	public Command f_driveLockedOn() {
 		return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getRelativeTarget);
 				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getTarget);
 	}
 
