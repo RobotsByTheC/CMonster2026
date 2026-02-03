@@ -104,13 +104,11 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance().run();
 		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 		Epilogue.update(this);
-		Supplier<Pose2d> relativePose = Pose2d::new;
 		if (Robot.isSimulation()) {
 			LookupTable.update(shooterSimDistance);
 		} else {
-			LookupTable.update(Meters.of(Math.hypot(relativePose.get().getX(), relativePose.get().getY())));
+			LookupTable.update(Meters.of(Math.hypot(vision.getTarget().getX(), vision.getTarget().getY())));
 		}
-
 	}
 
 	@Override
@@ -160,6 +158,7 @@ public class Robot extends TimedRobot {
 	public Command f_driveLockedOn() {
 		return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
 				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getRelativeTarget);
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getTarget);
 	}
 
 	public Command f_lockOnAndRev() {
