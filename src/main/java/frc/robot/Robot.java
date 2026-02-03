@@ -100,6 +100,8 @@ public class Robot extends TimedRobot {
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
+
+    operatorController.y().whileTrue(shooter.tuneFlywheel());
 	}
 
 	@Override

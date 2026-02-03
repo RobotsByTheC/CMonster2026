@@ -17,6 +17,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutAngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 
 @Logged
 public class RealFlywheelIO implements FlywheelIO {
@@ -45,11 +46,6 @@ public class RealFlywheelIO implements FlywheelIO {
 	}
 
 	@Override
-	public void stop() {
-		controller.setSetpoint(0, SparkBase.ControlType.kVoltage);
-	}
-
-	@Override
 	public AngularVelocity getVelocity() {
 		return RPM.of(encoder.getVelocity());
 	}
@@ -65,4 +61,9 @@ public class RealFlywheelIO implements FlywheelIO {
     target.mut_setMagnitude(velocity.in(RPM));
     System.out.println("t: " + velocity + ", a: " + controller.getSetpoint());
 	}
+
+  @Override
+  public void setVoltage(Voltage voltage) {
+    sparkA.setVoltage(voltage);
+  }
 }

@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.data.LookupTable;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
@@ -56,4 +57,12 @@ public class Shooter extends SubsystemBase {
 	public Command f_aimAndRev() {
 		return synchronizedRev(LookupTable::getVelocity); //.alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
 	}
+
+  public Command tuneFlywheel() {
+    return leftFlywheel.tune();
+  }
+
+//  public Command tuneHood() {
+//    return hood.tune();
+//  }
 }
