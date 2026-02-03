@@ -69,17 +69,17 @@ public class Swerve extends SubsystemBase {
 	public Command l_driveToPose(Pose2d relativePose) {
 		return startRun(() -> {
 			targetPose = relativePose;
-			filter.reset();
+			filter.reset(io.getHeading());
 		}, () -> io.driveSpeeds(filter.calculate(driveController.calculate(poseEstimator.getEstimatedPosition(),
 				targetPose, 0, targetPose.getRotation())))).until(driveController::atReference);
 	}
 
 	public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Pose2d> lockedPose) {
-		return startRun(() -> lockedTargetPose = io.getHeading(),
-				() -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(),
-						RadiansPerSecond
-								.of(thetaController.calculate(io.getHeading().minus(lockedTargetPose).getRadians(),
+		return startRun(() -> thetaController.reset(io.getHeading().getRadians()),
+				() -> io.driveSpeeds(
+						ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(),
+								RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(),
 										Math.atan2(lockedPose.get().getY(), lockedPose.get().getX()))),
-						io.getHeading())));
+								io.getHeading())));
 	}
 }
