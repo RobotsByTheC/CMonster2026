@@ -8,6 +8,13 @@ import org.photonvision.PhotonCamera;
 public class Vision {
 	private final PhotonCamera rightCamera = new PhotonCamera("OV9281-1");
 	private final PhotonCamera leftCamera = new PhotonCamera("OV9281-2");
+  
+	public void update() {
+		var leftResults = leftCamera.getAllUnreadResults();
+		var rightResults = rightCamera.getAllUnreadResults();
+
+	}
+
 	public Pose2d getTarget() {
 		return Pose2d.kZero;
 	}
