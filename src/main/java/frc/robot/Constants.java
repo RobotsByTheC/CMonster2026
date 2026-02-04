@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.units.measure.Angle;
@@ -121,5 +123,10 @@ public class Constants {
 	public static class HopperConstants {
 		public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
 		public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
+	}
+
+	public static class VisionConstants {
+		public static final Pose3d LEFT_CAMERA_OFFSET = new Pose3d(0, 0, 0, Rotation3d.kZero);
+		public static final Pose3d RIGHT_CAMERA_OFFSET = new Pose3d(0, 0, 0, Rotation3d.kZero);
 	}
 }
