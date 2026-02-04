@@ -105,7 +105,7 @@ public class Constants {
 			public static final double KA = 0;
 			public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
 			public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
-      public static final Angle MAX_ANGLE = Rotations.of(5.5);
+			public static final Angle MAX_ANGLE = Rotations.of(5.5);
 		}
 
 		public static class FlywheelConstants {
