@@ -5,6 +5,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static frc.robot.Constants.FeederConstants.LEFT_CAN_ID;
+import static frc.robot.Constants.FeederConstants.LEFT_INVERTED;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -55,7 +57,7 @@ public class Robot extends TimedRobot {
 	private final Shooter shooter;
 	private final Vision vision;
 	private final Hopper hopper;
-	private final Feeder feeder;
+	private final Feeder feeder_left;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -70,13 +72,13 @@ public class Robot extends TimedRobot {
 			swerve = new Swerve(new SimSwerveIO());
 			shooter = new Shooter(false);
 			hopper = new Hopper(new SimHopperIO());
-			feeder = new Feeder(new SimFeederIO());
+			feeder_left = new Feeder(new SimFeederIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
 			swerve = new Swerve(new RealSwerveIO());
 			shooter = new Shooter(true);
 			hopper = new Hopper(new RealHopperIO());
-			feeder = new Feeder(new RealFeederIO());
+			feeder_left = new Feeder(new RealFeederIO(LEFT_INVERTED, LEFT_CAN_ID));
 		}
 
 		vision = new Vision();
@@ -97,7 +99,7 @@ public class Robot extends TimedRobot {
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 		shooter.setDefaultCommand(shooter.f_idle());
 		hopper.setDefaultCommand(hopper.f_idle());
-		feeder.setDefaultCommand(feeder.f_idle());
+		feeder_left.setDefaultCommand(feeder_left.f_idle());
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));

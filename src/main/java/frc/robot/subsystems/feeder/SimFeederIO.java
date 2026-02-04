@@ -4,7 +4,6 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
@@ -22,9 +21,8 @@ public class SimFeederIO implements FeederIO {
 	private final MutVoltage targetVoltage = Volts.mutable(0);
 
 	public SimFeederIO() {
-		flywheelSim = new FlywheelSim(
-				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(4).withReduction(1 / 1.5), 6 / 3417.2, 1),
-				DCMotor.getNEO(4).withReduction(5));
+		flywheelSim = new FlywheelSim(LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1).withReduction(3), 0.005, 1),
+				DCMotor.getNEO(1).withReduction(3));
 
 		flywheelMechanismSim = new MechanismSim() {
 			@Override
@@ -51,11 +49,6 @@ public class SimFeederIO implements FeederIO {
 	@Override
 	public void setVoltage(Voltage voltage) {
 		targetVoltage.mut_setMagnitude(voltage.in(Volts));
-	}
-
-	@Override
-	public AngularVelocity getVelocity() {
-		return flywheelSim.getAngularVelocity();
 	}
 
 	@Override

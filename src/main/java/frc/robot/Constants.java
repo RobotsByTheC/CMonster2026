@@ -126,5 +126,9 @@ public class Constants {
 	public static class FeederConstants {
 		public static final Voltage FEED_VOLTAGE = Volts.of(5);
 		public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
+		public static final int LEFT_CAN_ID = 0;
+		public static final int RIGHT_CAN_ID = 0;
+		public static final boolean LEFT_INVERTED = false;
+		public static final boolean RIGHT_INVERTED = false;
 	}
 }
