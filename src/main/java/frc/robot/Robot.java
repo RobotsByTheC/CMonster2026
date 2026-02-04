@@ -44,8 +44,6 @@ import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
 import frc.robot.subsystems.hopper.SimHopperIO;
 
-import java.util.function.Supplier;
-
 @Logged
 public class Robot extends TimedRobot {
 	private Command autonomousCommand;
