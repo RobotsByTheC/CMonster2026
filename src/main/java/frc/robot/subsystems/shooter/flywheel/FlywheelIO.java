@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -29,9 +30,13 @@ public interface FlywheelIO {
 	 */
 	void setVelocity(AngularVelocity velocity);
 
-  /**
-   * Sets the current input voltage to the Spark MAX for the motor
-   * @param voltage The voltage to set.
-   */
-  void setVoltage(Voltage voltage);
+	/**
+	 * Sets the current input voltage to the Spark MAX for the motor
+	 *
+	 * @param voltage
+	 *            The voltage to set.
+	 */
+	void setVoltage(Voltage voltage);
+
+	Angle getPosition();
 }

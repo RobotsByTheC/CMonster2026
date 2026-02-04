@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.util.function.BooleanConsumer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -13,16 +12,12 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 
 public class ConstantTuner {
-  public static Command createRoutine(Consumer<Voltage> v, Subsystem sys, BooleanSupplier up, BooleanSupplier low) {
-    SysIdRoutine routine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
-        new SysIdRoutine.Mechanism(v, null, sys));
-    return routine.dynamic(SysIdRoutine.Direction.kForward)
-            .until(up)
-        .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse)
-            .until(low))
-        .andThen(routine.quasistatic(SysIdRoutine.Direction.kForward)
-            .until(up))
-        .andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse)
-            .until(low));
-  }
+	public static Command createRoutine(Consumer<Voltage> v, Subsystem sys, BooleanSupplier up, BooleanSupplier low) {
+		SysIdRoutine routine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.1), Volts.of(0.5), null),
+				new SysIdRoutine.Mechanism(v, null, sys));
+		return routine.dynamic(SysIdRoutine.Direction.kForward).until(up)
+				.andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).until(low))
+				.andThen(routine.quasistatic(SysIdRoutine.Direction.kForward).until(up))
+				.andThen(routine.quasistatic(SysIdRoutine.Direction.kReverse).until(low));
+	}
 }

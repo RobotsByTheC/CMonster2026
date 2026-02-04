@@ -52,7 +52,7 @@ public class Hood extends SubsystemBase {
 		return o_stop().andThen(idle());
 	}
 
-  public Command tune() {
-    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
-  }
+	public Command tune() {
+		return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
+	}
 }
