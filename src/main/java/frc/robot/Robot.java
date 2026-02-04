@@ -43,8 +43,9 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
 import frc.robot.subsystems.hopper.SimHopperIO;
-
-import java.util.function.Supplier;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.RealFeederIO;
+import frc.robot.subsystems.feeder.SimFeederIO;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -54,6 +55,7 @@ public class Robot extends TimedRobot {
 	private final Shooter shooter;
 	private final Vision vision;
 	private final Hopper hopper;
+	private final Feeder feeder;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
 	private double childLockMultiplier = 1;
@@ -68,11 +70,13 @@ public class Robot extends TimedRobot {
 			swerve = new Swerve(new SimSwerveIO());
 			shooter = new Shooter(false);
 			hopper = new Hopper(new SimHopperIO());
+			feeder = new Feeder(new SimFeederIO());
 		} else {
 			intake = new Intake(new RealIntakeIO());
 			swerve = new Swerve(new RealSwerveIO());
 			shooter = new Shooter(true);
 			hopper = new Hopper(new RealHopperIO());
+			feeder = new Feeder(new RealFeederIO());
 		}
 
 		vision = new Vision();
@@ -93,6 +97,7 @@ public class Robot extends TimedRobot {
 		swerve.setDefaultCommand(f_driveWithFlightSticks());
 		shooter.setDefaultCommand(shooter.f_idle());
 		hopper.setDefaultCommand(hopper.f_idle());
+		feeder.setDefaultCommand(feeder.f_idle());
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));

@@ -122,4 +122,9 @@ public class Constants {
 		public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
 		public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
 	}
+
+	public static class FeederConstants {
+		public static final Voltage FEED_VOLTAGE = Volts.of(5);
+		public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
+	}
 }
