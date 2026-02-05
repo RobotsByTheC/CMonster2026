@@ -15,7 +15,7 @@ public class Feeder extends SubsystemBase {
 	public Feeder(FeederIO io, Trigger readyToFire) {
 		this.io = io;
 
-    this.readyToFire = readyToFire;
+    this.readyToFire = readyToFire.and(io::isBallReadyToFire);
   }
 
   public Command queueBall() {
