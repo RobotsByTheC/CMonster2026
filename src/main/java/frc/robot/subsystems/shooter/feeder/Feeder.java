@@ -16,4 +16,17 @@ public class Feeder extends SubsystemBase {
 		this.io = io;
 
     this.readyToFire = readyToFire;
+  }
+
+  public Command queueBall() {
+    return runOnce(() -> isQueued = true).andThen(idle().until(readyToFire)).andThen(activate().until());
+  }
+
+  public Command activate() {
+    return run(() -> io.setVoltage(FEED_VOLTAGE));
+  }
+
+  public Command stop() {
+    return run(io::stop);
+  }
 }
