@@ -1,7 +1,9 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.units.measure.Angle;
@@ -126,7 +128,7 @@ public class Constants {
 	}
 
 	public static class VisionConstants {
-		public static final Pose3d LEFT_CAMERA_OFFSET = new Pose3d(0, 0, 0, Rotation3d.kZero);
-		public static final Pose3d RIGHT_CAMERA_OFFSET = new Pose3d(0, 0, 0, Rotation3d.kZero);
+		public static final Transform3d LEFT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
+		public static final Transform3d RIGHT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
 	}
 }
