@@ -130,5 +130,8 @@ public class Constants {
 	public static class VisionConstants {
 		public static final Transform3d LEFT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
 		public static final Transform3d RIGHT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
+
+		public static final Pose2d BLUE_HUB = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
+		public static final Pose2d RED_HUB = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
 	}
 }
