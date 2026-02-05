@@ -49,6 +49,6 @@ public class RealFeederIO implements FeederIO {
 
   @Override
   public boolean isBallAtFlywheel() {
-    return false;
+    return top.getProximity()<0.1;
   }
 }
