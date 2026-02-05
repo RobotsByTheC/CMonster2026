@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
 
+import com.reduxrobotics.sensors.canandcolor.Canandcolor;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkMax;
@@ -18,10 +19,17 @@ import frc.robot.Constants.ShooterConstants.FlywheelConstants;
 public class RealFeederIO implements FeederIO {
 	private final SparkMax spark;
 
-	public RealFeederIO(boolean inverted, int can) {
+  private final Canandcolor bottom;
+  private final Canandcolor middle;
+  private final Canandcolor top;
+
+  public RealFeederIO(boolean inverted, int can) {
 		spark = new SparkMax(can, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kBrake);
 		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    bottom = new Canandcolor(Constants.CANConstants.LEFT_CNC_BOTTOM);
+    middle = new Canandcolor(Constants.CANConstants.LEFT_CNC_MIDDLE);
+    top = new Canandcolor(Constants.CANConstants.LEFT_CNC_TOP);
 	}
 
 	@Override
