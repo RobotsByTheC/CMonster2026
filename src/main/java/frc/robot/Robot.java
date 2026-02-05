@@ -45,9 +45,9 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
 import frc.robot.subsystems.hopper.SimHopperIO;
-import frc.robot.subsystems.feeder.Feeder;
-import frc.robot.subsystems.feeder.RealFeederIO;
-import frc.robot.subsystems.feeder.SimFeederIO;
+import frc.robot.subsystems.shooter.feeder.Feeder;
+import frc.robot.subsystems.shooter.feeder.RealFeederIO;
+import frc.robot.subsystems.shooter.feeder.SimFeederIO;
 
 @Logged
 public class Robot extends TimedRobot {
