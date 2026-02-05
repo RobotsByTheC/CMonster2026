@@ -31,4 +31,10 @@ public interface FeederIO {
    * @return Whether the distance is small enough to confirm that a Fuel has left.
    */
   boolean isBallAtFlywheel();
+
+  /**
+   * Use distance senors to determine whether a Fuel is currently stored at the base of the feeder.
+   * @return Whether the distance is small enough to confirm that a Fuel is stored.
+   */
+  boolean isBallReadyToFire();
 }

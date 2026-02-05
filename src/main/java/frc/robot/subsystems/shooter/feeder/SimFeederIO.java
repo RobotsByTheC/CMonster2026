@@ -57,6 +57,11 @@ public class SimFeederIO implements FeederIO {
   }
 
   @Override
+  public boolean isBallReadyToFire() {
+    return false;
+  }
+
+  @Override
 	public Current getCurrentDraw() {
 		return Amps.of(flywheelSim.getCurrentDrawAmps());
 	}
