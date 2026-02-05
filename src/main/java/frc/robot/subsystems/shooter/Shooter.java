@@ -1,15 +1,20 @@
 package frc.robot.subsystems.shooter;
 
+import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_B_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_RIGHT_A_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_RIGHT_B_CAN_ID;
 
+import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.data.LookupTable;
+import frc.robot.subsystems.shooter.feeder.Feeder;
+import frc.robot.subsystems.shooter.feeder.RealFeederIO;
 import frc.robot.subsystems.shooter.flywheel.Flywheel;
 import frc.robot.subsystems.shooter.flywheel.RealFlywheelIO;
 import frc.robot.subsystems.shooter.flywheel.SimFlywheelIO;
@@ -18,9 +23,12 @@ import frc.robot.subsystems.shooter.hood.RealHoodIO;
 import frc.robot.subsystems.shooter.hood.SimHoodIO;
 import java.util.function.Supplier;
 
+@Logged
 public class Shooter extends SubsystemBase {
 	private final Flywheel leftFlywheel;
+  private final Feeder leftFeeder;
 	private final Flywheel rightFlywheel;
+  private final Feeder rightFeeder;
 	private final Hood hood;
 
 	public Shooter(boolean real) {
@@ -28,11 +36,15 @@ public class Shooter extends SubsystemBase {
 			leftFlywheel = new Flywheel(new RealFlywheelIO(false, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID));
 			rightFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_RIGHT_A_CAN_ID, FLYWHEEL_RIGHT_B_CAN_ID));
 			hood = new Hood(new RealHoodIO());
-		} else {
+
+
+      leftFeeder = new Feeder(new RealFeederIO(false, FEEDER_LEFT_CAN_ID), new Trigger(() -> leftFlywheel.));
+    } else {
 			leftFlywheel = new Flywheel(new SimFlywheelIO());
 			rightFlywheel = new Flywheel(new SimFlywheelIO());
 			hood = new Hood(new SimHoodIO());
 		}
+
 
 		leftFlywheel.setDefaultCommand(leftFlywheel.f_idle());
 		rightFlywheel.setDefaultCommand(rightFlywheel.f_idle());
