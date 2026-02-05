@@ -21,7 +21,6 @@ public class RealFeederIO implements FeederIO {
 	public RealFeederIO(boolean inverted, int can) {
 		spark = new SparkMax(can, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kCoast);
-		config.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
 		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
 
