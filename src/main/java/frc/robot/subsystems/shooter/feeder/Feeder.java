@@ -19,7 +19,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command queueBall() {
-    return runOnce(() -> isQueued = true).andThen(idle().until(readyToFire)).andThen(activate().until());
+    return runOnce(() -> isQueued = true).andThen(idle().until(readyToFire)).andThen(activate().until(io::isBallAtFlywheel));
   }
 
   public Command activate() {
