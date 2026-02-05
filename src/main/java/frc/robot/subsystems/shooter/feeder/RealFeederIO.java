@@ -24,14 +24,14 @@ public class RealFeederIO implements FeederIO {
   private final Canandcolor middle;
   private final Canandcolor top;
 
-  public RealFeederIO(boolean inverted, int sparkCAN) {
+  public RealFeederIO(boolean inverted, int sparkCAN, int bottomCAN, int middleCAN, int topCAN) {
 		spark = new SparkMax(sparkCAN, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kBrake);
 		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    bottom = new Canandcolor(Constants.CANConstants.LEFT_CNC_BOTTOM);
-    middle = new Canandcolor(Constants.CANConstants.LEFT_CNC_MIDDLE);
-    top = new Canandcolor(Constants.CANConstants.LEFT_CNC_TOP);
+    bottom = new Canandcolor(bottomCAN);
+    middle = new Canandcolor(middleCAN);
+    top = new Canandcolor(topCAN);
 	}
 
 	@Override
