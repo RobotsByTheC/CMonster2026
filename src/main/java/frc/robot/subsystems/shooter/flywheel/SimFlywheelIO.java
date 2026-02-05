@@ -61,7 +61,12 @@ public class SimFlywheelIO implements FlywheelIO {
 		targetFlywheelSpeed.mut_setMagnitude(angularVelocity.in(RPM));
 	}
 
-	@Override
+  @Override
+  public boolean atTargetVelocity() {
+    return targetFlywheelSpeed.isNear(getVelocity(), RPM.of(20));
+  }
+
+  @Override
 	public AngularVelocity getVelocity() {
 		return flywheelSim.getAngularVelocity();
 	}
