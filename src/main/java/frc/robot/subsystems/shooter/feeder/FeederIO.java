@@ -25,4 +25,10 @@ public interface FeederIO {
 	 *            The voltage that the flywheel should be fed.
 	 */
 	void setVoltage(Voltage voltage);
+
+  /**
+   * Use distance sensors to determine whether a Fuel has left the feeder and is now inside the flywheel mechanism.
+   * @return Whether the distance is small enough to confirm that a Fuel has left.
+   */
+  boolean isBallAtFlywheel();
 }

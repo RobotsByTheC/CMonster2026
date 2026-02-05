@@ -39,4 +39,8 @@ public class RealFeederIO implements FeederIO {
 		spark.setVoltage(voltage);
 	}
 
+  @Override
+  public boolean isBallAtFlywheel() {
+    return false;
+  }
 }
