@@ -2,29 +2,18 @@ package frc.robot.subsystems.shooter.feeder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 import static frc.robot.Constants.FeederConstants.*;
 
 public class Feeder extends SubsystemBase {
 	private final FeederIO io;
+  private final Trigger readyToFire;
+
   private boolean isQueued = false;
 
-	public Feeder(FeederIO io) {
+	public Feeder(FeederIO io, Trigger readyToFire) {
 		this.io = io;
-	}
 
-	public Command f_feederIntake() {
-		return run(() -> {
-			io.setVoltage(FEED_VOLTAGE);
-		});
-	}
-
-	public Command f_feederReverse() {
-		return run(() -> {
-			io.setVoltage(SPIT_VOLTAGE);
-		});
-	}
-
-	public Command f_idle() {
-		return run(io::stop);
-	}
+    this.readyToFire = readyToFire;
 }
