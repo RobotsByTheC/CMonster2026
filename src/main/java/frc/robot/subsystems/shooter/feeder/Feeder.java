@@ -1,4 +1,4 @@
-package frc.robot.subsystems.feeder;
+package frc.robot.subsystems.shooter.feeder;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;

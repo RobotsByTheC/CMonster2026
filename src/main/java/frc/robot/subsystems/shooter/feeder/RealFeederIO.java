@@ -1,4 +1,4 @@
-package frc.robot.subsystems.feeder;
+package frc.robot.subsystems.shooter.feeder;
 
 import static edu.wpi.first.units.Units.Amps;
 
