@@ -7,7 +7,7 @@ import edu.wpi.first.units.measure.Voltage;
 @Logged
 public interface FeederIO {
 	/**
-	 * Stop the flywheel of the hopper
+	 * Stop the feeder
 	 */
 	void stop();
 
@@ -19,10 +19,10 @@ public interface FeederIO {
 	Current getCurrentDraw();
 
 	/**
-	 * Set the desired voltage of the flywheel.
+	 * Set the desired voltage of the feeder.
 	 *
 	 * @param voltage
-	 *            The voltage that the flywheel should be fed.
+	 *            The voltage that the feeder should be fed.
 	 */
 	void setVoltage(Voltage voltage);
 
