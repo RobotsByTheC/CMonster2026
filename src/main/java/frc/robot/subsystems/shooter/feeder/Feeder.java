@@ -6,6 +6,7 @@ import static frc.robot.Constants.FeederConstants.*;
 
 public class Feeder extends SubsystemBase {
 	private final FeederIO io;
+  private boolean isQueued = false;
 
 	public Feeder(FeederIO io) {
 		this.io = io;
