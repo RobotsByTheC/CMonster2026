@@ -24,8 +24,8 @@ public class RealFeederIO implements FeederIO {
   private final Canandcolor middle;
   private final Canandcolor top;
 
-  public RealFeederIO(boolean inverted, int can) {
-		spark = new SparkMax(can, SparkLowLevel.MotorType.kBrushless);
+  public RealFeederIO(boolean inverted, int sparkCAN) {
+		spark = new SparkMax(sparkCAN, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kBrake);
 		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
