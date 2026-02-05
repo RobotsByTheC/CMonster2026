@@ -74,7 +74,14 @@ public class Constants {
 		public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
 		public static final int HOOD_CAN_ID = 16;
 
-		public static final int GYRO_CAN_ID = 50;
+    public static final int LEFT_CNC_BOTTOM = 21;
+    public static final int LEFT_CNC_MIDDLE = 22;
+    public static final int LEFT_CNC_TOP = 23;
+    public static final int RIGHT_CNC_BOTTOM = 24;
+    public static final int RIGHT_CNC_MIDDLE = 25;
+    public static final int RIGHT_CNC_TOP = 26;
+
+    public static final int GYRO_CAN_ID = 50;
 	}
 
 	public static class IntakeConstants {

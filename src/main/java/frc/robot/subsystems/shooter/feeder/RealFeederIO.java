@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants.FlywheelConstants;
 
 @Logged
@@ -27,6 +28,7 @@ public class RealFeederIO implements FeederIO {
 		spark = new SparkMax(can, SparkLowLevel.MotorType.kBrushless);
 		SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kBrake);
 		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     bottom = new Canandcolor(Constants.CANConstants.LEFT_CNC_BOTTOM);
     middle = new Canandcolor(Constants.CANConstants.LEFT_CNC_MIDDLE);
     top = new Canandcolor(Constants.CANConstants.LEFT_CNC_TOP);
