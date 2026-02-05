@@ -10,8 +10,6 @@ public class Feeder extends SubsystemBase {
 	private final FeederIO io;
   private final Trigger readyToFire;
 
-  private boolean isQueued = false;
-
 	public Feeder(FeederIO io, Trigger readyToFire) {
 		this.io = io;
 
@@ -19,7 +17,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command queueBall() {
-    return runOnce(() -> isQueued = true).andThen(idle().until(readyToFire)).andThen(activate().until(io::isBallAtFlywheel));
+    return idle().until(readyToFire).andThen(activate().until(io::isBallAtFlywheel)).andThen(stop());
   }
 
   public Command activate() {
