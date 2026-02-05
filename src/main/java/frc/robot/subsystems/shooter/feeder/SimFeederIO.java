@@ -51,17 +51,17 @@ public class SimFeederIO implements FeederIO {
 		targetVoltage.mut_setMagnitude(voltage.in(Volts));
 	}
 
-  @Override
-  public boolean isBallAtFlywheel() {
-    return false;
-  }
+	@Override
+	public boolean isBallAtFlywheel() {
+		return false;
+	}
 
-  @Override
-  public boolean isBallReadyToFire() {
-    return false;
-  }
+	@Override
+	public boolean isBallReadyToFire() {
+		return false;
+	}
 
-  @Override
+	@Override
 	public Current getCurrentDraw() {
 		return Amps.of(flywheelSim.getCurrentDrawAmps());
 	}

@@ -33,5 +33,5 @@ public interface FlywheelIO {
 	 */
 	void setVelocity(AngularVelocity velocity);
 
-  boolean atTargetVelocity();
+	boolean atTargetVelocity();
 }

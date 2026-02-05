@@ -59,8 +59,8 @@ public class RealFlywheelIO implements FlywheelIO {
 		controller.setSetpoint(velocity.in(RPM), SparkBase.ControlType.kVelocity);
 	}
 
-  @Override
-  public boolean atTargetVelocity() {
-    return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
-  }
+	@Override
+	public boolean atTargetVelocity() {
+		return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
+	}
 }

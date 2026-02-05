@@ -16,10 +16,10 @@ public class Flywheel extends SubsystemBase {
 		this.io = io;
 	}
 
-  @NotLogged
-  public boolean atTargetSpeed() {
-    return io.atTargetVelocity();
-  }
+	@NotLogged
+	public boolean atTargetSpeed() {
+		return io.atTargetVelocity();
+	}
 
 	public Command o_stop() {
 		return runOnce(io::stop);

@@ -5,8 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static frc.robot.Constants.FeederConstants.LEFT_CAN_ID;
-import static frc.robot.Constants.FeederConstants.LEFT_INVERTED;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -45,9 +43,6 @@ import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
 import frc.robot.subsystems.hopper.SimHopperIO;
-import frc.robot.subsystems.shooter.feeder.Feeder;
-import frc.robot.subsystems.shooter.feeder.RealFeederIO;
-import frc.robot.subsystems.shooter.feeder.SimFeederIO;
 
 @Logged
 public class Robot extends TimedRobot {

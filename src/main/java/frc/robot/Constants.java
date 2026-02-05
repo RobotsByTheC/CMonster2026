@@ -72,18 +72,18 @@ public class Constants {
 		public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
 		public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
 		public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
-    public static final int FEEDER_LEFT_CAN_ID = 15;
-    public static final int FEEDER_RIGHT_CAN_ID = 16;
-    public static final int HOOD_CAN_ID = 17;
+		public static final int FEEDER_LEFT_CAN_ID = 15;
+		public static final int FEEDER_RIGHT_CAN_ID = 16;
+		public static final int HOOD_CAN_ID = 17;
 
-    public static final int LEFT_CNC_BOTTOM = 21;
-    public static final int LEFT_CNC_MIDDLE = 22;
-    public static final int LEFT_CNC_TOP = 23;
-    public static final int RIGHT_CNC_BOTTOM = 24;
-    public static final int RIGHT_CNC_MIDDLE = 25;
-    public static final int RIGHT_CNC_TOP = 26;
+		public static final int LEFT_CNC_BOTTOM = 21;
+		public static final int LEFT_CNC_MIDDLE = 22;
+		public static final int LEFT_CNC_TOP = 23;
+		public static final int RIGHT_CNC_BOTTOM = 24;
+		public static final int RIGHT_CNC_MIDDLE = 25;
+		public static final int RIGHT_CNC_TOP = 26;
 
-    public static final int GYRO_CAN_ID = 50;
+		public static final int GYRO_CAN_ID = 50;
 	}
 
 	public static class IntakeConstants {

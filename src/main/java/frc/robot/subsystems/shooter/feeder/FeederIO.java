@@ -26,15 +26,17 @@ public interface FeederIO {
 	 */
 	void setVoltage(Voltage voltage);
 
-  /**
-   * Use distance sensors to determine whether a Fuel has left the feeder and is now inside the flywheel mechanism.
-   * @return Whether the distance is small enough to confirm that a Fuel has left.
-   */
-  boolean isBallAtFlywheel();
+	/**
+	 * Use distance sensors to determine whether a Fuel has left the feeder and is now inside the flywheel mechanism.
+	 *
+	 * @return Whether the distance is small enough to confirm that a Fuel has left.
+	 */
+	boolean isBallAtFlywheel();
 
-  /**
-   * Use distance senors to determine whether a Fuel is currently stored at the base of the feeder.
-   * @return Whether the distance is small enough to confirm that a Fuel is stored.
-   */
-  boolean isBallReadyToFire();
+	/**
+	 * Use distance senors to determine whether a Fuel is currently stored at the base of the feeder.
+	 *
+	 * @return Whether the distance is small enough to confirm that a Fuel is stored.
+	 */
+	boolean isBallReadyToFire();
 }
