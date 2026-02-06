@@ -1,7 +1,6 @@
 package frc.robot.subsystems.hopper;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 
@@ -11,13 +10,6 @@ public interface HopperIO {
 	 * Stop the flywheel of the hopper
 	 */
 	void stop();
-
-	/**
-	 * Returns the current velocity that the flywheel in the shooter is running at.
-	 *
-	 * @return The flywheel's velocity.
-	 */
-	AngularVelocity getVelocity();
 
 	/**
 	 * Returns the current draw that the mechanism is currently consuming.

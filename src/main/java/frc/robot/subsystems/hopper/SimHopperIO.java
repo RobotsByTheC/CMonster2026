@@ -3,7 +3,6 @@ package frc.robot.subsystems.hopper;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
@@ -51,11 +50,6 @@ public class SimHopperIO implements HopperIO {
 	@Override
 	public void setVoltage(Voltage voltage) {
 		targetVoltage.mut_setMagnitude(voltage.in(Volts));
-	}
-
-	@Override
-	public AngularVelocity getVelocity() {
-		return flywheelSim.getAngularVelocity();
 	}
 
 	@Override

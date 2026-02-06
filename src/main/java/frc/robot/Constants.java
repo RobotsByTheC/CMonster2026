@@ -75,6 +75,7 @@ public class Constants {
 		public static final int FEEDER_LEFT_CAN_ID = 15;
 		public static final int FEEDER_RIGHT_CAN_ID = 16;
 		public static final int HOOD_CAN_ID = 17;
+		public static final int HOPPER_CAN_ID = 18;
 
 		public static final int LEFT_CNC_BOTTOM = 21;
 		public static final int LEFT_CNC_MIDDLE = 22;
