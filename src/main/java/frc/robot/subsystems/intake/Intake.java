@@ -96,15 +96,14 @@ public class Intake extends SubsystemBase {
   // f before a method means forever, l means it has an end condition, o means run once.
 
   public Command f_stowAndIdle() {
-    return claim(extension.stow()).withName("Intake Stow & Idle");
+    return claim(extension.stow());
   }
 
   public Command f_extendAndGrab() {
-    return claim(extension.extend().alongWith(roller.runIntakeMotor())).withName("Intake Extend & Grab");
+    return claim(extension.extend().alongWith(roller.runIntakeMotor()));
   }
 
   public Command l_retractAndGrab() {
-    return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()))
-        .withName("Intake Retract & Grab");
+    return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()));
   }
 }
