@@ -87,7 +87,7 @@ public class Shooter extends SubsystemBase {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
 
-  public Command kapow() {
+  public Command l_kapow() {
     Command left = (leftFeeder.canShoot()) ? leftFeeder.queueBall() : Commands.none();
     Command right = (rightFeeder.canShoot()) ? rightFeeder.queueBall() : Commands.none();
     return left.alongWith(right);
