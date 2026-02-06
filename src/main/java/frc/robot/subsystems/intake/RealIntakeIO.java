@@ -16,42 +16,42 @@ import edu.wpi.first.units.measure.Voltage;
 
 @Logged
 public class RealIntakeIO implements IntakeIO {
-	private final SparkMax intakeMotor;
-	private final SparkMax wristMotor;
-	private final SparkAbsoluteEncoder wristEncoder;
+  private final SparkMax intakeMotor;
+  private final SparkMax wristMotor;
+  private final SparkAbsoluteEncoder wristEncoder;
 
-	public RealIntakeIO() {
-		intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		intakeMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  public RealIntakeIO() {
+    intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+    intakeMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+    wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		wristEncoder = wristMotor.getAbsoluteEncoder();
-	}
+    wristEncoder = wristMotor.getAbsoluteEncoder();
+  }
 
-	@Override
-	public void setIntakeVoltage(Voltage voltage) {
-		intakeMotor.setVoltage(voltage);
-	}
+  @Override
+  public void setIntakeVoltage(Voltage voltage) {
+    intakeMotor.setVoltage(voltage);
+  }
 
-	@Override
-	public void setWristVoltage(Voltage voltage) {
-		wristMotor.setVoltage(voltage);
-	}
+  @Override
+  public void setWristVoltage(Voltage voltage) {
+    wristMotor.setVoltage(voltage);
+  }
 
-	@Override
-	public Angle getWristPosition() {
-		return Rotations.of(wristEncoder.getPosition());
-	}
+  @Override
+  public Angle getWristPosition() {
+    return Rotations.of(wristEncoder.getPosition());
+  }
 
-	@Override
-	public AngularVelocity getWristVelocity() {
-		return RPM.of(wristEncoder.getVelocity());
-	}
+  @Override
+  public AngularVelocity getWristVelocity() {
+    return RPM.of(wristEncoder.getVelocity());
+  }
 
-	@Override
-	public Voltage getWristVoltage() {
-		return Volts.of(wristMotor.getAppliedOutput() * wristMotor.getBusVoltage());
-	}
+  @Override
+  public Voltage getWristVoltage() {
+    return Volts.of(wristMotor.getAppliedOutput() * wristMotor.getBusVoltage());
+  }
 }

@@ -14,48 +14,48 @@ import static edu.wpi.first.units.Units.*;
 
 @Logged
 public class SimHoodIO implements HoodIO {
-	@NotLogged private final SingleJointedArmSim sim;
-	@NotLogged private final MechanismSim mechanism;
+  @NotLogged private final SingleJointedArmSim sim;
+  @NotLogged private final MechanismSim mechanism;
 
-	public SimHoodIO() {
-		sim = new SingleJointedArmSim(DCMotor.getNEO(1), 58.9362825, 0.003122, .1921, 0, Math.PI * 4, true, 0);
-		mechanism = new MechanismSim() {
-			@Override
-			public double getCurrentDraw() {
-				return sim.getCurrentDrawAmps();
-			}
+  public SimHoodIO() {
+    sim = new SingleJointedArmSim(DCMotor.getNEO(1), 58.9362825, 0.003122, .1921, 0, Math.PI * 4, true, 0);
+    mechanism = new MechanismSim() {
+      @Override
+      public double getCurrentDraw() {
+        return sim.getCurrentDrawAmps();
+      }
 
-			@Override
-			public void update(double timestep) {
-				sim.update(timestep);
-			}
-		};
+      @Override
+      public void update(double timestep) {
+        sim.update(timestep);
+      }
+    };
 
-		SimulationContext.getDefault().addMechanism(mechanism);
-	}
+    SimulationContext.getDefault().addMechanism(mechanism);
+  }
 
-	@Override
-	public void stop() {
-		sim.setInputVoltage(0);
-	}
+  @Override
+  public void stop() {
+    sim.setInputVoltage(0);
+  }
 
-	@Override
-	public Angle getAngle() {
-		return Radians.of(sim.getAngleRads());
-	}
+  @Override
+  public Angle getAngle() {
+    return Radians.of(sim.getAngleRads());
+  }
 
-	@Override
-	public AngularVelocity getVelocity() {
-		return RadiansPerSecond.of(sim.getVelocityRadPerSec());
-	}
+  @Override
+  public AngularVelocity getVelocity() {
+    return RadiansPerSecond.of(sim.getVelocityRadPerSec());
+  }
 
-	@Override
-	public void setVoltage(Voltage voltage) {
-		sim.setInputVoltage(mechanism.outputVoltage(voltage.in(Volts)));
-	}
+  @Override
+  public void setVoltage(Voltage voltage) {
+    sim.setInputVoltage(mechanism.outputVoltage(voltage.in(Volts)));
+  }
 
-	@Override
-	public boolean atBottom() {
-		return sim.hasHitLowerLimit();
-	}
+  @Override
+  public boolean atBottom() {
+    return sim.hasHitLowerLimit();
+  }
 }

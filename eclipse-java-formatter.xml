@@ -37,4 +37,11 @@
     key="org.eclipse.jdt.core.formatter.keep_empty_enclosed_body_on_one_line">true</entry>
   <entry
     key="org.eclipse.jdt.core.formatter.insert_new_line_in_empty_method_body">do not insert</entry>
+
+  <entry key="org.eclipse.jdt.core.formatter.tabulation.char">space</entry>
+  <entry key="org.eclipse.jdt.core.formatter.tabulation.size">2</entry>
+  <entry key="org.eclipse.jdt.core.formatter.indentation.size">2</entry>
+
+  <entry
+    key="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations">false</entry>
 </properties>

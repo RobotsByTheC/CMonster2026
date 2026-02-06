@@ -15,45 +15,45 @@ import static edu.wpi.first.units.Units.*;
 
 @Logged
 public class SimHopperIO implements HopperIO {
-	@NotLogged private final FlywheelSim flywheelSim;
-	@NotLogged private final MechanismSim flywheelMechanismSim;
+  @NotLogged private final FlywheelSim flywheelSim;
+  @NotLogged private final MechanismSim flywheelMechanismSim;
 
-	private final MutVoltage targetVoltage = Volts.mutable(0);
+  private final MutVoltage targetVoltage = Volts.mutable(0);
 
-	public SimHopperIO() {
-		flywheelSim = new FlywheelSim(
-				LinearSystemId.createFlywheelSystem(DCMotor.getNEO(4).withReduction(1 / 1.5), 6 / 3417.2, 1),
-				DCMotor.getNEO(4).withReduction(5));
+  public SimHopperIO() {
+    flywheelSim = new FlywheelSim(
+        LinearSystemId.createFlywheelSystem(DCMotor.getNEO(4).withReduction(1 / 1.5), 6 / 3417.2, 1),
+        DCMotor.getNEO(4).withReduction(5));
 
-		flywheelMechanismSim = new MechanismSim() {
-			@Override
-			public double getCurrentDraw() {
-				return flywheelSim.getCurrentDrawAmps();
-			}
+    flywheelMechanismSim = new MechanismSim() {
+      @Override
+      public double getCurrentDraw() {
+        return flywheelSim.getCurrentDrawAmps();
+      }
 
-			@Override
-			public void update(double timestep) {
-				flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(targetVoltage.in(Volts)));
+      @Override
+      public void update(double timestep) {
+        flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(targetVoltage.in(Volts)));
 
-				flywheelSim.update(timestep);
-			}
-		};
+        flywheelSim.update(timestep);
+      }
+    };
 
-		SimulationContext.getDefault().addMechanism(flywheelMechanismSim);
-	}
+    SimulationContext.getDefault().addMechanism(flywheelMechanismSim);
+  }
 
-	@Override
-	public void stop() {
-		targetVoltage.mut_setMagnitude(0);
-	}
+  @Override
+  public void stop() {
+    targetVoltage.mut_setMagnitude(0);
+  }
 
-	@Override
-	public void setVoltage(Voltage voltage) {
-		targetVoltage.mut_setMagnitude(voltage.in(Volts));
-	}
+  @Override
+  public void setVoltage(Voltage voltage) {
+    targetVoltage.mut_setMagnitude(voltage.in(Volts));
+  }
 
-	@Override
-	public Current getCurrentDraw() {
-		return Amps.of(flywheelSim.getCurrentDrawAmps());
-	}
+  @Override
+  public Current getCurrentDraw() {
+    return Amps.of(flywheelSim.getCurrentDrawAmps());
+  }
 }

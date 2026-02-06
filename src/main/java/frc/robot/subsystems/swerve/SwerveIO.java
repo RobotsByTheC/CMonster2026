@@ -7,38 +7,38 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
 @Logged
 public interface SwerveIO {
-	/**
-	 * Stops all swerve motors immediately.
-	 */
-	void stop();
+  /**
+   * Stops all swerve motors immediately.
+   */
+  void stop();
 
-	/**
-	 * Get the current heading as provided by the connected gyro.
-	 *
-	 * @return The current heading
-	 */
-	Rotation2d getHeading();
+  /**
+   * Get the current heading as provided by the connected gyro.
+   *
+   * @return The current heading
+   */
+  Rotation2d getHeading();
 
-	/**
-	 * Set the gyro to a passed in heading, can be reset to zero by passing in {@link Rotation2d#kZero}
-	 *
-	 * @param heading
-	 *            The heading to reset the gyro to
-	 */
-	void setGyro(Rotation2d heading);
+  /**
+   * Set the gyro to a passed in heading, can be reset to zero by passing in {@link Rotation2d#kZero}
+   *
+   * @param heading
+   *          The heading to reset the gyro to
+   */
+  void setGyro(Rotation2d heading);
 
-	/**
-	 * Sets a desired state for all the swerve modules to be at in order to drive at the passed in speeds.
-	 *
-	 * @param speeds
-	 *            The speeds to drive at.
-	 */
-	void driveSpeeds(ChassisSpeeds speeds);
+  /**
+   * Sets a desired state for all the swerve modules to be at in order to drive at the passed in speeds.
+   *
+   * @param speeds
+   *          The speeds to drive at.
+   */
+  void driveSpeeds(ChassisSpeeds speeds);
 
-	/**
-	 * Get an array of all the module positions for the swerve modules
-	 *
-	 * @return The modules positions.
-	 */
-	SwerveModulePosition[] getModulePositions();
+  /**
+   * Get an array of all the module positions for the swerve modules
+   *
+   * @return The modules positions.
+   */
+  SwerveModulePosition[] getModulePositions();
 }

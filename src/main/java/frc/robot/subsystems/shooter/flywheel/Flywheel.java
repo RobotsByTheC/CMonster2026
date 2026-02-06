@@ -14,31 +14,31 @@ import static edu.wpi.first.units.Units.Volts;
 
 @Logged
 public class Flywheel extends SubsystemBase {
-	private final FlywheelIO io;
+  private final FlywheelIO io;
 
-	public Flywheel(FlywheelIO io) {
-		this.io = io;
-	}
+  public Flywheel(FlywheelIO io) {
+    this.io = io;
+  }
 
-	@NotLogged
-	public boolean atTargetSpeed() {
-		return io.atTargetVelocity();
-	}
+  @NotLogged
+  public boolean atTargetSpeed() {
+    return io.atTargetVelocity();
+  }
 
-	public Command o_stop() {
-		return runOnce(() -> io.setVoltage(Volts.zero()));
-	}
+  public Command o_stop() {
+    return runOnce(() -> io.setVoltage(Volts.zero()));
+  }
 
-	public Command f_shoot(Supplier<AngularVelocity> target) {
-		return run(() -> io.setVelocity(target.get()));
-	}
+  public Command f_shoot(Supplier<AngularVelocity> target) {
+    return run(() -> io.setVelocity(target.get()));
+  }
 
-	public Command f_idle() {
-		return o_stop().andThen(idle());
-	}
+  public Command f_idle() {
+    return o_stop().andThen(idle());
+  }
 
-	public Command tune() {
-		return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getVelocity().gte(RPM.of(500)),
-				() -> io.getVelocity().lte(RPM.zero()));
-	}
+  public Command tune() {
+    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getVelocity().gte(RPM.of(500)),
+        () -> io.getVelocity().lte(RPM.zero()));
+  }
 }

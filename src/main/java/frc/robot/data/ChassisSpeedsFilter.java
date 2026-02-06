@@ -10,26 +10,26 @@ import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 
 public class ChassisSpeedsFilter {
-	private final SlewRateLimiter xFilter;
-	private final SlewRateLimiter yFilter;
-	private final SlewRateLimiter thetaFilter;
+  private final SlewRateLimiter xFilter;
+  private final SlewRateLimiter yFilter;
+  private final SlewRateLimiter thetaFilter;
 
-	public ChassisSpeedsFilter(LinearAcceleration linear, AngularAcceleration angular) {
-		xFilter = new SlewRateLimiter(linear.in(MetersPerSecondPerSecond));
-		yFilter = new SlewRateLimiter(linear.in(MetersPerSecondPerSecond));
-		thetaFilter = new SlewRateLimiter(angular.in(RadiansPerSecondPerSecond));
-	}
+  public ChassisSpeedsFilter(LinearAcceleration linear, AngularAcceleration angular) {
+    xFilter = new SlewRateLimiter(linear.in(MetersPerSecondPerSecond));
+    yFilter = new SlewRateLimiter(linear.in(MetersPerSecondPerSecond));
+    thetaFilter = new SlewRateLimiter(angular.in(RadiansPerSecondPerSecond));
+  }
 
-	public void reset(Rotation2d gyroHeading) {
-		xFilter.reset(0);
-		yFilter.reset(0);
-		thetaFilter.reset(gyroHeading.getRadians());
-	}
+  public void reset(Rotation2d gyroHeading) {
+    xFilter.reset(0);
+    yFilter.reset(0);
+    thetaFilter.reset(gyroHeading.getRadians());
+  }
 
-	public ChassisSpeeds calculate(ChassisSpeeds speeds) {
-		speeds.vxMetersPerSecond = xFilter.calculate(speeds.vxMetersPerSecond);
-		speeds.vyMetersPerSecond = yFilter.calculate(speeds.vyMetersPerSecond);
-		speeds.omegaRadiansPerSecond = thetaFilter.calculate(speeds.omegaRadiansPerSecond);
-		return speeds;
-	}
+  public ChassisSpeeds calculate(ChassisSpeeds speeds) {
+    speeds.vxMetersPerSecond = xFilter.calculate(speeds.vxMetersPerSecond);
+    speeds.vyMetersPerSecond = yFilter.calculate(speeds.vyMetersPerSecond);
+    speeds.omegaRadiansPerSecond = thetaFilter.calculate(speeds.omegaRadiansPerSecond);
+    return speeds;
+  }
 }

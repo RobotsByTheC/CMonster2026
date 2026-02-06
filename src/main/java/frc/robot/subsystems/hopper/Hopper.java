@@ -9,25 +9,25 @@ import static frc.robot.Constants.HopperConstants.OUTTAKE_VOLTAGE;
 
 @Logged
 public class Hopper extends SubsystemBase {
-	private final HopperIO io;
+  private final HopperIO io;
 
-	public Hopper(HopperIO io) {
-		this.io = io;
-	}
+  public Hopper(HopperIO io) {
+    this.io = io;
+  }
 
-	public Command f_hopperIntake() {
-		return run(() -> {
-			io.setVoltage(INTAKE_VOLTAGE);
-		});
-	}
+  public Command f_hopperIntake() {
+    return run(() -> {
+      io.setVoltage(INTAKE_VOLTAGE);
+    });
+  }
 
-	public Command f_hopperReverse() {
-		return run(() -> {
-			io.setVoltage(OUTTAKE_VOLTAGE);
-		});
-	}
+  public Command f_hopperReverse() {
+    return run(() -> {
+      io.setVoltage(OUTTAKE_VOLTAGE);
+    });
+  }
 
-	public Command f_idle() {
-		return run(io::stop);
-	}
+  public Command f_idle() {
+    return run(io::stop);
+  }
 }

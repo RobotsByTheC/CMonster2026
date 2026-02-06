@@ -16,38 +16,38 @@ import static frc.robot.Constants.CANConstants.HOOD_CAN_ID;
 
 @Logged
 public class RealHoodIO implements HoodIO {
-	private final SparkMax spark;
-	private final RelativeEncoder encoder;
-	private final SparkLimitSwitch limitSwitch;
+  private final SparkMax spark;
+  private final RelativeEncoder encoder;
+  private final SparkLimitSwitch limitSwitch;
 
-	public RealHoodIO() {
-		spark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		encoder = spark.getEncoder();
-		limitSwitch = spark.getForwardLimitSwitch();
-	}
+  public RealHoodIO() {
+    spark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+    encoder = spark.getEncoder();
+    limitSwitch = spark.getForwardLimitSwitch();
+  }
 
-	@Override
-	public void stop() {
-		spark.setVoltage(Volts.zero());
-	}
+  @Override
+  public void stop() {
+    spark.setVoltage(Volts.zero());
+  }
 
-	@Override
-	public Angle getAngle() {
-		return Rotations.of(encoder.getPosition());
-	}
+  @Override
+  public Angle getAngle() {
+    return Rotations.of(encoder.getPosition());
+  }
 
-	@Override
-	public AngularVelocity getVelocity() {
-		return RPM.of(encoder.getVelocity());
-	}
+  @Override
+  public AngularVelocity getVelocity() {
+    return RPM.of(encoder.getVelocity());
+  }
 
-	@Override
-	public void setVoltage(Voltage voltage) {
-		spark.setVoltage(voltage);
-	}
+  @Override
+  public void setVoltage(Voltage voltage) {
+    spark.setVoltage(voltage);
+  }
 
-	@Override
-	public boolean atBottom() {
-		return limitSwitch.isPressed();
-	}
+  @Override
+  public boolean atBottom() {
+    return limitSwitch.isPressed();
+  }
 }

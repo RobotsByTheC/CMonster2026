@@ -19,44 +19,44 @@ import static frc.robot.Constants.ShooterConstants.HoodConstants.*;
 
 @Logged
 public class Hood extends SubsystemBase {
-	private final HoodIO io;
-	private final ProfiledPIDController pidController;
-	private final ArmFeedforward feedforward;
+  private final HoodIO io;
+  private final ProfiledPIDController pidController;
+  private final ArmFeedforward feedforward;
 
-	public Hood(HoodIO io) {
-		this.io = io;
-		pidController = new ProfiledPIDController(KP, KI, KD, new TrapezoidProfile.Constraints(
-				MAX_VELOCITY.in(RadiansPerSecond), MAX_ACCELERATION.in(RadiansPerSecondPerSecond)));
-		feedforward = new ArmFeedforward(KS, KG, KV, KA);
-	}
+  public Hood(HoodIO io) {
+    this.io = io;
+    pidController = new ProfiledPIDController(KP, KI, KD, new TrapezoidProfile.Constraints(
+        MAX_VELOCITY.in(RadiansPerSecond), MAX_ACCELERATION.in(RadiansPerSecondPerSecond)));
+    feedforward = new ArmFeedforward(KS, KG, KV, KA);
+  }
 
-	public boolean isAtTargetAngle() {
-		return Radians.of(pidController.getSetpoint().position).isNear(io.getAngle(), Degrees.of(1));
-	}
+  public boolean isAtTargetAngle() {
+    return Radians.of(pidController.getSetpoint().position).isNear(io.getAngle(), Degrees.of(1));
+  }
 
-	private Voltage calculatePIDVoltage(Angle targetAngle) {
-		return Volts.of(pidController.calculate(io.getAngle().in(Radians), targetAngle.in(Radians))
-				+ feedforward.calculate(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)));
-	}
+  private Voltage calculatePIDVoltage(Angle targetAngle) {
+    return Volts.of(pidController.calculate(io.getAngle().in(Radians), targetAngle.in(Radians))
+        + feedforward.calculate(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)));
+  }
 
-	public Command f_holdDesiredAngle(Supplier<Angle> target) {
-		return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
-				() -> io.setVoltage(calculatePIDVoltage(target.get())));
-	}
+  public Command f_holdDesiredAngle(Supplier<Angle> target) {
+    return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
+        () -> io.setVoltage(calculatePIDVoltage(target.get())));
+  }
 
-	public Command l_returnToNormalcy() {
-		return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom);
-	}
+  public Command l_returnToNormalcy() {
+    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom);
+  }
 
-	public Command o_stop() {
-		return runOnce(io::stop);
-	}
+  public Command o_stop() {
+    return runOnce(io::stop);
+  }
 
-	public Command f_idle() {
-		return o_stop().andThen(idle());
-	}
+  public Command f_idle() {
+    return o_stop().andThen(idle());
+  }
 
-	public Command tune() {
-		return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
-	}
+  public Command tune() {
+    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
+  }
 }

@@ -29,74 +29,73 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 @Logged
 public class SwerveModule {
-	private final SparkMax driveSpark;
-	private final SparkMax turnSpark;
-	private final RelativeEncoder driveEncoder;
-	private final AbsoluteEncoder turnEncoder;
+  private final SparkMax driveSpark;
+  private final SparkMax turnSpark;
+  private final RelativeEncoder driveEncoder;
+  private final AbsoluteEncoder turnEncoder;
 
-	private final SparkClosedLoopController driveController;
-	private final SparkClosedLoopController turnController;
+  private final SparkClosedLoopController driveController;
+  private final SparkClosedLoopController turnController;
 
-	private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
+  private SwerveModuleState desiredState = new SwerveModuleState(0, Rotation2d.kZero);
 
-	public SwerveModule(int drivingCan, int turningCan) {
-		driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
-		turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
+  public SwerveModule(int drivingCan, int turningCan) {
+    driveSpark = new SparkMax(drivingCan, SparkLowLevel.MotorType.kBrushless);
+    turnSpark = new SparkMax(turningCan, SparkLowLevel.MotorType.kBrushless);
 
-		driveEncoder = driveSpark.getEncoder();
-		turnEncoder = turnSpark.getAbsoluteEncoder();
+    driveEncoder = driveSpark.getEncoder();
+    turnEncoder = turnSpark.getAbsoluteEncoder();
 
-		driveController = driveSpark.getClosedLoopController();
-		turnController = turnSpark.getClosedLoopController();
+    driveController = driveSpark.getClosedLoopController();
+    turnController = turnSpark.getClosedLoopController();
 
-		SparkMaxConfig driveConfig = new SparkMaxConfig();
-		driveConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50);
-		driveConfig.encoder
-				.positionConversionFactor(
-						WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
-				.velocityConversionFactor(WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION)
-						.per(Minute).in(MetersPerSecond));
-		driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD).outputRange(-1, 1)
-				.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-		driveConfig.closedLoop.feedForward.kV(1 / WHEEL_DIAMETER.times(Math.PI)
-				.times(RPM.of(5676).in(RotationsPerSecond)).div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
+    SparkMaxConfig driveConfig = new SparkMaxConfig();
+    driveConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(50);
+    driveConfig.encoder
+        .positionConversionFactor(WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).in(Meters))
+        .velocityConversionFactor(
+            WHEEL_DIAMETER.times(Math.PI / DriveConstants.DRIVE_MOTOR_REDUCTION).per(Minute).in(MetersPerSecond));
+    driveConfig.closedLoop.pid(DriveConstants.KP, DriveConstants.KI, DriveConstants.KD).outputRange(-1, 1)
+        .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    driveConfig.closedLoop.feedForward.kV(1 / WHEEL_DIAMETER.times(Math.PI).times(RPM.of(5676).in(RotationsPerSecond))
+        .div(DRIVE_MOTOR_REDUCTION).per(Second).in(MetersPerSecond));
 
-		SparkMaxConfig turnConfig = new SparkMaxConfig();
-		turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
-		turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI)
-				.inverted(true);
-		turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
-				.feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
-				.positionWrappingInputRange(0, 2 * Math.PI);
+    SparkMaxConfig turnConfig = new SparkMaxConfig();
+    turnConfig.idleMode(SparkBaseConfig.IdleMode.kBrake).smartCurrentLimit(20);
+    turnConfig.absoluteEncoder.positionConversionFactor(2 * Math.PI).velocityConversionFactor(2 * Math.PI)
+        .inverted(true);
+    turnConfig.closedLoop.pid(TurnConstants.KP, TurnConstants.KI, TurnConstants.KD)
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder).positionWrappingEnabled(true)
+        .positionWrappingInputRange(0, 2 * Math.PI);
 
-		driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    driveSpark.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turnSpark.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-		desiredState.angle = new Rotation2d(turnEncoder.getPosition());
-		driveEncoder.setPosition(0);
-	}
+    desiredState.angle = new Rotation2d(turnEncoder.getPosition());
+    driveEncoder.setPosition(0);
+  }
 
-	public SwerveModuleState getState() {
-		return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition()));
-	}
+  public SwerveModuleState getState() {
+    return new SwerveModuleState(driveEncoder.getVelocity(), new Rotation2d(turnEncoder.getPosition()));
+  }
 
-	public SwerveModulePosition getPosition() {
-		return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition()));
-	}
+  public SwerveModulePosition getPosition() {
+    return new SwerveModulePosition(driveEncoder.getPosition(), new Rotation2d(turnEncoder.getPosition()));
+  }
 
-	public void setDesiredState(SwerveModuleState desiredState) {
-		desiredState.optimize(Rotation2d.fromRadians(turnEncoder.getPosition()));
+  public void setDesiredState(SwerveModuleState desiredState) {
+    desiredState.optimize(Rotation2d.fromRadians(turnEncoder.getPosition()));
 
-		driveController.setSetpoint(desiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
-		turnController.setSetpoint(desiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
+    driveController.setSetpoint(desiredState.speedMetersPerSecond, SparkBase.ControlType.kVelocity);
+    turnController.setSetpoint(desiredState.angle.getRadians(), SparkBase.ControlType.kPosition);
 
-		this.desiredState = desiredState;
-	}
+    this.desiredState = desiredState;
+  }
 
-	public void stop() {
-		driveSpark.setVoltage(0);
-		turnSpark.setVoltage(0);
-		driveController.setSetpoint(0, SparkBase.ControlType.kVoltage);
-		turnController.setSetpoint(0, SparkBase.ControlType.kVoltage);
-	}
+  public void stop() {
+    driveSpark.setVoltage(0);
+    turnSpark.setVoltage(0);
+    driveController.setSetpoint(0, SparkBase.ControlType.kVoltage);
+    turnController.setSetpoint(0, SparkBase.ControlType.kVoltage);
+  }
 }

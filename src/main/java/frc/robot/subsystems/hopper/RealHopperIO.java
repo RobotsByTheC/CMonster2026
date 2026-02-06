@@ -16,27 +16,27 @@ import edu.wpi.first.units.measure.Voltage;
 
 @Logged
 public class RealHopperIO implements HopperIO {
-	private final SparkMax spark;
+  private final SparkMax spark;
 
-	public RealHopperIO() {
-		spark = new SparkMax(HOPPER_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-		SparkBaseConfig config = new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kBrake);
-		spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-	}
+  public RealHopperIO() {
+    spark = new SparkMax(HOPPER_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+    SparkBaseConfig config = new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kBrake);
+    spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+  }
 
-	@Override
-	public void stop() {
-		spark.setVoltage(0);
-	}
+  @Override
+  public void stop() {
+    spark.setVoltage(0);
+  }
 
-	@Override
-	public Current getCurrentDraw() {
-		return Amps.of(spark.getOutputCurrent());
-	}
+  @Override
+  public Current getCurrentDraw() {
+    return Amps.of(spark.getOutputCurrent());
+  }
 
-	@Override
-	public void setVoltage(Voltage voltage) {
-		spark.setVoltage(voltage);
-	}
+  @Override
+  public void setVoltage(Voltage voltage) {
+    spark.setVoltage(voltage);
+  }
 
 }
