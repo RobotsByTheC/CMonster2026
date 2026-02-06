@@ -1,5 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.units.measure.Angle;
@@ -115,14 +119,15 @@ public class Constants {
 			public static final double KA = 0;
 			public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
 			public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
+			public static final Angle MAX_ANGLE = Rotations.of(5.5);
 		}
 
 		public static class FlywheelConstants {
-			public static final double KP = 0.006;
+			public static final double KP = 0.0003;
 			public static final double KI = 0;
 			public static final double KD = 0;
 			public static final double KS = 0;
-			public static final double KV = 0.00137;
+			public static final double KV = 0.05;
 
 			public static final AngularVelocity IDLE_SPEED = RPM.of(4000);
 		}
@@ -133,6 +138,14 @@ public class Constants {
 		public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
 	}
 
+	public static class VisionConstants {
+		public static final Transform3d LEFT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
+		public static final Transform3d RIGHT_CAMERA_OFFSET = new Transform3d(0, 0, 0, Rotation3d.kZero);
+
+		public static final Pose2d BLUE_HUB = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
+		public static final Pose2d RED_HUB = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
+  }
+  
 	public static class FeederConstants {
 		public static final Voltage FEED_VOLTAGE = Volts.of(5);
 		public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
