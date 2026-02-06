@@ -6,11 +6,14 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED;
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
+import static frc.robot.Constants.VisionConstants.BLUE_HUB;
+import static frc.robot.Constants.VisionConstants.RED_HUB;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -20,7 +23,9 @@ import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
@@ -52,7 +57,7 @@ public class Robot extends TimedRobot {
 	private final Intake intake;
 	private final Swerve swerve;
 	private final Shooter shooter;
-	private final Vision vision;
+	private final PoseEstimation poseEstimation;
 	private final Hopper hopper;
 
 	public MutDistance shooterSimDistance = Meters.mutable(1);
@@ -75,7 +80,7 @@ public class Robot extends TimedRobot {
 			hopper = new Hopper(new RealHopperIO());
 		}
 
-		vision = new Vision();
+		poseEstimation = new PoseEstimation();
 
 		DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -104,12 +109,14 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 		CommandScheduler.getInstance().run();
 		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-		Epilogue.update(this);
+    poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
 		if (Robot.isSimulation()) {
 			LookupTable.update(shooterSimDistance);
 		} else {
-			LookupTable.update(Meters.of(Math.hypot(vision.getTarget().getX(), vision.getTarget().getY())));
+			DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
+					.getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
 		}
+		Epilogue.update(this);
 	}
 
 	@Override
@@ -158,7 +165,16 @@ public class Robot extends TimedRobot {
 
 	public Command f_driveLockedOn() {
 		return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-				() -> getLinearJoystickVelocity(rightFlightStick.getY()), vision::getTarget);
+				() -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
+          if (DriverStation.getAlliance().isPresent()) {
+            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+              return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
+            } else {
+              return poseEstimation.getDistanceToHub(RED_HUB).angle();
+            }
+          }
+          return Radians.zero();
+        });
 	}
 
 	public Command f_lockOnAndRev() {
