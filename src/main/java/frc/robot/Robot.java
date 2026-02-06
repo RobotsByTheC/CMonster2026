@@ -94,10 +94,19 @@ public class Robot extends TimedRobot {
     shooter.setDefaultCommand(shooter.f_idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
-    operatorController.a()
-        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
+    bindDriverButtons();
+    bindOperatorButtons();
+  }
 
-    operatorController.y().whileTrue(shooter.tuneFlywheel());
+  public void bindDriverButtons() {
+    leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
+  }
+
+  public void bindOperatorButtons() {
+    operatorController.x().whileTrue(f_shootBall());
+
+    operatorController.y().whileTrue(intake.f_extendAndGrab());
+    operatorController.y().onFalse(intake.l_retractAndGrab());
   }
 
   @Override
@@ -174,5 +183,9 @@ public class Robot extends TimedRobot {
 
   public Command f_lockOnAndRev() {
     return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
+  }
+
+  public Command f_shootBall() {
+    return shooter.l_kapow().repeatedly();
   }
 }
