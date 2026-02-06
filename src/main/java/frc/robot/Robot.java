@@ -57,7 +57,6 @@ public class Robot extends TimedRobot {
   private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
-  private double childLockMultiplier = 1;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
@@ -147,10 +146,10 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(rawValue).times(childLockMultiplier);
+    return MAX_DRIVE_SPEED.times(rawValue);
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(rawValue).times(childLockMultiplier);
+    return MAX_TURN_SPEED.times(rawValue);
   }
 
   public Command f_driveWithFlightSticks() {
