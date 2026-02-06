@@ -32,4 +32,6 @@ public interface FlywheelIO {
 	 *            The speed that the flywheel should go to.
 	 */
 	void setVelocity(AngularVelocity velocity);
+
+	boolean atTargetVelocity();
 }

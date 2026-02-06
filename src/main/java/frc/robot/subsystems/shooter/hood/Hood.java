@@ -29,6 +29,10 @@ public class Hood extends SubsystemBase {
 		feedforward = new ArmFeedforward(KS, KG, KV, KA);
 	}
 
+	public boolean isAtTargetAngle() {
+		return Radians.of(pidController.getSetpoint().position).isNear(io.getAngle(), Degrees.of(1));
+	}
+
 	private Voltage calculatePIDVoltage(Angle targetAngle) {
 		return Volts.of(pidController.calculate(io.getAngle().in(Radians), targetAngle.in(Radians))
 				+ feedforward.calculate(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)));
