@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -21,6 +22,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
@@ -99,22 +101,22 @@ public class Robot extends TimedRobot {
 
 		operatorController.a().onTrue(
 				Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.in(Meters) + 0.1)));
+
+		operatorController.y().whileTrue(shooter.tuneFlywheel());
 	}
 
 	@Override
 	public void robotPeriodic() {
 		CommandScheduler.getInstance().run();
 		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-		poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
+    poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
 		if (Robot.isSimulation()) {
 			LookupTable.update(shooterSimDistance);
 		} else {
 			DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
 					.getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
 		}
-
 		Epilogue.update(this);
-
 	}
 
 	@Override

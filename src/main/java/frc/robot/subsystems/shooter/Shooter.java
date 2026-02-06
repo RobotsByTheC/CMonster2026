@@ -69,14 +69,18 @@ public class Shooter extends SubsystemBase {
 	}
 
 	public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
-		return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
+		Command command = leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
+		command.addRequirements(this);
+		return command;
 	}
 
 	public Command f_idle() {
-		return leftFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED)
+    Command command = leftFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED)
 				.alongWith(rightFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED))
 				.alongWith(hood.l_returnToNormalcy().andThen(hood.o_stop())).alongWith(leftFeeder.stop())
 				.alongWith(rightFeeder.stop());
+    command.addRequirements(this);
+    return command;
 	}
 
 	public Command f_aimAndRev() {
@@ -88,4 +92,12 @@ public class Shooter extends SubsystemBase {
 		Command right = (rightFeeder.canShoot()) ? rightFeeder.queueBall() : Commands.none();
 		return left.alongWith(right);
 	}
+
+	public Command tuneFlywheel() {
+		return leftFlywheel.tune();
+	}
+
+	public Command tuneHood() {
+    return hood.tune();
+  }
 }
