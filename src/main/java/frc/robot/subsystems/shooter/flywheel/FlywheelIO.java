@@ -39,4 +39,6 @@ public interface FlywheelIO {
 	void setVoltage(Voltage voltage);
 
 	Angle getPosition();
+
+	boolean atTargetVelocity();
 }

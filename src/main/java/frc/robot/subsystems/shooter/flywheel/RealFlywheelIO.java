@@ -72,4 +72,9 @@ public class RealFlywheelIO implements FlywheelIO {
 	public Angle getPosition() {
 		return Rotations.of(encoder.getPosition());
 	}
+
+	@Override
+	public boolean atTargetVelocity() {
+		return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
+	}
 }

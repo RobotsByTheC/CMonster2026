@@ -1,6 +1,7 @@
 package frc.robot.data;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -19,10 +20,10 @@ public class ChassisSpeedsFilter {
 		thetaFilter = new SlewRateLimiter(angular.in(RadiansPerSecondPerSecond));
 	}
 
-	public void reset() {
+	public void reset(Rotation2d gyroHeading) {
 		xFilter.reset(0);
 		yFilter.reset(0);
-		thetaFilter.reset(0);
+		thetaFilter.reset(gyroHeading.getRadians());
 	}
 
 	public ChassisSpeeds calculate(ChassisSpeeds speeds) {

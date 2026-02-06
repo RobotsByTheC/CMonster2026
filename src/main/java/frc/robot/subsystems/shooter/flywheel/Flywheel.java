@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,6 +18,11 @@ public class Flywheel extends SubsystemBase {
 
 	public Flywheel(FlywheelIO io) {
 		this.io = io;
+	}
+
+	@NotLogged
+	public boolean atTargetSpeed() {
+		return io.atTargetVelocity();
 	}
 
 	public Command o_stop() {

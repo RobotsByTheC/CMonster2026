@@ -70,6 +70,11 @@ public class SimFlywheelIO implements FlywheelIO {
 	}
 
 	@Override
+	public boolean atTargetVelocity() {
+		return targetFlywheelSpeed.isNear(getVelocity(), RPM.of(20));
+	}
+
+	@Override
 	public AngularVelocity getVelocity() {
 		return flywheelSim.getAngularVelocity();
 	}
