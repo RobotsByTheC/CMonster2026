@@ -49,11 +49,11 @@ import frc.robot.subsystems.hopper.SimHopperIO;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  private final Intake intake;
+//  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   private final PoseEstimation poseEstimation;
-  private final Hopper hopper;
+//  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
 
@@ -63,15 +63,15 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
+//      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      hopper = new Hopper(new SimHopperIO());
+//      hopper = new Hopper(new SimHopperIO());
     } else {
-      intake = new Intake(new RealIntakeIO());
+//      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      hopper = new Hopper(new RealHopperIO());
+//      hopper = new Hopper(new RealHopperIO());
     }
 
     poseEstimation = new PoseEstimation();
@@ -88,10 +88,10 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.f_stowAndIdle());
+//    intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
     shooter.setDefaultCommand(shooter.f_idle());
-    hopper.setDefaultCommand(hopper.f_idle());
+//    hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
     bindOperatorButtons();
@@ -104,8 +104,8 @@ public class Robot extends TimedRobot {
   public void bindOperatorButtons() {
     operatorController.x().whileTrue(f_shootBall());
 
-    operatorController.y().whileTrue(intake.f_extendAndGrab());
-    operatorController.y().onFalse(intake.l_retractAndGrab());
+//    operatorController.y().whileTrue(intake.f_extendAndGrab());
+//    operatorController.y().onFalse(intake.l_retractAndGrab());
   }
 
   @Override
