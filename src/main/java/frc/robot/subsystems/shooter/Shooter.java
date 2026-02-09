@@ -88,9 +88,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command l_kapow() {
-    Command left = (leftFeeder.canShoot()) ? leftFeeder.queueBall() : Commands.none();
-    Command right = (rightFeeder.canShoot()) ? rightFeeder.queueBall() : Commands.none();
-    return left.alongWith(right);
+    return leftFeeder.queueBall().alongWith(rightFeeder.queueBall());
   }
 
   public Command tuneFlywheel() {
