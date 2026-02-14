@@ -44,11 +44,21 @@ public class Shooter extends SubsystemBase {
     if (real) {
       hood = new Hood(new RealHoodIO());
 
-      leftFlywheel = new Flywheel(new RealFlywheelIO(false, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID));
+      leftFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID,
+          Constants.ShooterConstants.FlywheelConstants.LeftConstants.KP,
+          Constants.ShooterConstants.FlywheelConstants.LeftConstants.KI,
+          Constants.ShooterConstants.FlywheelConstants.LeftConstants.KD,
+          Constants.ShooterConstants.FlywheelConstants.LeftConstants.KS,
+          Constants.ShooterConstants.FlywheelConstants.LeftConstants.KV));
       leftFeeder = new Feeder(
           new RealFeederIO(false, FEEDER_LEFT_CAN_ID, LEFT_CNC_BOTTOM, LEFT_CNC_MIDDLE, LEFT_CNC_TOP),
-          new Trigger(() -> leftFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
-      rightFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_RIGHT_A_CAN_ID, FLYWHEEL_RIGHT_B_CAN_ID));
+          new Trigger(() -> leftFlywheel.atTargetSpeed()));
+      rightFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_RIGHT_A_CAN_ID, FLYWHEEL_RIGHT_B_CAN_ID,
+          Constants.ShooterConstants.FlywheelConstants.RightConstants.KP,
+          Constants.ShooterConstants.FlywheelConstants.RightConstants.KI,
+          Constants.ShooterConstants.FlywheelConstants.RightConstants.KD,
+          Constants.ShooterConstants.FlywheelConstants.RightConstants.KS,
+          Constants.ShooterConstants.FlywheelConstants.RightConstants.KV));
       rightFeeder = new Feeder(
           new RealFeederIO(false, FEEDER_RIGHT_CAN_ID, RIGHT_CNC_BOTTOM, RIGHT_CNC_MIDDLE, RIGHT_CNC_TOP),
           new Trigger(() -> rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
