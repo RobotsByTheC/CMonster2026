@@ -66,11 +66,9 @@ public class Shooter extends SubsystemBase {
     } else {
       hood = new Hood(new SimHoodIO());
       leftFlywheel = new Flywheel(new SimFlywheelIO());
-      leftFeeder = new Feeder(new SimFeederIO(),
-          new Trigger(() -> leftFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
+      leftFeeder = new Feeder(new SimFeederIO(), new Trigger(() -> leftFlywheel.atTargetSpeed()));
       rightFlywheel = new Flywheel(new SimFlywheelIO());
-      rightFeeder = new Feeder(new SimFeederIO(),
-          new Trigger(() -> rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
+      rightFeeder = new Feeder(new SimFeederIO(), new Trigger(() -> rightFlywheel.atTargetSpeed()));
     }
 
     leftFlywheel.setDefaultCommand(leftFlywheel.f_idle());
