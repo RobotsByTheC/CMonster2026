@@ -35,6 +35,9 @@ public class RealFlywheelIO implements FlywheelIO {
     configA.closedLoop.pid(P, I, D);
     configA.closedLoop.feedForward.sv(S, V);
     configA.smartCurrentLimit(40);
+    configA.encoder.velocityConversionFactor(1);
+    configA.encoder.positionConversionFactor(1);
+
     sparkA.configure(configA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     sparkB = new SparkMax(canB, SparkLowLevel.MotorType.kBrushless);
