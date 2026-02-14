@@ -55,6 +55,11 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public double getRPM() {
+    return encoder.getVelocity();
+  }
+
+  @Override
   public Current getCurrentDraw() {
     return Amps.of(sparkA.getOutputCurrent() + sparkB.getOutputCurrent());
   }
