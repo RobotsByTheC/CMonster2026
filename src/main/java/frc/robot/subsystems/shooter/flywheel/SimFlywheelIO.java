@@ -83,4 +83,9 @@ public class SimFlywheelIO implements FlywheelIO {
   public Current getCurrentDraw() {
     return Amps.of(flywheelSim.getCurrentDrawAmps());
   }
+
+  @Override
+  public Voltage getVoltageDraw() {
+    return Volts.of(flywheelSim.getInputVoltage());
+  }
 }
