@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
   // private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
+  public PowerDistribution pdp;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
