@@ -3,7 +3,9 @@ package frc.robot.subsystems.shooter.flywheel;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ConstantTuner;
 
@@ -31,6 +33,10 @@ public class Flywheel extends SubsystemBase {
 
   public Command f_shoot(Supplier<AngularVelocity> target) {
     return run(() -> io.setVelocity(target.get()));
+  }
+
+  public Command runAtVoltage(Supplier<Voltage> volts) {
+    return run(() -> io.setVoltage(volts.get())).alongWith(Commands.run(() -> System.out.println("volts: " + volts.get().in(Volts))));
   }
 
   public Command f_idle() {
