@@ -91,6 +91,10 @@ public class Shooter extends SubsystemBase {
   public Command noramlize() {
     return hood.l_returnToNormalcy();
   }
+
+  public Command itsy_bitsy_test_hood(Supplier<Voltage> volts) {
+    return hood.applyVoltage(volts);
+  }
   public Command f_aimAndRev() {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
