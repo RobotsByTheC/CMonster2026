@@ -42,8 +42,6 @@ public class RealFlywheelIO implements FlywheelIO {
 
     sparkB = new SparkMax(canB, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig configB = new SparkMaxConfig().follow(sparkA, true).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configA.encoder.velocityConversionFactor(1);
-    configA.encoder.positionConversionFactor(1);
 
     sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = sparkA.getClosedLoopController();
