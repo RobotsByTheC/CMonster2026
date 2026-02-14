@@ -57,6 +57,11 @@ public class RealHoodIO implements HoodIO {
     return Volts.of(spark.getAppliedOutput()*spark.getBusVoltage());
   }
   @Override
+  public Current getCurrent() {
+    return Amps.of(spark.getOutputCurrent());
+  }
+
+  @Override
   public void setVoltage(Voltage voltage) {
     spark.setVoltage(voltage);
   }
