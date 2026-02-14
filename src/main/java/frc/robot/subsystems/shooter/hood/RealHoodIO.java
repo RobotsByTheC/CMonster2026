@@ -22,6 +22,7 @@ public class RealHoodIO implements HoodIO {
 
   public RealHoodIO() {
     spark = new SparkMax(HOOD_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+    SparkBaseConfig config = new SparkMaxConfig().inverted(false);
     encoder = spark.getEncoder();
     limitSwitch = spark.getForwardLimitSwitch();
   }
