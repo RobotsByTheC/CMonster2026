@@ -88,6 +88,9 @@ public class Shooter extends SubsystemBase {
         .alongWith(Commands.run(() -> System.out.println("voltage: " + volts.get().in(Volts))));
   }
 
+  public Command noramlize() {
+    return hood.l_returnToNormalcy();
+  }
   public Command f_aimAndRev() {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
