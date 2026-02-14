@@ -123,11 +123,21 @@ public class Constants {
     }
 
     public static class FlywheelConstants {
-      public static final double KP = 0.0003;
-      public static final double KI = 0;
-      public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KV = 0.05;
+      public static final class RightConstants {
+        public static final double KP = 0.0004;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0.22;
+        public static final double KV = 0.0021141;
+      }
+
+      public static final class LeftConstants {
+        public static final double KP = 0.0004;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0.72;
+        public static final double KV = 0.0021141;
+      }
 
       public static final AngularVelocity IDLE_SPEED = RPM.of(4000);
     }
