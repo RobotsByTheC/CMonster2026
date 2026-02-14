@@ -88,4 +88,9 @@ public class SimFlywheelIO implements FlywheelIO {
   public Voltage getVoltageDraw() {
     return Volts.of(flywheelSim.getInputVoltage());
   }
+
+  @Override
+  public double getRPM() {
+    return flywheelSim.getAngularVelocityRPM();
+  }
 }
