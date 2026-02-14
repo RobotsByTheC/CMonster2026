@@ -117,7 +117,11 @@ public class Shooter extends SubsystemBase {
     return leftFeeder.queueBall().alongWith(rightFeeder.queueBall());
   }
 
-  public Command tuneFlywheel() {
+  public Command tuneRightFlywheel() {
+    return rightFlywheel.tune();
+  }
+
+  public Command tuneLeftFlywheel() {
     return leftFlywheel.tune();
   }
 
