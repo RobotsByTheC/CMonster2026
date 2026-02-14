@@ -112,13 +112,13 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-    poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
-    if (Robot.isSimulation()) {
-      LookupTable.update(shooterSimDistance);
-    } else {
-      DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
-          .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
-    }
+    // poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
+    // if (Robot.isSimulation()) {
+    // LookupTable.update(shooterSimDistance);
+    // } else {
+    // DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
+    // .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
+    // }
     Epilogue.update(this);
   }
 
@@ -166,23 +166,23 @@ public class Robot extends TimedRobot {
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }
 
-  public Command f_driveLockedOn() {
-    return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
-          if (DriverStation.getAlliance().isPresent()) {
-            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-              return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
-            } else {
-              return poseEstimation.getDistanceToHub(RED_HUB).angle();
-            }
-          }
-          return Radians.zero();
-        });
-  }
+  // public Command f_driveLockedOn() {
+  // return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+  // () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
+  // if (DriverStation.getAlliance().isPresent()) {
+  // if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+  // return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
+  // } else {
+  // return poseEstimation.getDistanceToHub(RED_HUB).angle();
+  // }
+  // }
+  // return Radians.zero();
+  // });
+  // }
 
-  public Command f_lockOnAndRev() {
-    return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
-  }
+  // public Command f_lockOnAndRev() {
+  // return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
+  // }
 
   public Command f_shootBall() {
     return shooter.l_kapow().repeatedly();
