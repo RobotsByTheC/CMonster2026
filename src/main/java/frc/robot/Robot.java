@@ -88,10 +88,10 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-//    intake.setDefaultCommand(intake.f_stowAndIdle());
+    // intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    shooter.setDefaultCommand(shooter.f_idle());
-//    hopper.setDefaultCommand(hopper.f_idle());
+    // shooter.setDefaultCommand(shooter.f_idle());
+    // hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
     bindOperatorButtons();
