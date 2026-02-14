@@ -45,7 +45,8 @@ public class Hood extends SubsystemBase {
   }
 
   public Command l_returnToNormalcy() {
-    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom);
+    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom).andThen(Commands.runOnce(() -> System.out.println("done")));
+  }
   }
 
   public Command o_stop() {
