@@ -65,6 +65,12 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public Voltage getVoltageDraw() {
+    return Volts
+        .of(sparkA.getAppliedOutput() * sparkA.getBusVoltage() + sparkB.getAppliedOutput() * sparkB.getBusVoltage());
+  }
+
+  @Override
   public void setVelocity(AngularVelocity velocity) {
     controller.setSetpoint(velocity.in(RPM), SparkBase.ControlType.kVelocity);
     target.mut_setMagnitude(velocity.in(RPM));
