@@ -20,6 +20,7 @@ public class Flywheel extends SubsystemBase {
 
   public Flywheel(FlywheelIO io) {
     this.io = io;
+    this.setDefaultCommand(o_stop());
   }
 
   @NotLogged
