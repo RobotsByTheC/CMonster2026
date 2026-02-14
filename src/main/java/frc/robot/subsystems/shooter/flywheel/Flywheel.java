@@ -45,7 +45,7 @@ public class Flywheel extends SubsystemBase {
   }
 
   public Command tune() {
-    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getVelocity().gte(RPM.of(500)),
+    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getVelocity().gte(RPM.of(5000)),
         () -> io.getVelocity().lte(RPM.zero()));
   }
 }
