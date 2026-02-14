@@ -26,6 +26,8 @@ public class RealHoodIO implements HoodIO {
     config.encoder.positionConversionFactor(1d/157.5);
     config.encoder.velocityConversionFactor(1d/157.5);
     config.limitSwitch.forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyClosed);
+    spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
     encoder = spark.getEncoder();
     limitSwitch = spark.getForwardLimitSwitch();
   }
