@@ -53,6 +53,12 @@ public class SimHoodIO implements HoodIO {
   public Voltage getVoltage() {
     return null;
   }
+
+  @Override
+  public Current getCurrent() {
+    return Amps.of(sim.getCurrentDrawAmps());
+  }
+
   @Override
   public void setVoltage(Voltage voltage) {
     sim.setInputVoltage(mechanism.outputVoltage(voltage.in(Volts)));
