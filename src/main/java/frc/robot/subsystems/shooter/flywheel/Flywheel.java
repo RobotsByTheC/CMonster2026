@@ -37,7 +37,8 @@ public class Flywheel extends SubsystemBase {
   }
 
   public Command runAtVoltage(Supplier<Voltage> volts) {
-    return run(() -> io.setVoltage(volts.get())).alongWith(Commands.run(() -> System.out.println("volts: " + volts.get().in(Volts))));
+    return run(() -> io.setVoltage(volts.get()))
+        .alongWith(Commands.run(() -> System.out.println("volts: " + volts.get().in(Volts))));
   }
 
   public Command f_idle() {

@@ -3,7 +3,6 @@ package frc.robot.subsystems.shooter.hood;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
@@ -47,7 +46,8 @@ public class Hood extends SubsystemBase {
   }
 
   public Command l_returnToNormalcy() {
-    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom).andThen(Commands.runOnce(() -> System.out.println("done")));
+    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom)
+        .andThen(Commands.runOnce(() -> System.out.println("done")));
   }
 
   public Command applyVoltage(Supplier<Voltage> volts) {

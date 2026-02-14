@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
@@ -108,7 +107,7 @@ public class Robot extends TimedRobot {
 
     operatorController.leftBumper().onTrue(shooter.tuneHood());
 
-//    operatorController.leftBumper().whileTrue(shooter.holdHoodAngle(() -> Degrees.of(15)));
+    // operatorController.leftBumper().whileTrue(shooter.holdHoodAngle(() -> Degrees.of(15)));
 
     operatorController.rightBumper().onTrue(shooter.synchronizedRev(() -> RPM.of(1000)));
 
