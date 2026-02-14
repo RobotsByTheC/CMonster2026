@@ -44,7 +44,7 @@ public class RealHoodIO implements HoodIO {
 
   @Override
   public Angle getAngle() {
-    return Rotations.of(encoder.getPosition());
+    return Rotations.of(encoder.getPosition()).unaryMinus();
   }
 
   @Override
