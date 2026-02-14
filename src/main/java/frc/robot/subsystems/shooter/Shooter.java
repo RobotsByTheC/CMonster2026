@@ -109,6 +109,10 @@ public class Shooter extends SubsystemBase {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
 
+  public Command holdHoodAngle(Supplier<Angle> angle) {
+    return hood.f_holdDesiredAngle(angle);
+  }
+
   public Command l_kapow() {
     return leftFeeder.queueBall().alongWith(rightFeeder.queueBall());
   }
