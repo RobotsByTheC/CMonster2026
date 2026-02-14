@@ -83,13 +83,6 @@ public class Shooter extends SubsystemBase {
     return command;
   }
 
-  public Command f_idle() {
-    Command command = leftFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED)
-        .alongWith(rightFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED))
-        .alongWith(hood.l_returnToNormalcy().andThen(hood.o_stop())).alongWith(leftFeeder.stop())
-        .alongWith(rightFeeder.stop());
-    command.addRequirements(this);
-    return command;
   }
 
   public Command f_aimAndRev() {
