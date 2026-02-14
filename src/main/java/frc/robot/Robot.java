@@ -98,14 +98,30 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-    leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
+    // leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(f_shootBall());
+    // operatorController.x().whileTrue(shooter.synchronizedRev(() -> RPM.of(3000)));
+    operatorController.a().onTrue(shooter.itsy_bitsy_test_hood(() -> appliedVoltage));
 
-//    operatorController.y().whileTrue(intake.f_extendAndGrab());
-//    operatorController.y().onFalse(intake.l_retractAndGrab());
+    operatorController.b().onTrue(shooter.noramlize());
+
+    operatorController.leftBumper().onTrue(shooter.tuneHood());
+
+//    operatorController.leftBumper().whileTrue(shooter.holdHoodAngle(() -> Degrees.of(15)));
+
+    operatorController.rightBumper().onTrue(shooter.synchronizedRev(() -> RPM.of(1000)));
+
+    operatorController.x()
+        .onTrue(Commands.runOnce(() -> appliedVoltage.mut_setMagnitude(appliedVoltage.magnitude() + 0.01)));
+    operatorController.y()
+        .onTrue(Commands.runOnce(() -> appliedVoltage.mut_setMagnitude(appliedVoltage.magnitude() - 0.01)));
+
+    // operatorController.y().onTrue(shooter.tuneFlywheel());
+
+    // operatorController.y().whileTrue(intake.f_extendAndGrab());
+    // operatorController.y().onFalse(intake.l_retractAndGrab());
   }
 
   @Override
