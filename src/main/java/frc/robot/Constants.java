@@ -72,12 +72,12 @@ public class Constants {
     public static final int BACK_RIGHT_DRIVE_CAN_ID = 8;
     public static final int INTAKE_MOTOR_CAN_ID = 9;
     public static final int INTAKE_WRIST_CAN_ID = 10;
-    public static final int FLYWHEEL_LEFT_A_CAN_ID = 11;
-    public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
-    public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
-    public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
     public static final int FEEDER_LEFT_CAN_ID = 15;
     public static final int FEEDER_RIGHT_CAN_ID = 16;
+    public static final int FLYWHEEL_RIGHT_A_CAN_ID = 11;
+    public static final int FLYWHEEL_RIGHT_B_CAN_ID = 12;
+    public static final int FLYWHEEL_LEFT_A_CAN_ID = 13;
+    public static final int FLYWHEEL_LEFT_B_CAN_ID = 14;
     public static final int HOOD_CAN_ID = 17;
     public static final int HOPPER_CAN_ID = 18;
 
