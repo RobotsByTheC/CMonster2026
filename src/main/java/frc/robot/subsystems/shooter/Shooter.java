@@ -83,6 +83,9 @@ public class Shooter extends SubsystemBase {
     return command;
   }
 
+  public Command shootAtVoltage(Supplier<Voltage> volts) {
+    return leftFlywheel.runAtVoltage(volts).alongWith(rightFlywheel.runAtVoltage(volts))
+        .alongWith(Commands.run(() -> System.out.println("voltage: " + volts.get().in(Volts))));
   }
 
   public Command f_aimAndRev() {
