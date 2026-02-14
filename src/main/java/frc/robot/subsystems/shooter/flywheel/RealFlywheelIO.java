@@ -29,10 +29,11 @@ public class RealFlywheelIO implements FlywheelIO {
   private final RelativeEncoder encoder;
   private final MutAngularVelocity target = RPM.mutable(0);
 
-  public RealFlywheelIO(boolean inverted, int canA, int canB) {
+  public RealFlywheelIO(boolean inverted, int canA, int canB, double P, double I, double D, double S, double V) {
     sparkA = new SparkMax(canA, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig configA = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configA.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
+    configA.closedLoop.pid(P, I, D);
+    configA.closedLoop.feedForward.sv(S, V);
     sparkA.configure(configA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     sparkB = new SparkMax(canB, SparkLowLevel.MotorType.kBrushless);
