@@ -95,6 +95,16 @@ public class Shooter extends SubsystemBase {
   public Command itsy_bitsy_test_hood(Supplier<Voltage> volts) {
     return hood.applyVoltage(volts);
   }
+
+  // public Command f_idle() {
+  // Command command = leftFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED)
+  // .alongWith(rightFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED))
+  // .alongWith(hood.l_returnToNormalcy().andThen(hood.o_stop())).alongWith(leftFeeder.stop())
+  // .alongWith(rightFeeder.stop());
+  // command.addRequirements(this);
+  // return command;
+  // }
+
   public Command f_aimAndRev() {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
