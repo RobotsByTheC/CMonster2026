@@ -110,13 +110,13 @@ public class Constants {
 
   public static class ShooterConstants {
     public static class HoodConstants {
-      public static final double KP = 5;
+      public static final double KP = 1;
       public static final double KI = 0;
       public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KG = 0;
-      public static final double KV = 0;
-      public static final double KA = 0;
+      public static final double KS = 0.18;
+      public static final double KG = 0.10827;
+      public static final double KV = 0.59923;
+      public static final double KA = 0.26246;
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
       public static final Angle MAX_ANGLE = Rotations.of(5.5);
