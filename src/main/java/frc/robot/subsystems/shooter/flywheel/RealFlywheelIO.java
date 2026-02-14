@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
-import static frc.robot.Constants.ShooterConstants.FlywheelConstants;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
