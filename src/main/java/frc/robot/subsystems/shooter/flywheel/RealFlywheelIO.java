@@ -74,7 +74,6 @@ public class RealFlywheelIO implements FlywheelIO {
   public void setVelocity(AngularVelocity velocity) {
     controller.setSetpoint(velocity.in(RPM), SparkBase.ControlType.kVelocity);
     target.mut_setMagnitude(velocity.in(RPM));
-    System.out.println("t: " + velocity + ", a: " + controller.getSetpoint());
   }
 
   @Override
