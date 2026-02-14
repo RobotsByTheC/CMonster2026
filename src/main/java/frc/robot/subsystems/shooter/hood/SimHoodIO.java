@@ -50,6 +50,10 @@ public class SimHoodIO implements HoodIO {
   }
 
   @Override
+  public Voltage getVoltage() {
+    return null;
+  }
+  @Override
   public void setVoltage(Voltage voltage) {
     sim.setInputVoltage(mechanism.outputVoltage(voltage.in(Volts)));
   }
