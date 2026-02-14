@@ -73,7 +73,8 @@ public class Shooter extends SubsystemBase {
 
     leftFlywheel.setDefaultCommand(leftFlywheel.f_idle());
     rightFlywheel.setDefaultCommand(rightFlywheel.f_idle());
-    hood.setDefaultCommand(hood.f_idle());
+    hood.setDefaultCommand(hood.o_stop());
+    // hood.setDefaultCommand(hood.f_idle());
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
