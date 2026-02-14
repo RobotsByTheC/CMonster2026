@@ -125,6 +125,14 @@ public class Shooter extends SubsystemBase {
     return leftFlywheel.tune();
   }
 
+  public Command shootLeftFlywheel(Supplier<Voltage> volts) {
+    return leftFlywheel.runAtVoltage(volts);
+  }
+
+  public Command shootRightFlywheel(Supplier<Voltage> volts) {
+    return rightFlywheel.runAtVoltage(volts);
+  }
+
   public Command tuneHood() {
     return hood.tune();
   }
