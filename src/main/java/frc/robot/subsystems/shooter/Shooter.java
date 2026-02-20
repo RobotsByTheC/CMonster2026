@@ -63,7 +63,7 @@ public class Shooter extends SubsystemBase {
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KS,
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KV));
       rightFeeder = new Feeder(
-          new RealFeederIO(false, FEEDER_RIGHT_CAN_ID, RIGHT_CNC_BOTTOM, RIGHT_CNC_MIDDLE, RIGHT_CNC_TOP),
+          new RealFeederIO(true, FEEDER_RIGHT_CAN_ID, RIGHT_CNC_BOTTOM, RIGHT_CNC_MIDDLE, RIGHT_CNC_TOP),
           new Trigger(() -> rightFlywheel.atTargetSpeed()));
 
     } else {
