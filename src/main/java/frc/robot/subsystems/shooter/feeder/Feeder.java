@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter.feeder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import static frc.robot.Constants.FeederConstants.*;
@@ -26,7 +27,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command activate() {
-    return run(() -> io.setVoltage(FEED_VOLTAGE));
+    return run(() -> io.setVoltage(Constants.MatchConstants.FEEDER_APPLY_VOLTAGE));
   }
 
   public Command stop() {
