@@ -36,6 +36,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.sim.SimulationContext;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.RealHopperIO;
+import frc.robot.subsystems.hopper.SimHopperIO;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.RealIntakeIO;
+import frc.robot.subsystems.intake.SimIntakeIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
@@ -44,11 +50,11 @@ import frc.robot.subsystems.swerve.Swerve;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  // private final Intake intake;
+  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   // private final PoseEstimation poseEstimation;
-  // private final Hopper hopper;
+  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
   public MutVoltage appliedVoltage = Volts.mutable(0);
@@ -60,16 +66,16 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-      // intake = new Intake(new SimIntakeIO());
+       intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      // hopper = new Hopper(new SimHopperIO());
+       hopper = new Hopper(new SimHopperIO());
     } else {
-      // intake = new Intake(new RealIntakeIO());
+       intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
       pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
-      // hopper = new Hopper(new RealHopperIO());
+       hopper = new Hopper(new RealHopperIO());
     }
 
     // poseEstimation = new PoseEstimation();
@@ -86,10 +92,10 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    // intake.setDefaultCommand(intake.f_stowAndIdle());
+    intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
     // shooter.setDefaultCommand(shooter.f_idle());
-    // hopper.setDefaultCommand(hopper.f_idle());
+    hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
     bindOperatorButtons();
@@ -100,26 +106,11 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    // operatorController.x().whileTrue(shooter.synchronizedRev(() -> RPM.of(3000)));
-    operatorController.a().onTrue(shooter.itsy_bitsy_test_hood(() -> appliedVoltage));
-
-    operatorController.b().onTrue(shooter.noramlize());
-
-    operatorController.leftBumper().onTrue(shooter.tuneHood());
-
-    // operatorController.leftBumper().whileTrue(shooter.holdHoodAngle(() -> Degrees.of(15)));
-
-    operatorController.rightBumper().onTrue(shooter.synchronizedRev(() -> RPM.of(1000)));
-
-    operatorController.x()
-        .onTrue(Commands.runOnce(() -> appliedVoltage.mut_setMagnitude(appliedVoltage.magnitude() + 0.01)));
-    operatorController.y()
-        .onTrue(Commands.runOnce(() -> appliedVoltage.mut_setMagnitude(appliedVoltage.magnitude() - 0.01)));
-
-    // operatorController.y().onTrue(shooter.tuneFlywheel());
-
-    // operatorController.y().whileTrue(intake.f_extendAndGrab());
-    // operatorController.y().onFalse(intake.l_retractAndGrab());
+    operatorController.x().whileTrue(shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE));
+    operatorController.leftBumper().whileTrue(shooter.feed());
+    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake());
+    operatorController.a().whileTrue(intake.f_extendAndGrab());
+    operatorController.a().onFalse(intake.l_retractAndGrab());
   }
 
   @Override
