@@ -86,9 +86,17 @@ public class Shooter extends SubsystemBase {
     return command;
   }
 
+  public Command aimAndRev(Supplier<AngularVelocity> velocity, Supplier<Angle> angle) {
+    return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity)).alongWith(hood.f_holdDesiredAngle(angle));
+  }
+
   public Command shootAtVoltage(Supplier<Voltage> volts) {
     return leftFlywheel.runAtVoltage(volts).alongWith(rightFlywheel.runAtVoltage(volts))
         .alongWith(Commands.run(() -> System.out.println("voltage: " + volts.get().in(Volts))));
+  }
+
+  public Command feed() {
+    return leftFeeder.activate().alongWith(rightFeeder.activate());
   }
 
   public Command noramlize() {
