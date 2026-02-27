@@ -5,9 +5,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import static frc.robot.Constants.HopperConstants.INTAKE_VOLTAGE;
-import static frc.robot.Constants.HopperConstants.OUTTAKE_VOLTAGE;
-
 @Logged
 public class Hopper extends SubsystemBase {
   private final HopperIO io;
