@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
   private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
-  // private final PoseEstimation poseEstimation;
+  private final PoseEstimation poseEstimation;
   private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
        hopper = new Hopper(new RealHopperIO());
     }
 
-    // poseEstimation = new PoseEstimation();
+    poseEstimation = new PoseEstimation();
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -117,7 +117,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-    // poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
+    poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
     // if (Robot.isSimulation()) {
     // LookupTable.update(shooterSimDistance);
     // } else {
