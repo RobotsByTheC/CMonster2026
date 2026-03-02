@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FEEDER_RIGHT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
@@ -15,11 +14,8 @@ import static frc.robot.Constants.CANConstants.RIGHT_CNC_MIDDLE;
 import static frc.robot.Constants.CANConstants.RIGHT_CNC_TOP;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -55,7 +51,7 @@ public class Shooter extends SubsystemBase {
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KV));
       leftFeeder = new Feeder(
           new RealFeederIO(false, FEEDER_LEFT_CAN_ID, LEFT_CNC_BOTTOM, LEFT_CNC_MIDDLE, LEFT_CNC_TOP),
-          new Trigger(() -> leftFlywheel.atTargetSpeed()));
+          new Trigger(leftFlywheel::atTargetSpeed));
       rightFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_RIGHT_A_CAN_ID, FLYWHEEL_RIGHT_B_CAN_ID,
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KP,
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KI,
@@ -64,20 +60,21 @@ public class Shooter extends SubsystemBase {
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KV));
       rightFeeder = new Feeder(
           new RealFeederIO(true, FEEDER_RIGHT_CAN_ID, RIGHT_CNC_BOTTOM, RIGHT_CNC_MIDDLE, RIGHT_CNC_TOP),
-          new Trigger(() -> rightFlywheel.atTargetSpeed()));
+          new Trigger(rightFlywheel::atTargetSpeed));
 
     } else {
       hood = new Hood(new SimHoodIO());
       leftFlywheel = new Flywheel(new SimFlywheelIO());
-      leftFeeder = new Feeder(new SimFeederIO(), new Trigger(() -> leftFlywheel.atTargetSpeed()));
+      leftFeeder = new Feeder(new SimFeederIO(), new Trigger(leftFlywheel::atTargetSpeed));
       rightFlywheel = new Flywheel(new SimFlywheelIO());
-      rightFeeder = new Feeder(new SimFeederIO(), new Trigger(() -> rightFlywheel.atTargetSpeed()));
+      rightFeeder = new Feeder(new SimFeederIO(), new Trigger(rightFlywheel::atTargetSpeed));
     }
 
     leftFlywheel.setDefaultCommand(leftFlywheel.f_idle());
     rightFlywheel.setDefaultCommand(rightFlywheel.f_idle());
+    leftFeeder.setDefaultCommand(leftFeeder.o_stop());
+    rightFeeder.setDefaultCommand(rightFeeder.o_stop());
     hood.setDefaultCommand(hood.o_stop());
-    // hood.setDefaultCommand(hood.f_idle());
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
@@ -86,65 +83,15 @@ public class Shooter extends SubsystemBase {
     return command;
   }
 
-  public Command aimAndRev(Supplier<AngularVelocity> velocity, Supplier<Angle> angle) {
-    return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity)).alongWith(hood.f_holdDesiredAngle(angle));
-  }
-
-  public Command shootAtVoltage(Supplier<Voltage> volts) {
-    return leftFlywheel.runAtVoltage(volts).alongWith(rightFlywheel.runAtVoltage(volts))
-        .alongWith(Commands.run(() -> System.out.println("voltage: " + volts.get().in(Volts))));
-  }
-
   public Command feed() {
-    return leftFeeder.activate().alongWith(rightFeeder.activate());
+    return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
-
-  public Command noramlize() {
-    return hood.l_returnToNormalcy();
-  }
-
-  public Command itsy_bitsy_test_hood(Supplier<Voltage> volts) {
-    return hood.applyVoltage(volts);
-  }
-
-  // public Command f_idle() {
-  // Command command = leftFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED)
-  // .alongWith(rightFlywheel.f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED))
-  // .alongWith(hood.l_returnToNormalcy().andThen(hood.o_stop())).alongWith(leftFeeder.stop())
-  // .alongWith(rightFeeder.stop());
-  // command.addRequirements(this);
-  // return command;
-  // }
 
   public Command f_aimAndRev() {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
 
-  public Command holdHoodAngle(Supplier<Angle> angle) {
-    return hood.f_holdDesiredAngle(angle);
-  }
-
   public Command l_kapow() {
     return leftFeeder.queueBall().alongWith(rightFeeder.queueBall());
-  }
-
-  public Command tuneRightFlywheel() {
-    return rightFlywheel.tune();
-  }
-
-  public Command tuneLeftFlywheel() {
-    return leftFlywheel.tune();
-  }
-
-  public Command shootLeftFlywheel(Supplier<Voltage> volts) {
-    return leftFlywheel.runAtVoltage(volts);
-  }
-
-  public Command shootRightFlywheel(Supplier<Voltage> volts) {
-    return rightFlywheel.runAtVoltage(volts);
-  }
-
-  public Command tuneHood() {
-    return hood.tune();
   }
 }
