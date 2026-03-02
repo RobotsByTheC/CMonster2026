@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -35,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
@@ -94,7 +94,6 @@ public class Robot extends TimedRobot {
 
     intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    // shooter.setDefaultCommand(shooter.f_idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
@@ -106,11 +105,11 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE));
-    operatorController.leftBumper().whileTrue(shooter.feed());
-    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake());
-    operatorController.a().whileTrue(intake.f_extendAndGrab());
-    operatorController.a().onFalse(intake.l_retractAndGrab());
+    operatorController.x().whileTrue(shooter.f_aimAndRev());
+    operatorController.a()
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
+    operatorController.b()
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)));
   }
 
   @Override
@@ -124,6 +123,7 @@ public class Robot extends TimedRobot {
     // DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
     // .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
     // }
+    LookupTable.update(shooterSimDistance);
     Epilogue.update(this);
   }
 
