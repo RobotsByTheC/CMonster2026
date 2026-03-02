@@ -2,7 +2,6 @@ package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
-import static frc.robot.Constants.ShooterConstants.FlywheelConstants;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
@@ -29,17 +28,20 @@ public class RealFlywheelIO implements FlywheelIO {
   private final RelativeEncoder encoder;
   private final MutAngularVelocity target = RPM.mutable(0);
 
-  public RealFlywheelIO(boolean inverted, int canA, int canB) {
+  public RealFlywheelIO(boolean inverted, int canA, int canB, double P, double I, double D, double S, double V) {
     sparkA = new SparkMax(canA, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig configA = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configA.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
+    configA.closedLoop.pid(P, I, D);
+    configA.closedLoop.feedForward.sv(S, V);
+    configA.smartCurrentLimit(40);
+    configA.encoder.velocityConversionFactor(1);
+    configA.encoder.positionConversionFactor(1);
+
     sparkA.configure(configA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     sparkB = new SparkMax(canB, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig configB = new SparkMaxConfig().follow(sparkA, true).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configB.closedLoop.pid(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
-    configA.encoder.velocityConversionFactor(1);
-    configA.encoder.positionConversionFactor(1);
+    configB.smartCurrentLimit(40);
 
     sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = sparkA.getClosedLoopController();
@@ -52,15 +54,25 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public double getRPM() {
+    return encoder.getVelocity();
+  }
+
+  @Override
   public Current getCurrentDraw() {
     return Amps.of(sparkA.getOutputCurrent() + sparkB.getOutputCurrent());
+  }
+
+  @Override
+  public Voltage getVoltageDraw() {
+    return Volts
+        .of(sparkA.getAppliedOutput() * sparkA.getBusVoltage() + sparkB.getAppliedOutput() * sparkB.getBusVoltage());
   }
 
   @Override
   public void setVelocity(AngularVelocity velocity) {
     controller.setSetpoint(velocity.in(RPM), SparkBase.ControlType.kVelocity);
     target.mut_setMagnitude(velocity.in(RPM));
-    System.out.println("t: " + velocity + ", a: " + controller.getSetpoint());
   }
 
   @Override

@@ -3,7 +3,9 @@ package frc.robot.subsystems.shooter.feeder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 
+import static edu.wpi.first.units.Units.Milliseconds;
 import static frc.robot.Constants.FeederConstants.*;
 
 public class Feeder extends SubsystemBase {
@@ -13,7 +15,7 @@ public class Feeder extends SubsystemBase {
   public Feeder(FeederIO io, Trigger readyToFire) {
     this.io = io;
 
-    this.readyToFire = readyToFire.and(io::isBallReadyToFire);
+    this.readyToFire = readyToFire;
   }
 
   public boolean canShoot() {
@@ -21,11 +23,11 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command queueBall() {
-    return idle().until(readyToFire).andThen(activate().until(io::isBallAtFlywheel)).andThen(stop());
+    return idle().until(readyToFire).andThen(activate().withTimeout(Milliseconds.of(100))).andThen(stop());
   }
 
   public Command activate() {
-    return run(() -> io.setVoltage(FEED_VOLTAGE));
+    return run(() -> io.setVoltage(Constants.MatchConstants.FEEDER_APPLY_VOLTAGE));
   }
 
   public Command stop() {

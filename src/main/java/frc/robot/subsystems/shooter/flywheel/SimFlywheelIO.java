@@ -45,8 +45,10 @@ public class SimFlywheelIO implements FlywheelIO {
       }
     };
 
-    flywheelFeedForward = new SimpleMotorFeedforward(FlywheelConstants.KS, FlywheelConstants.KV);
-    flywheelPIDController = new PIDController(FlywheelConstants.KP, FlywheelConstants.KI, FlywheelConstants.KD);
+    flywheelFeedForward = new SimpleMotorFeedforward(FlywheelConstants.LeftConstants.KS,
+        FlywheelConstants.LeftConstants.KV);
+    flywheelPIDController = new PIDController(FlywheelConstants.LeftConstants.KP, FlywheelConstants.LeftConstants.KI,
+        FlywheelConstants.LeftConstants.KD);
 
     SimulationContext.getDefault().addMechanism(flywheelMechanismSim);
   }
@@ -82,5 +84,15 @@ public class SimFlywheelIO implements FlywheelIO {
   @Override
   public Current getCurrentDraw() {
     return Amps.of(flywheelSim.getCurrentDrawAmps());
+  }
+
+  @Override
+  public Voltage getVoltageDraw() {
+    return Volts.of(flywheelSim.getInputVoltage());
+  }
+
+  @Override
+  public double getRPM() {
+    return flywheelSim.getAngularVelocityRPM();
   }
 }

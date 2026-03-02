@@ -5,14 +5,13 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED;
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
-import static frc.robot.Constants.VisionConstants.BLUE_HUB;
-import static frc.robot.Constants.VisionConstants.RED_HUB;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -25,16 +24,21 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
+import frc.robot.subsystems.hopper.Hopper;
+import frc.robot.subsystems.hopper.RealHopperIO;
+import frc.robot.subsystems.hopper.SimHopperIO;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
@@ -42,9 +46,6 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.RealHopperIO;
-import frc.robot.subsystems.hopper.SimHopperIO;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -52,10 +53,12 @@ public class Robot extends TimedRobot {
   private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
-  private final PoseEstimation poseEstimation;
+  // private final PoseEstimation poseEstimation;
   private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
+  public MutVoltage appliedVoltage = Volts.mutable(0);
+  public PowerDistribution pdp;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
@@ -63,18 +66,19 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
+       intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      hopper = new Hopper(new SimHopperIO());
+       hopper = new Hopper(new SimHopperIO());
     } else {
-      intake = new Intake(new RealIntakeIO());
+       intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      hopper = new Hopper(new RealHopperIO());
+      pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
+       hopper = new Hopper(new RealHopperIO());
     }
 
-    poseEstimation = new PoseEstimation();
+    // poseEstimation = new PoseEstimation();
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -90,7 +94,7 @@ public class Robot extends TimedRobot {
 
     intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    shooter.setDefaultCommand(shooter.f_idle());
+    // shooter.setDefaultCommand(shooter.f_idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
@@ -98,27 +102,28 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-    leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
+    // leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(f_shootBall());
-
-    operatorController.y().whileTrue(intake.f_extendAndGrab());
-    operatorController.y().onFalse(intake.l_retractAndGrab());
+    operatorController.x().whileTrue(shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE));
+    operatorController.leftBumper().whileTrue(shooter.feed());
+    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake());
+    operatorController.a().whileTrue(intake.f_extendAndGrab());
+    operatorController.a().onFalse(intake.l_retractAndGrab());
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-    poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
-    if (Robot.isSimulation()) {
-      LookupTable.update(shooterSimDistance);
-    } else {
-      DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
-          .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
-    }
+    // poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
+    // if (Robot.isSimulation()) {
+    // LookupTable.update(shooterSimDistance);
+    // } else {
+    // DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
+    // .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
+    // }
     Epilogue.update(this);
   }
 
@@ -166,23 +171,23 @@ public class Robot extends TimedRobot {
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }
 
-  public Command f_driveLockedOn() {
-    return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
-          if (DriverStation.getAlliance().isPresent()) {
-            if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-              return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
-            } else {
-              return poseEstimation.getDistanceToHub(RED_HUB).angle();
-            }
-          }
-          return Radians.zero();
-        });
-  }
+  // public Command f_driveLockedOn() {
+  // return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+  // () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
+  // if (DriverStation.getAlliance().isPresent()) {
+  // if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
+  // return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
+  // } else {
+  // return poseEstimation.getDistanceToHub(RED_HUB).angle();
+  // }
+  // }
+  // return Radians.zero();
+  // });
+  // }
 
-  public Command f_lockOnAndRev() {
-    return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
-  }
+  // public Command f_lockOnAndRev() {
+  // return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
+  // }
 
   public Command f_shootBall() {
     return shooter.l_kapow().repeatedly();

@@ -5,6 +5,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import frc.robot.sim.MechanismSim;
@@ -47,6 +48,16 @@ public class SimHoodIO implements HoodIO {
   @Override
   public AngularVelocity getVelocity() {
     return RadiansPerSecond.of(sim.getVelocityRadPerSec());
+  }
+
+  @Override
+  public Voltage getVoltage() {
+    return null;
+  }
+
+  @Override
+  public Current getCurrent() {
+    return Amps.of(sim.getCurrentDrawAmps());
   }
 
   @Override

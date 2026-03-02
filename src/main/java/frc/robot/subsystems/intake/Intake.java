@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 
 @Logged
 public class Intake extends SubsystemBase {
@@ -25,11 +26,11 @@ public class Intake extends SubsystemBase {
 
   class Extension extends SubsystemBase {
     public Command extend() {
-      return rotateToAngle(WRIST_EXTEND_ANGLE);
+      return rotateToAngle(Constants.MatchConstants.INTAKE_EXTEND_ANGLE);
     }
 
     public Command stow() {
-      return rotateToAngle(WRIST_STOW_ANGLE);
+      return rotateToAngle(Constants.MatchConstants.INTAKE_STOW_ANGLE);
     }
 
     public Command stop() {
@@ -50,7 +51,7 @@ public class Intake extends SubsystemBase {
 
   class Roller extends SubsystemBase {
     public Command runIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+      return runOnce(() -> io.setIntakeVoltage(Constants.MatchConstants.INTAKE_APPLY_VOLTAGE));
     }
 
     public Command stop() {

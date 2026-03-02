@@ -7,6 +7,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.ConstantTuner;
 
@@ -45,7 +46,12 @@ public class Hood extends SubsystemBase {
   }
 
   public Command l_returnToNormalcy() {
-    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom);
+    return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom)
+        .andThen(Commands.runOnce(() -> System.out.println("done")));
+  }
+
+  public Command applyVoltage(Supplier<Voltage> volts) {
+    return run(() -> io.setVoltage(volts.get()));
   }
 
   public Command o_stop() {

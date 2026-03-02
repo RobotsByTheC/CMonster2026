@@ -17,6 +17,18 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 
 public class Constants {
+  //CHANGE THESE, NOTHING ELSE
+  public static class MatchConstants {
+    public static final AngularVelocity FLYWHEEL_SPEED = RPM.of(3000);
+    public static final Angle HOOD_ANGLE = Degrees.of(15); //x degrees above the horizontal
+    public static final Voltage FEEDER_APPLY_VOLTAGE = Volts.of(5);
+    public static final Voltage HOPPER_APPLY_VOLTAGE = Volts.of(5);
+    public static final Angle INTAKE_EXTEND_ANGLE = Degrees.of(60);
+    public static final Angle INTAKE_STOW_ANGLE = Degrees.of(0);
+    public static final Voltage INTAKE_APPLY_VOLTAGE = Volts.of(5);
+  }
+
+
   public static class SwerveConstants {
     public static class DriveConstants {
       public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(2);
@@ -72,12 +84,12 @@ public class Constants {
     public static final int BACK_RIGHT_DRIVE_CAN_ID = 8;
     public static final int INTAKE_MOTOR_CAN_ID = 9;
     public static final int INTAKE_WRIST_CAN_ID = 10;
-    public static final int FLYWHEEL_LEFT_A_CAN_ID = 11;
-    public static final int FLYWHEEL_LEFT_B_CAN_ID = 12;
-    public static final int FLYWHEEL_RIGHT_A_CAN_ID = 13;
-    public static final int FLYWHEEL_RIGHT_B_CAN_ID = 14;
-    public static final int FEEDER_LEFT_CAN_ID = 15;
-    public static final int FEEDER_RIGHT_CAN_ID = 16;
+    public static final int FLYWHEEL_RIGHT_A_CAN_ID = 11;
+    public static final int FLYWHEEL_RIGHT_B_CAN_ID = 12;
+    public static final int FLYWHEEL_LEFT_A_CAN_ID = 13;
+    public static final int FLYWHEEL_LEFT_B_CAN_ID = 14;
+    public static final int FEEDER_RIGHT_CAN_ID = 15;
+    public static final int FEEDER_LEFT_CAN_ID = 16;
     public static final int HOOD_CAN_ID = 17;
     public static final int HOPPER_CAN_ID = 18;
 
@@ -110,24 +122,34 @@ public class Constants {
 
   public static class ShooterConstants {
     public static class HoodConstants {
-      public static final double KP = 5;
+      public static final double KP = 1;
       public static final double KI = 0;
       public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KG = 0;
-      public static final double KV = 0;
-      public static final double KA = 0;
+      public static final double KS = 0.18;
+      public static final double KG = 0.10827;
+      public static final double KV = 0.59923;
+      public static final double KA = 0.26246;
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
-      public static final Angle MAX_ANGLE = Rotations.of(5.5);
+      public static final Angle MAX_ANGLE = Degrees.of(30);
     }
 
     public static class FlywheelConstants {
-      public static final double KP = 0.0003;
-      public static final double KI = 0;
-      public static final double KD = 0;
-      public static final double KS = 0;
-      public static final double KV = 0.05;
+      public static final class RightConstants {
+        public static final double KP = 0.0004;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0.22;
+        public static final double KV = 0.0021141;
+      }
+
+      public static final class LeftConstants {
+        public static final double KP = 0.0004;
+        public static final double KI = 0;
+        public static final double KD = 0;
+        public static final double KS = 0.72;
+        public static final double KV = 0.0021141;
+      }
 
       public static final AngularVelocity IDLE_SPEED = RPM.of(4000);
     }

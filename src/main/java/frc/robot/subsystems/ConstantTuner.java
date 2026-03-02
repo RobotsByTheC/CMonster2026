@@ -9,11 +9,13 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 public class ConstantTuner {
   public static Command createRoutine(Consumer<Voltage> v, Subsystem sys, BooleanSupplier up, BooleanSupplier low) {
-    SysIdRoutine routine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.1), Volts.of(0.5), null),
+    SysIdRoutine routine = new SysIdRoutine(
+        new SysIdRoutine.Config(Volts.per(Second).of(0.125), Volts.of(1), Seconds.of(20)),
         new SysIdRoutine.Mechanism(v, null, sys));
     return routine.dynamic(SysIdRoutine.Direction.kForward).until(up)
         .andThen(routine.dynamic(SysIdRoutine.Direction.kReverse).until(low))
