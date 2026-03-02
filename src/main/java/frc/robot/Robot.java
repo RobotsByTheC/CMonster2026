@@ -66,16 +66,16 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-       intake = new Intake(new SimIntakeIO());
+      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-       hopper = new Hopper(new SimHopperIO());
+      hopper = new Hopper(new SimHopperIO());
     } else {
-       intake = new Intake(new RealIntakeIO());
+      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
       pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
-       hopper = new Hopper(new RealHopperIO());
+      hopper = new Hopper(new RealHopperIO());
     }
 
     // poseEstimation = new PoseEstimation();

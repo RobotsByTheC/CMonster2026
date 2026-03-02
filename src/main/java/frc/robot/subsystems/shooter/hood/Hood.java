@@ -9,7 +9,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.ConstantTuner;
 
 import java.util.function.Supplier;
 
@@ -50,19 +49,7 @@ public class Hood extends SubsystemBase {
         .andThen(Commands.runOnce(() -> System.out.println("done")));
   }
 
-  public Command applyVoltage(Supplier<Voltage> volts) {
-    return run(() -> io.setVoltage(volts.get()));
-  }
-
   public Command o_stop() {
     return runOnce(io::stop);
-  }
-
-  public Command f_idle() {
-    return o_stop().andThen(idle());
-  }
-
-  public Command tune() {
-    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
   }
 }
