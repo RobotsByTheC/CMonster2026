@@ -58,7 +58,6 @@ public class Robot extends TimedRobot {
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
   public MutVoltage appliedVoltage = Volts.mutable(0);
-  public PowerDistribution pdp;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
@@ -74,7 +73,6 @@ public class Robot extends TimedRobot {
       intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
       hopper = new Hopper(new RealHopperIO());
     }
 
