@@ -13,6 +13,7 @@ import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -86,6 +87,7 @@ public class Robot extends TimedRobot {
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
+    CanandEventLoop.getInstance();
 
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
