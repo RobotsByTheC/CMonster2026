@@ -4,8 +4,10 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
@@ -45,7 +47,7 @@ public class RealFlywheelIO implements FlywheelIO {
 
     sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = sparkA.getClosedLoopController();
-    encoder = sparkA.getEncoder();
+    encoder = sparkA.getAlternateEncoder();
   }
 
   @Override
