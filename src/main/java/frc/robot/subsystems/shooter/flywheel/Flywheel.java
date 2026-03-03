@@ -6,6 +6,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -34,5 +35,9 @@ public class Flywheel extends SubsystemBase {
 
   public Command f_idle() {
     return o_stop().andThen(idle());
+  }
+
+  public Command f_idleAtSpeed() {
+    return f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED);
   }
 }
