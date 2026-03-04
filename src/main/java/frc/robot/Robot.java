@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
@@ -28,7 +27,6 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,12 +36,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.RealHopperIO;
-import frc.robot.subsystems.hopper.SimHopperIO;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.RealIntakeIO;
-import frc.robot.subsystems.intake.SimIntakeIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
@@ -107,8 +99,8 @@ public class Robot extends TimedRobot {
 
   public void bindOperatorButtons() {
     operatorController.x().whileTrue(shooter.f_aimAndRev());
-    operatorController.x().onFalse(shooter.normalize());
-    operatorController.y().whileTrue(shooter.feed());
+    operatorController.x().onFalse(shooter.l_normalize_hood());
+    operatorController.y().whileTrue(shooter.feed());   
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
     operatorController.b()
