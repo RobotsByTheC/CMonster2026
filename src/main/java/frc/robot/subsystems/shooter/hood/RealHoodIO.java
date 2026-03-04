@@ -46,7 +46,7 @@ public class RealHoodIO implements HoodIO {
 
     isPressed = new Trigger(limitSwitch::isPressed);
 
-    isPressed.onTrue(Commands.runOnce(() -> encoder.setPosition(0)));
+    isPressed.whileTrue(Commands.run(() -> encoder.setPosition(0)));
   }
 
   @Override
