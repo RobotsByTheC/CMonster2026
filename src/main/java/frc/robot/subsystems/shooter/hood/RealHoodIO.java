@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
@@ -23,6 +24,7 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.CANConstants.HOOD_CAN_ID;
+import static frc.robot.Constants.ShooterConstants.HoodConstants.MAX_ANGLE;
 
 @Logged
 public class RealHoodIO implements HoodIO {
@@ -77,7 +79,7 @@ public class RealHoodIO implements HoodIO {
     if (voltage.magnitude() < 0) {
       spark.setVoltage(voltage.unaryMinus());
     } else if (voltage.magnitude() > 0) {
-      if (getAngle().lte(Degrees.of(30))) {
+      if (getAngle().lte(MAX_ANGLE)) {
         spark.setVoltage(voltage.unaryMinus());
       } else {
         spark.setVoltage(0);
