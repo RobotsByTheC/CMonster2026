@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FEEDER_RIGHT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
@@ -14,6 +15,7 @@ import static frc.robot.Constants.CANConstants.RIGHT_CNC_MIDDLE;
 import static frc.robot.Constants.CANConstants.RIGHT_CNC_TOP;
 
 import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -43,7 +45,7 @@ public class Shooter extends SubsystemBase {
     if (real) {
       hood = new Hood(new RealHoodIO());
 
-      leftFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_LEFT_B_CAN_ID, FLYWHEEL_LEFT_A_CAN_ID,
+      leftFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KP,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KI,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KD,
