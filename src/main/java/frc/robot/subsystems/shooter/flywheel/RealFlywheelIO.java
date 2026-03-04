@@ -48,7 +48,7 @@ public class RealFlywheelIO implements FlywheelIO {
 
     sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = sparkA.getClosedLoopController();
-    encoder = sparkA.getAlternateEncoder();
+    encoder = sparkA.getEncoder();
   }
 
   @Override
