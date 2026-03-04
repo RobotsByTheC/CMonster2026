@@ -24,8 +24,6 @@ public interface FlywheelIO {
 
   Voltage getVoltageDraw();
 
-  double getRPM();
-
   /**
    * Set the desired velocity of the flywheel, to be reached via PID and FeedForward within the implementations.
    *
