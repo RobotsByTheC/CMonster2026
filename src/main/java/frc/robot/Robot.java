@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
@@ -106,6 +107,8 @@ public class Robot extends TimedRobot {
 
   public void bindOperatorButtons() {
     operatorController.x().whileTrue(shooter.f_aimAndRev());
+    operatorController.x().onFalse(shooter.normalize());
+    operatorController.y().whileTrue(shooter.feed());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
     operatorController.b()
