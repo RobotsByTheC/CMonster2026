@@ -5,6 +5,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -26,9 +28,11 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -100,6 +104,8 @@ public class Robot extends TimedRobot {
     // shooter.setDefaultCommand(shooter.f_idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
+    leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
+
     bindDriverButtons();
     bindOperatorButtons();
   }
@@ -110,10 +116,20 @@ public class Robot extends TimedRobot {
 
   public void bindOperatorButtons() {
     operatorController.x().whileTrue(
-        shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE));
-    operatorController.leftBumper().whileTrue(shooter.feed());
-    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake());
-    operatorController.a().whileTrue(intake.f_extendAndGrab());
+        shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE)
+            .alongWith(leds.runPattern(LEDPattern.solid(Color.kGreen))));
+    operatorController.leftBumper()
+        .whileTrue(shooter.feed().alongWith(
+            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kYellow, Color.kGreen)
+                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
+    operatorController.rightBumper()
+        .whileTrue(hopper.f_hopperIntake().alongWith(
+            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kOrange, Color.kYellow)
+                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
+    operatorController.a()
+        .whileTrue(intake.f_extendAndGrab().alongWith(
+            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kOrange)
+                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
     operatorController.a().onFalse(intake.l_retractAndGrab());
   }
 
@@ -147,7 +163,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+  }
 
   @Override
   public void teleopInit() {
