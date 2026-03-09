@@ -12,8 +12,6 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkMaxAlternateEncoder;
-import com.revrobotics.spark.config.ExternalEncoderConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
@@ -22,6 +20,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.revroboticshacks.HackedSparkMaxAlternateEncoder;
 
 @Logged
 public class RealFlywheelIO implements FlywheelIO {
@@ -48,6 +47,8 @@ public class RealFlywheelIO implements FlywheelIO {
     sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = sparkA.getClosedLoopController();
     encoder = sparkA.getEncoder();
+    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
+    encoder = new HackedSparkMaxAlternateEncoder(leadMotor);
   }
 
   @Override
