@@ -91,6 +91,9 @@ public class Robot extends TimedRobot {
 
     bindDriverButtons();
     bindOperatorButtons();
+
+    SmartDashboard.putNumber("Shooter RPM", 0); // for dashboard-side tuning
+
   }
 
   public void bindDriverButtons() {
