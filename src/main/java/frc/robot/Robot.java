@@ -63,6 +63,9 @@ public class Robot extends TimedRobot {
 
   private final AddressableLED led = new AddressableLED(9);
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
+  @Logged
+  private long lastLoopTimeµs = 0;
+
   public Robot() {
     if (Robot.isSimulation()) {
 //      intake = new Intake(new SimIntakeIO());
@@ -132,6 +135,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    long start = RobotController.getFPGATime();
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     // poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
@@ -143,6 +147,7 @@ public class Robot extends TimedRobot {
     // }
     LookupTable.update(shooterSimDistance);
     Epilogue.update(this);
+    lastLoopTimeµs = RobotController.getFPGATime() - start;
   }
 
   @Override
