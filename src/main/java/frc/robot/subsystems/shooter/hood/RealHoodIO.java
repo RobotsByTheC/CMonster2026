@@ -14,6 +14,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
@@ -46,7 +47,7 @@ public class RealHoodIO implements HoodIO {
 
     isPressed = new Trigger(limitSwitch::isPressed);
 
-    isPressed.whileTrue(Commands.run(() -> encoder.setPosition(0)));
+    isPressed.whileTrue(Commands.run(() -> encoder.setPosition(0)).ignoringDisable(true));
   }
 
   @Override
