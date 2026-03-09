@@ -92,12 +92,12 @@ public class Constants {
     public static final int HOOD_CAN_ID = 17;
     public static final int HOPPER_CAN_ID = 18;
 
-    public static final int LEFT_CNC_BOTTOM = 21;
-    public static final int LEFT_CNC_MIDDLE = 22;
-    public static final int LEFT_CNC_TOP = 23;
-    public static final int RIGHT_CNC_BOTTOM = 24;
-    public static final int RIGHT_CNC_MIDDLE = 25;
-    public static final int RIGHT_CNC_TOP = 26;
+    public static final int LEFT_CNC_BOTTOM = 1;
+    public static final int LEFT_CNC_MIDDLE = 2;
+    public static final int LEFT_CNC_TOP = 3;
+    public static final int RIGHT_CNC_BOTTOM = 4;
+    public static final int RIGHT_CNC_MIDDLE = 5;
+    public static final int RIGHT_CNC_TOP = 6;
 
     public static final int GYRO_CAN_ID = 50;
   }
