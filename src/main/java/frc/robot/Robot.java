@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
 
   @Logged
-  private final PowerDistribution pdb = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
+  private final PowerDistribution pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
 
   @Logged
   private long lastLoopTimeµs = 0;
