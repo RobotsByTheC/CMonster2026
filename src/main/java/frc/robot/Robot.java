@@ -124,9 +124,10 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(shooter.f_aimAndRev());
-    operatorController.x().onFalse(shooter.l_normalize_hood());
-    operatorController.y().whileTrue(shooter.feed());   
+    operatorController.leftBumper().whileTrue(shooter.l_kapow());
+    operatorController.rightBumper().whileTrue(shooter.f_aimAndRev());
+    operatorController.x().whileTrue(shooter.synchronizedRev(() -> RPM.of(SmartDashboard.getNumber("Shooter RPM", 0))));
+    operatorController.y().whileTrue(shooter.feed());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
     operatorController.b()
