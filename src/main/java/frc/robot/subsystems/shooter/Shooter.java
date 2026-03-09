@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
     if (real) {
       hood = new Hood(new RealHoodIO());
 
-      leftFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID,
+      leftFlywheel = new Flywheel(new RealFlywheelIO(false, FLYWHEEL_LEFT_B_CAN_ID, FLYWHEEL_LEFT_A_CAN_ID,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KP,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KI,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KD,
