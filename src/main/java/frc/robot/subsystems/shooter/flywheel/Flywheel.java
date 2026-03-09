@@ -3,6 +3,7 @@ package frc.robot.subsystems.shooter.flywheel;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -39,5 +40,9 @@ public class Flywheel extends SubsystemBase {
 
   public Command f_idleAtSpeed() {
     return f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED);
+  }
+
+  public Command f_applyVoltage(Supplier<Voltage> voltage) {
+    return run(() -> io.setVoltage(voltage.get()));
   }
 }

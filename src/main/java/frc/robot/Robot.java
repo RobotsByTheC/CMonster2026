@@ -52,11 +52,7 @@ import frc.robot.subsystems.swerve.Swerve;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-//  private final Intake intake;
-  private final Swerve swerve;
   private final Shooter shooter;
-  // private final PoseEstimation poseEstimation;
-//  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
   public MutVoltage appliedVoltage = Volts.mutable(0);
@@ -74,15 +70,9 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-//      intake = new Intake(new SimIntakeIO());
-      swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-//      hopper = new Hopper(new SimHopperIO());
     } else {
-//      intake = new Intake(new RealIntakeIO());
-      swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-//      hopper = new Hopper(new RealHopperIO());
     }
 
     // poseEstimation = new PoseEstimation();
@@ -103,10 +93,6 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-//    intake.setDefaultCommand(intake.f_stowAndIdle());
-    swerve.setDefaultCommand(f_driveWithFlightSticks());
-//    hopper.setDefaultCommand(hopper.f_idle());
-
     bindDriverButtons();
     bindOperatorButtons();
 
@@ -126,18 +112,12 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-    // leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
+
   }
 
   public void bindOperatorButtons() {
-    operatorController.leftBumper().whileTrue(shooter.l_kapow());
-    operatorController.rightBumper().whileTrue(shooter.f_aimAndRev());
-    operatorController.x().whileTrue(shooter.synchronizedRev(() -> RPM.of(SmartDashboard.getNumber("Shooter RPM", 0))));
-    operatorController.y().whileTrue(shooter.feed());
-    operatorController.a()
-        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
-    operatorController.b()
-        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)));
+    operatorController.a().whileTrue(shooter.synchronizedRev(() -> RPM.of(2000)));
+    operatorController.b().whileTrue(shooter.applyFlywheelVoltage(() -> Volts.of(5)));
   }
 
   @Override
@@ -198,33 +178,5 @@ public class Robot extends TimedRobot {
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
     return MAX_TURN_SPEED.times(rawValue);
-  }
-
-  public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
-        () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
-  }
-
-  // public Command f_driveLockedOn() {
-  // return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-  // () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> {
-  // if (DriverStation.getAlliance().isPresent()) {
-  // if (DriverStation.getAlliance().get().equals(DriverStation.Alliance.Blue)) {
-  // return poseEstimation.getDistanceToHub(BLUE_HUB).angle();
-  // } else {
-  // return poseEstimation.getDistanceToHub(RED_HUB).angle();
-  // }
-  // }
-  // return Radians.zero();
-  // });
-  // }
-
-  // public Command f_lockOnAndRev() {
-  // return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
-  // }
-
-  public Command f_shootBall() {
-    return shooter.l_kapow().repeatedly();
   }
 }

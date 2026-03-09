@@ -97,6 +97,16 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public double getDutyCycleA() {
+    return 0;
+  }
+
+  @Override
+  public double getDutyCycleB() {
+    return 0;
+  }
+
+  @Override
   public AngularVelocity getVelocity() {
     return flywheelSim.getAngularVelocity();
   }

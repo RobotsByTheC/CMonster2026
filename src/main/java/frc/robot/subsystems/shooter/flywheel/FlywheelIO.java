@@ -48,4 +48,6 @@ public interface FlywheelIO {
   Current getCurrentB();
   Voltage getVoltageA();
   Voltage getVoltageB();
+  double getDutyCycleA();
+  double getDutyCycleB();
 }

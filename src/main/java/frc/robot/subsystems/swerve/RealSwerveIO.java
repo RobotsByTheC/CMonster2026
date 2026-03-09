@@ -17,7 +17,6 @@ public class RealSwerveIO implements SwerveIO {
   private final SwerveModule backLeft;
   private final SwerveModule backRight;
 
-  private final Pigeon2 gyro;
 
   public RealSwerveIO() {
     frontLeft = new SwerveModule(FRONT_LEFT_DRIVE_CAN_ID, FRONT_LEFT_TURN_CAN_ID);
@@ -25,7 +24,6 @@ public class RealSwerveIO implements SwerveIO {
     backLeft = new SwerveModule(BACK_LEFT_DRIVE_CAN_ID, BACK_LEFT_TURN_CAN_ID);
     backRight = new SwerveModule(BACK_RIGHT_DRIVE_CAN_ID, BACK_RIGHT_TURN_CAN_ID);
 
-    gyro = new Pigeon2(GYRO_CAN_ID);
   }
 
   public void setDesiredStates(SwerveModuleState[] states) {
@@ -45,12 +43,12 @@ public class RealSwerveIO implements SwerveIO {
 
   @Override
   public Rotation2d getHeading() {
-    return gyro.getRotation2d();
+    return Rotation2d.kZero;
   }
 
   @Override
   public void setGyro(Rotation2d heading) {
-    gyro.setYaw(heading.getDegrees());
+
   }
 
   @Override

@@ -44,6 +44,7 @@ public class RealFlywheelIO implements FlywheelIO {
         .inverted(inverted)
         .averageDepth(2)
         .measurementPeriod(1);
+    leadConfig.alternateEncoder.inverted(!inverted);
     leadConfig.smartCurrentLimit(40);
 
     leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -116,5 +117,13 @@ public class RealFlywheelIO implements FlywheelIO {
   @Override
   public Voltage getVoltageB() {
     return Volts.of(followerMotor.getAppliedOutput() * followerMotor.getBusVoltage());
+  }
+
+  public double getDutyCycleA() {
+    return leadMotor.getAppliedOutput();
+  }
+
+  public double getDutyCycleB() {
+    return followerMotor.getAppliedOutput();
   }
 }
