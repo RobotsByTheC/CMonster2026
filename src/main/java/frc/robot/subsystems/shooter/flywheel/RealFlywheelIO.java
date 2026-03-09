@@ -38,13 +38,13 @@ public class RealFlywheelIO implements FlywheelIO {
             .idleMode(SparkBaseConfig.IdleMode.kCoast);
     leadConfig.closedLoop.pid(P, I, D);
     leadConfig.closedLoop.feedForward.sv(S, V);
-    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
-    leadConfig.alternateEncoder
-        .countsPerRevolution(8192)
-        .inverted(inverted)
-        .averageDepth(2)
-        .measurementPeriod(1);
-    leadConfig.alternateEncoder.inverted(!inverted);
+    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+//    leadConfig.alternateEncoder
+//        .countsPerRevolution(8192)
+//        .inverted(inverted)
+//        .averageDepth(2)
+//        .measurementPeriod(1);
+//    leadConfig.alternateEncoder.inverted(!inverted);
     leadConfig.smartCurrentLimit(40);
 
     leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -58,7 +58,7 @@ public class RealFlywheelIO implements FlywheelIO {
 
     followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = leadMotor.getClosedLoopController();
-    encoder = new HackedSparkMaxAlternateEncoder(leadMotor);
+    encoder = leadMotor.getEncoder();
   }
 
   @Override
