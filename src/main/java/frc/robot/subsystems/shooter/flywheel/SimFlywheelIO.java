@@ -77,6 +77,26 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public Current getCurrentA() {
+    return null;
+  }
+
+  @Override
+  public Current getCurrentB() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageA() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageB() {
+    return null;
+  }
+
+  @Override
   public AngularVelocity getVelocity() {
     return flywheelSim.getAngularVelocity();
   }

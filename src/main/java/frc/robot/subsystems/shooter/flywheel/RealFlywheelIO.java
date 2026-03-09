@@ -86,4 +86,24 @@ public class RealFlywheelIO implements FlywheelIO {
   public boolean atTargetVelocity() {
     return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
   }
+
+  @Override
+  public Current getCurrentA() {
+    return Amps.of(leadMotor.getOutputCurrent());
+  }
+
+  @Override
+  public Current getCurrentB() {
+    return Amps.of(followerMotor.getOutputCurrent());
+  }
+
+  @Override
+  public Voltage getVoltageA() {
+    return Volts.of(leadMotor.getAppliedOutput() * leadMotor.getBusVoltage());
+  }
+
+  @Override
+  public Voltage getVoltageB() {
+    return Volts.of(followerMotor.getAppliedOutput() * followerMotor.getBusVoltage());
+  }
 }

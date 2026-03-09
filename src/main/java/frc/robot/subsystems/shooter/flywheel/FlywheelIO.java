@@ -43,4 +43,9 @@ public interface FlywheelIO {
   Angle getPosition();
 
   boolean atTargetVelocity();
+
+  Current getCurrentA();
+  Current getCurrentB();
+  Voltage getVoltageA();
+  Voltage getVoltageB();
 }
