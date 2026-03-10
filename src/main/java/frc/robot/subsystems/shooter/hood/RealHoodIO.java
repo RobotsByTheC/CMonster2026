@@ -76,7 +76,6 @@ public class RealHoodIO implements HoodIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    System.out.println("voltage: " + voltage.in(Volts) + ", angle: " + getAngle().in(Degrees));
     if (voltage.magnitude() < 0) {
       spark.setVoltage(voltage.unaryMinus());
     } else if (voltage.magnitude() > 0) {

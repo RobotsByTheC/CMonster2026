@@ -22,6 +22,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -130,10 +131,8 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.leftBumper().whileTrue(shooter.l_kapow());
-    operatorController.rightBumper().whileTrue(shooter.f_aimAndRev());
-    operatorController.x().whileTrue(shooter.synchronizedRev(() -> RPM.of(SmartDashboard.getNumber("Shooter RPM", 0))));
-    operatorController.y().whileTrue(shooter.feed());
+    operatorController.leftTrigger().onTrue(swerve.o_resetGyro());
+    operatorController.x().whileTrue(shooter.f_aimAndRev());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
     operatorController.b()
@@ -194,14 +193,14 @@ public class Robot extends TimedRobot {
   }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(rawValue);
+    return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(rawValue);
+    return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
 
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()*-1),
         () -> getLinearJoystickVelocity(rightFlightStick.getY()),
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }
