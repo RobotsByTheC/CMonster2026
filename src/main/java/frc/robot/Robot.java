@@ -157,10 +157,10 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(rawValue);
+    return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(rawValue);
+    return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
 
   public Command f_driveWithFlightSticks() {
