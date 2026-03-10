@@ -66,7 +66,7 @@ public class RealFlywheelIO implements FlywheelIO {
   @Override
   public Voltage getVoltageDraw() {
     return Volts
-        .of(sparkA.getAppliedOutput() * sparkA.getBusVoltage() + sparkB.getAppliedOutput() * sparkB.getBusVoltage());
+        .of((sparkA.getAppliedOutput() * sparkA.getBusVoltage() + sparkB.getAppliedOutput() * sparkB.getBusVoltage()) / 2);
   }
 
   @Override

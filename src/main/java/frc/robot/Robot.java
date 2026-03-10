@@ -19,6 +19,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -50,11 +51,11 @@ import frc.robot.subsystems.swerve.Swerve;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  private final Intake intake;
+//  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   // private final PoseEstimation poseEstimation;
-  private final Hopper hopper;
+//  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
   public MutVoltage appliedVoltage = Volts.mutable(0);
@@ -65,15 +66,15 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
+//      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      hopper = new Hopper(new SimHopperIO());
+//      hopper = new Hopper(new SimHopperIO());
     } else {
-      intake = new Intake(new RealIntakeIO());
+//      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      hopper = new Hopper(new RealHopperIO());
+//      hopper = new Hopper(new RealHopperIO());
     }
 
     // poseEstimation = new PoseEstimation();
@@ -90,9 +91,9 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.f_stowAndIdle());
+//    intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    hopper.setDefaultCommand(hopper.f_idle());
+//    hopper.setDefaultCommand(hopper.f_idle());
 
     bindDriverButtons();
     bindOperatorButtons();
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
+    operatorController.leftTrigger().onTrue(swerve.o_resetGyro());
     operatorController.x().whileTrue(shooter.f_aimAndRev());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
@@ -157,14 +159,14 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(rawValue);
+    return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(rawValue);
+    return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
 
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()*-1),
         () -> getLinearJoystickVelocity(rightFlightStick.getY()),
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }
