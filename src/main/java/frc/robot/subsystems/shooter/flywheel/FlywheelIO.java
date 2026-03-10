@@ -13,7 +13,11 @@ public interface FlywheelIO {
    *
    * @return The flywheel's velocity.
    */
-  AngularVelocity getVelocity();
+  AngularVelocity getAlternateVelocity();
+
+  AngularVelocity getPrimaryVelocity();
+
+  AngularVelocity getFollowerVelocity();
 
   /**
    * Returns the current draw that the mechanism is currently consuming.
@@ -40,7 +44,11 @@ public interface FlywheelIO {
    */
   void setVoltage(Voltage voltage);
 
-  Angle getPosition();
+  Angle getAlternatePosition();
+
+  Angle getPrimaryPosition();
+
+  Angle getFollowerPosition();
 
   boolean atTargetVelocity();
 

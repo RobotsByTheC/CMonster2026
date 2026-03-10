@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FEEDER_RIGHT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
@@ -15,6 +16,7 @@ import static frc.robot.Constants.CANConstants.RIGHT_CNC_TOP;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -87,6 +89,10 @@ public class Shooter extends SubsystemBase {
     return command;
   }
 
+  public Command hoodify() {
+    return hood.f_holdDesiredAngle(() -> Degrees.of(30));
+  }
+
   public Command feed() {
     return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
@@ -101,5 +107,9 @@ public class Shooter extends SubsystemBase {
 
   public Command l_kapow() {
     return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
+  }
+
+  public Command voltify(Supplier<Voltage> voltage) {
+    return rightFlywheel.applyAFuckingVoltage(voltage);
   }
 }

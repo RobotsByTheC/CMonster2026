@@ -131,7 +131,9 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.leftBumper().whileTrue(shooter.synchronizedRev(() -> RPM.of(shooterSimDistance.in(Meters)* 100)));
+    operatorController.rightBumper().onTrue(shooter.hoodify());
+    operatorController.x().whileTrue(shooter.feed());
+    operatorController.leftBumper().whileTrue(shooter.voltify(() -> Volts.of(shooterSimDistance.in(Meters))));
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
     operatorController.b()
@@ -188,7 +190,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    shooterSimDistance.mut_setMagnitude(1);
+    shooterSimDistance.mut_setMagnitude(0);
   }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {

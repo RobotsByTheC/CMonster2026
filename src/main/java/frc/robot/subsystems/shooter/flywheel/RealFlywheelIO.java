@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.*;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.jni.CANSparkJNI;
 import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -27,7 +26,9 @@ public class RealFlywheelIO implements FlywheelIO {
   private final SparkMax followerMotor;
 
   private final SparkClosedLoopController controller;
-  private final RelativeEncoder encoder;
+  private final RelativeEncoder alternateEncoder;
+  private final RelativeEncoder primaryEncoder;
+  private final RelativeEncoder followerEncoder;
   private final MutAngularVelocity target = RPM.mutable(0);
 
   public RealFlywheelIO(boolean inverted, int leaderId, int followerId, double P, double I, double D, double S, double V) {
@@ -45,6 +46,9 @@ public class RealFlywheelIO implements FlywheelIO {
         .averageDepth(2)
         .measurementPeriod(1);
     leadConfig.smartCurrentLimit(40);
+    leadConfig.encoder
+        .quadratureAverageDepth(2)
+        .quadratureMeasurementPeriod(1);
 
     leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
@@ -57,12 +61,23 @@ public class RealFlywheelIO implements FlywheelIO {
 
     followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = leadMotor.getClosedLoopController();
-    encoder = new HackedSparkMaxAlternateEncoder(leadMotor);
+    alternateEncoder = new HackedSparkMaxAlternateEncoder(leadMotor);
+    primaryEncoder = leadMotor.getEncoder();
+    followerEncoder = followerMotor.getEncoder();
   }
 
   @Override
-  public AngularVelocity getVelocity() {
-    return RPM.of(encoder.getVelocity());
+  public AngularVelocity getAlternateVelocity() {
+    return RPM.of(alternateEncoder.getVelocity());
+  }
+
+  @Override
+  public AngularVelocity getPrimaryVelocity() {
+    return RPM.of(primaryEncoder.getVelocity());
+  }
+  @Override
+  public AngularVelocity getFollowerVelocity() {
+    return RPM.of(followerEncoder.getVelocity());
   }
 
   @Override
@@ -89,13 +104,21 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public Angle getPosition() {
-    return Rotations.of(encoder.getPosition());
+  public Angle getAlternatePosition() {
+    return Rotations.of(alternateEncoder.getPosition());
+  }
+  @Override
+  public Angle getPrimaryPosition() {
+    return Rotations.of(primaryEncoder.getPosition());
+  }
+  @Override
+  public Angle getFollowerPosition() {
+    return Rotations.of(followerEncoder.getPosition());
   }
 
   @Override
   public boolean atTargetVelocity() {
-    return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
+    return RPM.of(controller.getSetpoint()).isNear(getAlternateVelocity(), RPM.of(20));
   }
 
   @Override
