@@ -92,12 +92,12 @@ public class Constants {
     public static final int HOOD_CAN_ID = 17;
     public static final int HOPPER_CAN_ID = 18;
 
-    public static final int LEFT_CNC_BOTTOM = 21;
-    public static final int LEFT_CNC_MIDDLE = 22;
-    public static final int LEFT_CNC_TOP = 23;
-    public static final int RIGHT_CNC_BOTTOM = 24;
-    public static final int RIGHT_CNC_MIDDLE = 25;
-    public static final int RIGHT_CNC_TOP = 26;
+    public static final int LEFT_CNC_BOTTOM = 1;
+    public static final int LEFT_CNC_MIDDLE = 2;
+    public static final int LEFT_CNC_TOP = 3;
+    public static final int RIGHT_CNC_BOTTOM = 4;
+    public static final int RIGHT_CNC_MIDDLE = 5;
+    public static final int RIGHT_CNC_TOP = 6;
 
     public static final int GYRO_CAN_ID = 50;
   }
@@ -121,13 +121,13 @@ public class Constants {
 
   public static class ShooterConstants {
     public static class HoodConstants {
-      public static final double KP = 1;
-      public static final double KI = 0;
+      public static final double KP = 27.5;
+      public static final double KI = 0.001;
       public static final double KD = 0;
-      public static final double KS = 0.18;
-      public static final double KG = 0.10827;
-      public static final double KV = 0.59923;
-      public static final double KA = 0.26246;
+      public static final double KS = 0; //0.18
+      public static final double KG = 0; //0.10827
+      public static final double KV = 0; //0.59923
+      public static final double KA = 0; //0.26246
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
       public static final Angle MAX_ANGLE = Degrees.of(30);
@@ -138,7 +138,7 @@ public class Constants {
         public static final double KP = 0.0004;
         public static final double KI = 0;
         public static final double KD = 0;
-        public static final double KS = 0.22;
+        public static final double KS = 0.72;
         public static final double KV = 0.0021141;
       }
 
@@ -168,10 +168,8 @@ public class Constants {
   }
 
   public static class FeederConstants {
-    public static final Voltage FEED_VOLTAGE = Volts.of(5);
+    public static final Voltage FEED_VOLTAGE = Volts.of(9);
     public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
-    public static final int LEFT_CAN_ID = 0;
-    public static final int RIGHT_CAN_ID = 0;
     public static final boolean LEFT_INVERTED = false;
     public static final boolean RIGHT_INVERTED = false;
   }

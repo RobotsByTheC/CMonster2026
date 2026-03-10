@@ -24,8 +24,6 @@ public interface FlywheelIO {
 
   Voltage getVoltageDraw();
 
-  double getRPM();
-
   /**
    * Set the desired velocity of the flywheel, to be reached via PID and FeedForward within the implementations.
    *
@@ -45,4 +43,9 @@ public interface FlywheelIO {
   Angle getPosition();
 
   boolean atTargetVelocity();
+
+  Current getCurrentA();
+  Current getCurrentB();
+  Voltage getVoltageA();
+  Voltage getVoltageB();
 }

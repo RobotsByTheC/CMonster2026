@@ -39,11 +39,13 @@ public class Shooter extends SubsystemBase {
   private final Feeder rightFeeder;
   private final Hood hood;
 
+  private final Trigger isReadyToShoot;
+
   public Shooter(boolean real) {
     if (real) {
       hood = new Hood(new RealHoodIO());
 
-      leftFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_LEFT_A_CAN_ID, FLYWHEEL_LEFT_B_CAN_ID,
+      leftFlywheel = new Flywheel(new RealFlywheelIO(false, FLYWHEEL_LEFT_B_CAN_ID, FLYWHEEL_LEFT_A_CAN_ID,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KP,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KI,
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KD,
@@ -51,7 +53,7 @@ public class Shooter extends SubsystemBase {
           Constants.ShooterConstants.FlywheelConstants.LeftConstants.KV));
       leftFeeder = new Feeder(
           new RealFeederIO(false, FEEDER_LEFT_CAN_ID, LEFT_CNC_BOTTOM, LEFT_CNC_MIDDLE, LEFT_CNC_TOP),
-          new Trigger(leftFlywheel::atTargetSpeed));
+          new Trigger(() -> leftFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
       rightFlywheel = new Flywheel(new RealFlywheelIO(true, FLYWHEEL_RIGHT_A_CAN_ID, FLYWHEEL_RIGHT_B_CAN_ID,
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KP,
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KI,
@@ -60,7 +62,7 @@ public class Shooter extends SubsystemBase {
           Constants.ShooterConstants.FlywheelConstants.RightConstants.KV));
       rightFeeder = new Feeder(
           new RealFeederIO(true, FEEDER_RIGHT_CAN_ID, RIGHT_CNC_BOTTOM, RIGHT_CNC_MIDDLE, RIGHT_CNC_TOP),
-          new Trigger(rightFlywheel::atTargetSpeed));
+          new Trigger(() -> rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle()));
 
     } else {
       hood = new Hood(new SimHoodIO());
@@ -75,6 +77,8 @@ public class Shooter extends SubsystemBase {
     leftFeeder.setDefaultCommand(leftFeeder.o_stop());
     rightFeeder.setDefaultCommand(rightFeeder.o_stop());
     hood.setDefaultCommand(hood.o_stop());
+
+    isReadyToShoot = new Trigger(() -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
@@ -91,7 +95,11 @@ public class Shooter extends SubsystemBase {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
 
+  public Command l_normalize_hood() {
+    return hood.l_returnToNormalcy();
+  }
+
   public Command l_kapow() {
-    return leftFeeder.queueBall().alongWith(rightFeeder.queueBall());
+    return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 }

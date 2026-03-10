@@ -5,6 +5,8 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -13,6 +15,7 @@ import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -25,11 +28,16 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,12 +45,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.RealHopperIO;
-import frc.robot.subsystems.hopper.SimHopperIO;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.RealIntakeIO;
-import frc.robot.subsystems.intake.SimIntakeIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
@@ -64,6 +66,13 @@ public class Robot extends TimedRobot {
   @NotLogged private final CommandJoystick leftFlightStick;
   @NotLogged private final CommandJoystick rightFlightStick;
 
+  private final AddressableLED led = new AddressableLED(9);
+  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
+
+  private final PowerDistribution pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
+
+  private long lastLoopTimeµs = 0;
+
   public Robot() {
     if (Robot.isSimulation()) {
 //      intake = new Intake(new SimIntakeIO());
@@ -78,6 +87,9 @@ public class Robot extends TimedRobot {
     }
 
     // poseEstimation = new PoseEstimation();
+    led.setLength(ledBuffer.getLength());
+    led.start();
+    led.setData(ledBuffer);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -87,6 +99,7 @@ public class Robot extends TimedRobot {
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
+    CanandEventLoop.getInstance();
 
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
@@ -97,6 +110,20 @@ public class Robot extends TimedRobot {
 
     bindDriverButtons();
     bindOperatorButtons();
+
+    SmartDashboard.putNumber("Shooter RPM", 0); // for dashboard-side tuning
+
+    // Dim by 1/6th because the servo power module outputs 6 volts, but the LED strips take 5 volts
+    LEDPattern rslBlink =
+        LEDPattern.solid(Color.kOrangeRed).atBrightness(Percent.of(83))
+            .synchronizedBlink(RobotController::getRSLState);
+    CommandScheduler.getInstance().schedule(
+        Commands.run(() -> {
+              rslBlink.applyTo(ledBuffer);
+              led.setData(ledBuffer);
+            }).ignoringDisable(true)
+            .withName("RSL Blink")
+    );
   }
 
   public void bindDriverButtons() {
@@ -114,6 +141,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    long start = RobotController.getFPGATime();
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     // poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
@@ -125,6 +153,7 @@ public class Robot extends TimedRobot {
     // }
     LookupTable.update(shooterSimDistance);
     Epilogue.update(this);
+    lastLoopTimeµs = RobotController.getFPGATime() - start;
   }
 
   @Override
@@ -157,6 +186,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void robotInit() {
+    shooterSimDistance.mut_setMagnitude(1);
+  }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
     return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
