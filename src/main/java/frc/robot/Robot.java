@@ -131,12 +131,11 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.leftTrigger().onTrue(swerve.o_resetGyro());
-    operatorController.x().whileTrue(shooter.f_aimAndRev());
+    operatorController.leftBumper().whileTrue(shooter.synchronizedRev(() -> RPM.of(shooterSimDistance.in(Meters)* 100)));
     operatorController.a()
-        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
     operatorController.b()
-        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)));
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
   }
 
   @Override
