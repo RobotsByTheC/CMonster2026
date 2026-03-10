@@ -19,6 +19,7 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
+    operatorController.leftTrigger().onTrue(swerve.o_resetGyro());
     operatorController.x().whileTrue(shooter.f_aimAndRev());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)));
