@@ -146,12 +146,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
-    if (Robot.isSimulation()) {
-      LookupTable.update(Meters.of(1).plus(operatorFudgeFactor));
-    } else {
-      DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
-          .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance().plus(operatorFudgeFactor))));
-    }
+
+     DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
+     .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
     Epilogue.update(this);
   }
 
