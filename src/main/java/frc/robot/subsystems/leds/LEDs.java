@@ -42,22 +42,11 @@ public class LEDs extends SubsystemBase {
   }
 
   public Command showFlywheelAtSpeed() {
-    return runPattern(LEDPattern.solid(Color.kGreen));
+    return runPattern(LEDPattern.solid(Color.kBlue));
   }
 
   public Command showFeed() {
-    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kGreen)
-        .scrollAtRelativeSpeed(Percent.per(Second).of(25)));
-  }
-
-  public Command showHopperIntake() {
-    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kOrange, Color.kYellow)
-        .scrollAtRelativeSpeed(Percent.per(Second).of(25)));
-  }
-
-  public Command showExtendAndGrab() {
-    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kOrange)
-        .scrollAtRelativeSpeed(Percent.per(Second).of(25)).synchronizedBlink(RobotController::getRSLState));
+    return runPattern(LEDPattern.solid(Color.kGreen));
   }
 
   public Command rslBlink() {
