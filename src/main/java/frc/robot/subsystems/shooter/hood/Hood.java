@@ -54,7 +54,8 @@ public class Hood extends SubsystemBase {
   }
 
   public Command tune() {
-    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().isNear(Degrees.of(30), Degrees.of(1)), io::atBottom);
+    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().isNear(Degrees.of(30), Degrees.of(1)),
+        io::atBottom);
   }
 
   public Command o_stop() {
