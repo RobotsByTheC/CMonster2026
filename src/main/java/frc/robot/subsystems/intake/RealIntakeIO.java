@@ -27,7 +27,7 @@ public class RealIntakeIO implements IntakeIO {
     wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    wristEncoder = wristMotor.getAbsoluteEncoder();
+    wristEncoder = wristMotor.getEncoder();
   }
 
   @Override
