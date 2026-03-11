@@ -137,14 +137,6 @@ public class PoseEstimation {
     double averageDistance = 0;
 
     for (PhotonTrackedTarget target : visionEstimate.targetsUsed) {
-      if (target.poseAmbiguity > 0.2) {
-        // A target was used with too much ambiguity, reject the estimate
-        return;
-      } else if (target.poseAmbiguity == -1) {
-        // A target was used with an invalid ambiguity value, reject the estimate
-        return;
-      }
-
       // Distance to this target, in meters
       double targetDistance = target.getAlternateCameraToTarget().getTranslation().getNorm();
       averageDistance += targetDistance;
