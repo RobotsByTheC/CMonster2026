@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.function.Supplier;
 
+import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Volts;
 
 @Logged
@@ -44,5 +45,9 @@ public class Flywheel extends SubsystemBase {
 
   public Command applyAFuckingVoltage(Supplier<Voltage> voltage) {
     return run(() -> io.setVoltage(voltage.get()));
+  }
+
+  public double getPercentageSpeed() {
+    return Math.round(io.getPrimaryVelocity().div(io.getTargetVelocity()).in(Percent)*10)/10d;
   }
 }
