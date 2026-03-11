@@ -5,7 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -38,7 +37,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.dashboard.Dashboard;
@@ -49,6 +47,7 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
+import frc.robot.subsystems.leds.LEDs;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -57,6 +56,7 @@ public class Robot extends TimedRobot {
   private final Swerve swerve;
   private final Shooter shooter;
   // private final PoseEstimation poseEstimation;
+  private final LEDs leds;
 //  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
@@ -71,6 +71,7 @@ public class Robot extends TimedRobot {
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
 
   public Robot() {
+
     if (Robot.isSimulation()) {
 //      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
@@ -82,6 +83,8 @@ public class Robot extends TimedRobot {
       shooter = new Shooter(true);
 //      hopper = new Hopper(new RealHopperIO());
     }
+
+    leds = new LEDs();
 
     // poseEstimation = new PoseEstimation();
     led.setLength(ledBuffer.getLength());
@@ -104,6 +107,8 @@ public class Robot extends TimedRobot {
 //    intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
 //    hopper.setDefaultCommand(hopper.f_idle());
+
+    leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
 
     bindDriverButtons();
     bindOperatorButtons();
@@ -172,7 +177,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+  }
 
   @Override
   public void teleopInit() {

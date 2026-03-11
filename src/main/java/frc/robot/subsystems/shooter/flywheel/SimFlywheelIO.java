@@ -21,7 +21,7 @@ public class SimFlywheelIO implements FlywheelIO {
   private final SimpleMotorFeedforward flywheelFeedForward;
   private final PIDController flywheelPIDController;
 
-  private MutAngularVelocity targetFlywheelSpeed;
+  private MutAngularVelocity targetFlywheelSpeed = RPM.mutable(0);
 
   public SimFlywheelIO() {
     flywheelSim = new FlywheelSim(
@@ -62,7 +62,6 @@ public class SimFlywheelIO implements FlywheelIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    targetFlywheelSpeed = null;
     flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(voltage.in(Volts)));
   }
 
