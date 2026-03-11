@@ -190,7 +190,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    shooterSimDistance.mut_setMagnitude(0);
+    shooterSimDistance.mut_setMagnitude(1);
   }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
