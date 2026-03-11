@@ -13,21 +13,25 @@ import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -35,13 +39,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.DashboardField;
+import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
-import frc.robot.subsystems.hopper.Hopper;
-import frc.robot.subsystems.hopper.RealHopperIO;
-import frc.robot.subsystems.hopper.SimHopperIO;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.RealIntakeIO;
-import frc.robot.subsystems.intake.SimIntakeIO;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
@@ -51,39 +52,44 @@ import frc.robot.subsystems.leds.LEDs;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  private final Intake intake;
+  //  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   // private final PoseEstimation poseEstimation;
-  private final Hopper hopper;
   private final LEDs leds;
+//  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
+  public MutDistance operatorFudgeFactor = Meters.mutable(0);
   public MutVoltage appliedVoltage = Volts.mutable(0);
-  public PowerDistribution pdp;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
   @NotLogged private final CommandJoystick rightFlightStick;
 
+  private final AddressableLED led = new AddressableLED(9);
+  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
+
   public Robot() {
 
     if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
+//      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      hopper = new Hopper(new SimHopperIO());
+//      hopper = new Hopper(new SimHopperIO());
     } else {
-      intake = new Intake(new RealIntakeIO());
+//      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      pdp = new PowerDistribution(60, PowerDistribution.ModuleType.kRev);
-      hopper = new Hopper(new RealHopperIO());
+//      hopper = new Hopper(new RealHopperIO());
     }
 
     leds = new LEDs();
 
     // poseEstimation = new PoseEstimation();
+    led.setLength(ledBuffer.getLength());
+    led.start();
+    led.setData(ledBuffer);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -93,19 +99,36 @@ public class Robot extends TimedRobot {
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
+    CanandEventLoop.getInstance();
 
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.f_stowAndIdle());
+//    intake.setDefaultCommand(intake.f_stowAndIdle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    // shooter.setDefaultCommand(shooter.f_idle());
-    hopper.setDefaultCommand(hopper.f_idle());
+//    hopper.setDefaultCommand(hopper.f_idle());
 
     leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
 
     bindDriverButtons();
     bindOperatorButtons();
+
+    Dashboard.addField(new DashboardField("Operator Controller Connected", operatorController::isConnected));
+    Dashboard.addField(new DashboardField("Left Flight Stick Connected", leftFlightStick::isConnected));
+    Dashboard.addField(new DashboardField("Right Flight Stick Connected", rightFlightStick::isConnected));
+
+
+    // Dim by 1/6th because the servo power module outputs 6 volts, but the LED strips take 5 volts
+    LEDPattern rslBlink =
+        LEDPattern.solid(Color.kOrangeRed).atBrightness(Percent.of(83))
+            .synchronizedBlink(RobotController::getRSLState);
+    CommandScheduler.getInstance().schedule(
+        Commands.run(() -> {
+              rslBlink.applyTo(ledBuffer);
+              led.setData(ledBuffer);
+            }).ignoringDisable(true)
+            .withName("RSL Blink")
+    );
   }
 
   public void bindDriverButtons() {
@@ -113,13 +136,14 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(
-        shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE)
-            .alongWith(leds.showFlywheelAtSpeed()));
-    operatorController.leftBumper().whileTrue(shooter.feed().alongWith(leds.showFeed()));
-    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake().alongWith(leds.showHopperIntake()));
-    operatorController.a().whileTrue(intake.f_extendAndGrab().alongWith(leds.showExtendAndGrab()));
-    operatorController.a().onFalse(intake.l_retractAndGrab());
+    operatorController.x().whileTrue(shooter.feed());
+    operatorController.leftBumper().onTrue(shooter.f_aimAndRev());
+    operatorController.a()
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
+    operatorController.b()
+        .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
+    operatorController.povUp().onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
+    operatorController.povDown().onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() - 0.1)));
   }
 
   @Override
@@ -133,6 +157,7 @@ public class Robot extends TimedRobot {
     // DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
     // .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
     // }
+    LookupTable.update(shooterSimDistance);
     Epilogue.update(this);
   }
 
@@ -169,15 +194,21 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {}
 
+  @Override
+  public void robotInit() {
+    shooterSimDistance.mut_setMagnitude(1);
+    operatorFudgeFactor.mut_setMagnitude(0);
+  }
+
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(rawValue);
+    return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(rawValue);
+    return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.05));
   }
 
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()*-1),
         () -> getLinearJoystickVelocity(rightFlightStick.getY()),
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }

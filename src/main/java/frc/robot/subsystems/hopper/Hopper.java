@@ -14,11 +14,11 @@ public class Hopper extends SubsystemBase {
   }
 
   public Command f_hopperIntake() {
-    return run(() -> io.setVoltage(Constants.MatchConstants.HOPPER_APPLY_VOLTAGE));
+    return run(() -> io.setVoltage(Constants.HopperConstants.INTAKE_VOLTAGE));
   }
 
   public Command f_hopperReverse() {
-    return run(() -> io.setVoltage(Constants.MatchConstants.HOPPER_APPLY_VOLTAGE.unaryMinus()));
+    return run(() -> io.setVoltage(Constants.HopperConstants.OUTTAKE_VOLTAGE));
   }
 
   public Command f_idle() {

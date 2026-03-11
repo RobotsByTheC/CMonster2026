@@ -9,8 +9,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.ConstantTuner;
 
+import frc.robot.subsystems.ConstantTuner;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.*;
@@ -44,25 +44,20 @@ public class Hood extends SubsystemBase {
     return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
         () -> io.setVoltage(calculatePIDVoltage(target.get())));
   }
+  public Command applyVoltage(Supplier<Voltage> voltage) {
+    return run(() -> io.setVoltage(voltage.get()));
+  }
 
   public Command l_returnToNormalcy() {
     return run(() -> io.setVoltage(Volts.of(-1))).until(io::atBottom)
         .andThen(Commands.runOnce(() -> System.out.println("done")));
   }
 
-  public Command applyVoltage(Supplier<Voltage> volts) {
-    return run(() -> io.setVoltage(volts.get()));
+  public Command tune() {
+    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().isNear(Degrees.of(30), Degrees.of(1)), io::atBottom);
   }
 
   public Command o_stop() {
     return runOnce(io::stop);
-  }
-
-  public Command f_idle() {
-    return o_stop().andThen(idle());
-  }
-
-  public Command tune() {
-    return ConstantTuner.createRoutine(io::setVoltage, this, () -> io.getAngle().gte(MAX_ANGLE), io::atBottom);
   }
 }

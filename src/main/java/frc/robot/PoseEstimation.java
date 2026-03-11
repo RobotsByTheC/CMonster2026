@@ -11,6 +11,8 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.DashboardField;
 import frc.robot.data.PolarPoint;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -35,6 +37,8 @@ public class PoseEstimation {
         RIGHT_CAMERA_OFFSET);
     swerveEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DriveConstants.KINEMATICS, Rotation2d.kZero,
         new SwerveModulePosition[4], Pose2d.kZero);
+    Dashboard.addField(new DashboardField("Left Camera Connected", leftCamera::isConnected));
+    Dashboard.addField(new DashboardField("Right Camera Connected", rightCamera::isConnected));
   }
 
   public void update(Rotation2d gyro, SwerveModulePosition[] swervePositions) {

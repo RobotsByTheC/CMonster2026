@@ -62,16 +62,16 @@ public class LookupTable {
   }
 
   static {
-    fill(Meters.of(1), RPM.of(1000), Degrees.of(5));
-    fill(Meters.of(1.1), RPM.of(1100), Degrees.of(7.5));
-    fill(Meters.of(1.2), RPM.of(1200), Degrees.of(10));
-    fill(Meters.of(1.3), RPM.of(1300), Degrees.of(12.5));
-    fill(Meters.of(1.4), RPM.of(1400), Degrees.of(15));
-    fill(Meters.of(1.5), RPM.of(1500), Degrees.of(17.5));
-    fill(Meters.of(1.6), RPM.of(1600), Degrees.of(20));
-    fill(Meters.of(1.7), RPM.of(1700), Degrees.of(22.5));
-    fill(Meters.of(1.8), RPM.of(1800), Degrees.of(25));
-    fill(Meters.of(1.9), RPM.of(1900), Degrees.of(27.5));
-    fill(Meters.of(2), RPM.of(2000), Degrees.of(30));
+    fill(Meters.of(1), RPM.of(2000), Degrees.of(5));
+    fill(Meters.of(1.1), RPM.of(2100), Degrees.of(7.5));
+    fill(Meters.of(1.2), RPM.of(2200), Degrees.of(10));
+    fill(Meters.of(1.3), RPM.of(2300), Degrees.of(12.5));
+    fill(Meters.of(1.4), RPM.of(2400), Degrees.of(15));
+    fill(Meters.of(1.5), RPM.of(2500), Degrees.of(17.5));
+    fill(Meters.of(1.6), RPM.of(2600), Degrees.of(20));
+    fill(Meters.of(1.7), RPM.of(2700), Degrees.of(22.5));
+    fill(Meters.of(1.8), RPM.of(2800), Degrees.of(25));
+    fill(Meters.of(1.9), RPM.of(2900), Degrees.of(27.5));
+    fill(Meters.of(2), RPM.of(3000), Degrees.of(30));
   }
 }

@@ -22,15 +22,14 @@ public class Intake extends SubsystemBase {
   private final Extension extension;
   private final ArmFeedforward feedforward;
   private final ProfiledPIDController pidController;
-  @NotLogged private final SysIdRoutine sysIdRoutine;
 
   class Extension extends SubsystemBase {
     public Command extend() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_EXTEND_ANGLE);
+      return rotateToAngle(WRIST_EXTEND_ANGLE);
     }
 
     public Command stow() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_STOW_ANGLE);
+      return rotateToAngle(WRIST_STOW_ANGLE);
     }
 
     public Command stop() {
@@ -51,7 +50,7 @@ public class Intake extends SubsystemBase {
 
   class Roller extends SubsystemBase {
     public Command runIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(Constants.MatchConstants.INTAKE_APPLY_VOLTAGE));
+      return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
     }
 
     public Command stop() {
@@ -74,27 +73,12 @@ public class Intake extends SubsystemBase {
     pidController.setTolerance(0.0001);
     pidController.enableContinuousInput(0, 2 * Math.PI);
     feedforward = new ArmFeedforward(KS, KG, KV, KA);
-    sysIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
-        new SysIdRoutine.Mechanism(io::setWristVoltage, null, this));
-  }
-
-  public Command runSysIdRoutine() {
-    return sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward)
-        .until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
-        .andThen(
-            sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward)
-            .until(() -> io.getWristPosition().gte(Radians.of(Math.PI))))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse)
-            .until(() -> io.getWristPosition().lte(Radians.zero())));
   }
 
   public Command claim(Command command) {
     command.addRequirements(this);
     return command;
   }
-
-  // f before a method means forever, l means it has an end condition, o means run once.
 
   public Command f_stowAndIdle() {
     return claim(extension.stow());

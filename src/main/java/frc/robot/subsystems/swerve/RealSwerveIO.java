@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.dashboard.Dashboard;
+import frc.robot.dashboard.DashboardField;
 
 @Logged
 public class RealSwerveIO implements SwerveIO {
@@ -26,6 +28,8 @@ public class RealSwerveIO implements SwerveIO {
     backRight = new SwerveModule(BACK_RIGHT_DRIVE_CAN_ID, BACK_RIGHT_TURN_CAN_ID);
 
     gyro = new Pigeon2(GYRO_CAN_ID);
+
+    Dashboard.addField(new DashboardField("Gyro Connected", gyro::isConnected));
   }
 
   public void setDesiredStates(SwerveModuleState[] states) {

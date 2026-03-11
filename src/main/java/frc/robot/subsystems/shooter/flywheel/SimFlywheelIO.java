@@ -66,18 +66,58 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public Angle getPosition() {
+  public Angle getAlternatePosition() {
     return Radians.zero();
   }
 
   @Override
-  public boolean atTargetVelocity() {
-    return targetFlywheelSpeed.isNear(getVelocity(), RPM.of(20));
+  public Angle getPrimaryPosition() {
+    return null;
   }
 
   @Override
-  public AngularVelocity getVelocity() {
+  public Angle getFollowerPosition() {
+    return null;
+  }
+
+  @Override
+  public boolean atTargetVelocity() {
+    return targetFlywheelSpeed.isNear(getAlternateVelocity(), RPM.of(20));
+  }
+
+  @Override
+  public Current getCurrentA() {
+    return null;
+  }
+
+  @Override
+  public Current getCurrentB() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageA() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageB() {
+    return null;
+  }
+
+  @Override
+  public AngularVelocity getAlternateVelocity() {
     return flywheelSim.getAngularVelocity();
+  }
+
+  @Override
+  public AngularVelocity getPrimaryVelocity() {
+    return null;
+  }
+
+  @Override
+  public AngularVelocity getFollowerVelocity() {
+    return null;
   }
 
   @Override
@@ -88,10 +128,5 @@ public class SimFlywheelIO implements FlywheelIO {
   @Override
   public Voltage getVoltageDraw() {
     return Volts.of(flywheelSim.getInputVoltage());
-  }
-
-  @Override
-  public double getRPM() {
-    return flywheelSim.getAngularVelocityRPM();
   }
 }

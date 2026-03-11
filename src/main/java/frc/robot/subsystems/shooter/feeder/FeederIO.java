@@ -39,4 +39,6 @@ public interface FeederIO {
    * @return Whether the distance is small enough to confirm that a Fuel is stored.
    */
   boolean isBallReadyToFire();
+
+  double getProximity();
 }
