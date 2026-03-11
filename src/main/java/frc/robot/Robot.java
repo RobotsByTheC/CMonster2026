@@ -131,9 +131,8 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.rightBumper().onTrue(shooter.hoodify());
     operatorController.x().whileTrue(shooter.feed());
-    operatorController.leftBumper().whileTrue(shooter.voltify(() -> Volts.of(shooterSimDistance.in(Meters))));
+    operatorController.leftBumper().onTrue(shooter.f_aimAndRev());
     operatorController.a()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
     operatorController.b()
