@@ -12,6 +12,8 @@ import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED;
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
+import static frc.robot.Constants.VisionConstants.BLUE_HUB;
+import static frc.robot.Constants.VisionConstants.RED_HUB;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.epilogue.Epilogue;
@@ -35,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
@@ -118,12 +121,9 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
-    // if (Robot.isSimulation()) {
-    // LookupTable.update(shooterSimDistance);
-    // } else {
-    // DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
-    // .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
-    // }
+
+     DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
+     .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
     Epilogue.update(this);
   }
 
