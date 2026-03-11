@@ -110,6 +110,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command voltify(Supplier<Voltage> voltage) {
-    return rightFlywheel.applyAFuckingVoltage(voltage);
+    return rightFlywheel.applyAFuckingVoltage(voltage).alongWith(leftFlywheel.applyAFuckingVoltage(voltage));
   }
 }
