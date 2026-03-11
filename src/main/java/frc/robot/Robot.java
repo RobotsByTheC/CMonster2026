@@ -136,6 +136,8 @@ public class Robot extends TimedRobot {
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() + 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
     operatorController.b()
         .onTrue(Commands.runOnce(() -> shooterSimDistance.mut_setMagnitude(shooterSimDistance.magnitude() - 0.1)).andThen(Commands.runOnce(() -> System.out.println("new target: " + shooterSimDistance))));
+    operatorController.povUp().onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
+    operatorController.povDown().onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() - 0.1)));
   }
 
   @Override
