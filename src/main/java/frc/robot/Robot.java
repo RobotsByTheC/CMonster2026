@@ -230,8 +230,4 @@ public class Robot extends TimedRobot {
   // public Command f_lockOnAndRev() {
   // return f_driveLockedOn().alongWith(shooter.f_aimAndRev());
   // }
-
-  public Command f_shootBall() {
-    return shooter.l_kapow().repeatedly();
-  }
 }
