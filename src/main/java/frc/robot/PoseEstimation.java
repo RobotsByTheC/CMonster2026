@@ -182,6 +182,18 @@ public class PoseEstimation {
     return new PolarPoint(Meters.of(Math.hypot(relative.getX(), relative.getY())), relative.getRotation().getMeasure());
   }
 
+  public Distance getMeasureDistanceToHub(Pose2d target) {
+    return getDistanceToHub(target).distance();
+  }
+
+  public AngularVelocity getTargetVelocity() {
+    return LookupTable.getVelocity();
+  }
+
+  public Angle getTargetHoodAngle() {
+    return LookupTable.getAngle();
+  }
+
   @NotLogged
   public Pose2d getTarget() {
     return Pose2d.kZero;
