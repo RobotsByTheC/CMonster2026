@@ -111,7 +111,6 @@ public class Robot extends TimedRobot {
     bindDriverButtons();
     bindOperatorButtons();
 
-    SmartDashboard.putNumber("Shooter RPM", 0); // for dashboard-side tuning
 
     // Dim by 1/6th because the servo power module outputs 6 volts, but the LED strips take 5 volts
     LEDPattern rslBlink =
