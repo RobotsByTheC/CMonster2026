@@ -18,15 +18,6 @@ import static edu.wpi.first.units.Units.*;
 
 public class Constants {
   // CHANGE THESE, NOTHING ELSE
-  public static class MatchConstants {
-    public static final AngularVelocity FLYWHEEL_SPEED = RPM.of(3000);
-    public static final Angle HOOD_ANGLE = Degrees.of(15); // x degrees above the horizontal
-    public static final Voltage FEEDER_APPLY_VOLTAGE = Volts.of(5);
-    public static final Voltage HOPPER_APPLY_VOLTAGE = Volts.of(5);
-    public static final Angle INTAKE_EXTEND_ANGLE = Degrees.of(60);
-    public static final Angle INTAKE_STOW_ANGLE = Degrees.of(0);
-    public static final Voltage INTAKE_APPLY_VOLTAGE = Volts.of(5);
-  }
 
   public static class SwerveConstants {
     public static class DriveConstants {
