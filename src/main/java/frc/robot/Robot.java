@@ -111,6 +111,10 @@ public class Robot extends TimedRobot {
     bindDriverButtons();
     bindOperatorButtons();
 
+    Dashboard.addField(new DashboardField("Operator Controller Connected", operatorController::isConnected));
+    Dashboard.addField(new DashboardField("Left Flight Stick Connected", leftFlightStick::isConnected));
+    Dashboard.addField(new DashboardField("Right Flight Stick Connected", rightFlightStick::isConnected));
+
 
     // Dim by 1/6th because the servo power module outputs 6 volts, but the LED strips take 5 volts
     LEDPattern rslBlink =
