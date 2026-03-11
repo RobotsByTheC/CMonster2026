@@ -26,11 +26,11 @@ public class Intake extends SubsystemBase {
 
   class Extension extends SubsystemBase {
     public Command extend() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_EXTEND_ANGLE);
+      return rotateToAngle(WRIST_EXTEND_ANGLE);
     }
 
     public Command stow() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_STOW_ANGLE);
+      return rotateToAngle(WRIST_STOW_ANGLE);
     }
 
     public Command stop() {
@@ -51,7 +51,7 @@ public class Intake extends SubsystemBase {
 
   class Roller extends SubsystemBase {
     public Command runIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(Constants.MatchConstants.INTAKE_APPLY_VOLTAGE));
+      return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
     }
 
     public Command stop() {
