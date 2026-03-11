@@ -84,9 +84,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
-    Command command = leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
-    command.addRequirements(this);
-    return command;
+    return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
   }
 
   public Command hoodify() {
