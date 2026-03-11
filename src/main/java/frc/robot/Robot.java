@@ -5,8 +5,6 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Percent;
-import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -117,19 +115,10 @@ public class Robot extends TimedRobot {
   public void bindOperatorButtons() {
     operatorController.x().whileTrue(
         shooter.aimAndRev(() -> Constants.MatchConstants.FLYWHEEL_SPEED, () -> Constants.MatchConstants.HOOD_ANGLE)
-            .alongWith(leds.runPattern(LEDPattern.solid(Color.kGreen))));
-    operatorController.leftBumper()
-        .whileTrue(shooter.feed().alongWith(
-            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kYellow, Color.kGreen)
-                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
-    operatorController.rightBumper()
-        .whileTrue(hopper.f_hopperIntake().alongWith(
-            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kOrange, Color.kYellow)
-                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
-    operatorController.a()
-        .whileTrue(intake.f_extendAndGrab().alongWith(
-            leds.runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kOrange)
-                .scrollAtRelativeSpeed(Percent.per(Second).of(25)))));
+            .alongWith(leds.showFlywheelAtSpeed()));
+    operatorController.leftBumper().whileTrue(shooter.feed().alongWith(leds.showFeed()));
+    operatorController.rightBumper().whileTrue(hopper.f_hopperIntake().alongWith(leds.showHopperIntake()));
+    operatorController.a().whileTrue(intake.f_extendAndGrab().alongWith(leds.showExtendAndGrab()));
     operatorController.a().onFalse(intake.l_retractAndGrab());
   }
 

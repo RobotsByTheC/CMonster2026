@@ -1,11 +1,13 @@
 package frc.robot.subsystems.leds;
 
 import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.Second;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -36,5 +38,24 @@ public class LEDs extends SubsystemBase {
       leds.setData(ledBuffer); // send pixel data to the LED strips
     }).ignoringDisable(true);
 
+  }
+
+  public Command showFlywheelAtSpeed() {
+    return runPattern(LEDPattern.solid(Color.kGreen));
+  }
+
+  public Command showFeed() {
+    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kYellow, Color.kGreen)
+        .scrollAtRelativeSpeed(Percent.per(Second).of(25)));
+  }
+
+  public Command showHopperIntake() {
+    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kOrange, Color.kYellow)
+        .scrollAtRelativeSpeed(Percent.per(Second).of(25)));
+  }
+
+  public Command showExtendAndGrab() {
+    return runPattern(LEDPattern.gradient(LEDPattern.GradientType.kContinuous, Color.kRed, Color.kOrange)
+        .scrollAtRelativeSpeed(Percent.per(Second).of(25)));
   }
 }
