@@ -31,32 +31,23 @@ public class RealFlywheelIO implements FlywheelIO {
   private final RelativeEncoder followerEncoder;
   private final MutAngularVelocity target = RPM.mutable(0);
 
-  public RealFlywheelIO(boolean inverted, int leaderId, int followerId, double P, double I, double D, double S, double V) {
+  public RealFlywheelIO(boolean inverted, int leaderId, int followerId, double P, double I, double D, double S,
+      double V) {
     leadMotor = new SparkMax(leaderId, SparkLowLevel.MotorType.kBrushless);
-    SparkMaxConfig leadConfig =
-        (SparkMaxConfig) new SparkMaxConfig()
-            .inverted(inverted)
-            .idleMode(SparkBaseConfig.IdleMode.kCoast);
+    SparkMaxConfig leadConfig = (SparkMaxConfig) new SparkMaxConfig().inverted(inverted)
+        .idleMode(SparkBaseConfig.IdleMode.kCoast);
     leadConfig.closedLoop.pid(P, I, D);
     leadConfig.closedLoop.feedForward.sv(S, V);
     leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
-    leadConfig.alternateEncoder
-        .countsPerRevolution(8192)
-        .inverted(inverted)
-        .averageDepth(2)
-        .measurementPeriod(1);
+    leadConfig.alternateEncoder.countsPerRevolution(8192).inverted(inverted).averageDepth(2).measurementPeriod(1);
     leadConfig.smartCurrentLimit(40);
-    leadConfig.encoder
-        .quadratureAverageDepth(2)
-        .quadratureMeasurementPeriod(1);
+    leadConfig.encoder.quadratureAverageDepth(2).quadratureMeasurementPeriod(1);
 
     leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     followerMotor = new SparkMax(followerId, SparkLowLevel.MotorType.kBrushless);
-    SparkMaxConfig followerConfig =
-        (SparkMaxConfig) new SparkMaxConfig()
-            .follow(leadMotor, true)
-            .idleMode(SparkBaseConfig.IdleMode.kCoast);
+    SparkMaxConfig followerConfig = (SparkMaxConfig) new SparkMaxConfig().follow(leadMotor, true)
+        .idleMode(SparkBaseConfig.IdleMode.kCoast);
     followerConfig.smartCurrentLimit(40);
 
     followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -78,6 +69,11 @@ public class RealFlywheelIO implements FlywheelIO {
   @Override
   public AngularVelocity getFollowerVelocity() {
     return RPM.of(followerEncoder.getVelocity());
+  }
+
+  @Override
+  public AngularVelocity getTargetVelocity() {
+    return target;
   }
 
   @Override

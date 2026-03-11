@@ -19,6 +19,8 @@ public interface FlywheelIO {
 
   AngularVelocity getFollowerVelocity();
 
+  AngularVelocity getTargetVelocity();
+
   /**
    * Returns the current draw that the mechanism is currently consuming.
    *

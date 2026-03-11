@@ -121,6 +121,11 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
+  public AngularVelocity getTargetVelocity() {
+    return null;
+  }
+
+  @Override
   public Current getCurrentDraw() {
     return Amps.of(flywheelSim.getCurrentDrawAmps());
   }

@@ -31,6 +31,7 @@ import frc.robot.subsystems.shooter.flywheel.SimFlywheelIO;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.RealHoodIO;
 import frc.robot.subsystems.shooter.hood.SimHoodIO;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
@@ -42,6 +43,8 @@ public class Shooter extends SubsystemBase {
   private final Hood hood;
 
   private final Trigger isReadyToShoot;
+  private DoubleSupplier leftSpeedPercentage;
+  private DoubleSupplier rightSpeedPercentage;
 
   public Shooter(boolean real) {
     if (real) {
@@ -80,7 +83,10 @@ public class Shooter extends SubsystemBase {
     rightFeeder.setDefaultCommand(rightFeeder.o_stop());
     hood.setDefaultCommand(hood.o_stop());
 
-    isReadyToShoot = new Trigger(() -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
+    isReadyToShoot = new Trigger(
+        () -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
+    leftSpeedPercentage = leftFlywheel::getPercentageSpeed;
+    rightSpeedPercentage = rightFlywheel::getPercentageSpeed;
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
