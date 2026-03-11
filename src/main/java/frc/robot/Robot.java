@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
 //  private final Hopper hopper;
 
   public MutDistance shooterSimDistance = Meters.mutable(1);
+  public MutDistance operatorFudgeFactor = Meters.mutable(0);
   public MutVoltage appliedVoltage = Volts.mutable(0);
 
   @NotLogged private final CommandXboxController operatorController;
@@ -189,6 +190,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     shooterSimDistance.mut_setMagnitude(1);
+    operatorFudgeFactor.mut_setMagnitude(0);
   }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
