@@ -25,14 +25,14 @@ public interface IntakeIO {
   void setWristVoltage(Voltage voltage);
 
   /**
-   * Gets the position of the wrist using the absolute encoders on the NEOs.
+   * Gets the position of the wrist using the encoders on the NEOs.
    *
    * @return The position of the wrist.
    */
   Angle getWristPosition();
 
   /**
-   * Gets the velocity of the wrist using the absolute encoders on the NEOs.
+   * Gets the velocity of the wrist using the encoders on the NEOs.
    *
    * @return The velocity of the wrist.
    */

@@ -17,21 +17,9 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 
 public class Constants {
-  //CHANGE THESE, NOTHING ELSE
-  public static class MatchConstants {
-    public static final AngularVelocity FLYWHEEL_SPEED = RPM.of(3000);
-    public static final Angle HOOD_ANGLE = Degrees.of(15); //x degrees above the horizontal
-    public static final Voltage FEEDER_APPLY_VOLTAGE = Volts.of(5);
-    public static final Voltage HOPPER_APPLY_VOLTAGE = Volts.of(5);
-    public static final Angle INTAKE_EXTEND_ANGLE = Degrees.of(60);
-    public static final Angle INTAKE_STOW_ANGLE = Degrees.of(0);
-    public static final Voltage INTAKE_APPLY_VOLTAGE = Volts.of(5);
-  }
-
-
   public static class SwerveConstants {
     public static class DriveConstants {
-      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(2);
+      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(4.5);
       public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
       public static final Distance WHEEL_DIAMETER = Inches.of(3);
       public static final double DRIVE_MOTOR_REDUCTION = 4.71428571;
@@ -51,7 +39,7 @@ public class Constants {
     }
 
     public static class TurnConstants {
-      public static final AngularVelocity MAX_TURN_SPEED = RadiansPerSecond.of(10);
+      public static final AngularVelocity MAX_TURN_SPEED = RotationsPerSecond.of(2);
       public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(10);
 
       public static final double KP = 1;
@@ -92,13 +80,14 @@ public class Constants {
     public static final int FEEDER_LEFT_CAN_ID = 16;
     public static final int HOOD_CAN_ID = 17;
     public static final int HOPPER_CAN_ID = 18;
+    public static final int LED_CAN_ID = 19;
 
-    public static final int LEFT_CNC_BOTTOM = 21;
-    public static final int LEFT_CNC_MIDDLE = 22;
-    public static final int LEFT_CNC_TOP = 23;
-    public static final int RIGHT_CNC_BOTTOM = 24;
-    public static final int RIGHT_CNC_MIDDLE = 25;
-    public static final int RIGHT_CNC_TOP = 26;
+    public static final int LEFT_CNC_BOTTOM = 1;
+    public static final int LEFT_CNC_MIDDLE = 2;
+    public static final int LEFT_CNC_TOP = 3;
+    public static final int RIGHT_CNC_BOTTOM = 4;
+    public static final int RIGHT_CNC_MIDDLE = 5;
+    public static final int RIGHT_CNC_TOP = 6;
 
     public static final int GYRO_CAN_ID = 50;
   }
@@ -122,13 +111,13 @@ public class Constants {
 
   public static class ShooterConstants {
     public static class HoodConstants {
-      public static final double KP = 1;
-      public static final double KI = 0;
+      public static final double KP = 27.5;
+      public static final double KI = 0.001;
       public static final double KD = 0;
-      public static final double KS = 0.18;
-      public static final double KG = 0.10827;
-      public static final double KV = 0.59923;
-      public static final double KA = 0.26246;
+      public static final double KS = 0; // 0.18
+      public static final double KG = 0; // 0.10827
+      public static final double KV = 0; // 0.59923
+      public static final double KA = 0; // 0.26246
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
       public static final Angle MAX_ANGLE = Degrees.of(30);
@@ -136,19 +125,19 @@ public class Constants {
 
     public static class FlywheelConstants {
       public static final class RightConstants {
-        public static final double KP = 0.0004;
+        public static final double KP = 0.00001025;
         public static final double KI = 0;
         public static final double KD = 0;
-        public static final double KS = 0.22;
-        public static final double KV = 0.0021141;
+        public static final double KS = 0.17;
+        public static final double KV = 0.002;
       }
 
       public static final class LeftConstants {
-        public static final double KP = 0.0004;
+        public static final double KP = 0.00001375;
         public static final double KI = 0;
         public static final double KD = 0;
-        public static final double KS = 0.72;
-        public static final double KV = 0.0021141;
+        public static final double KS = 0.17;
+        public static final double KV = 0.002;
       }
 
       public static final AngularVelocity IDLE_SPEED = RPM.of(4000);
@@ -169,11 +158,7 @@ public class Constants {
   }
 
   public static class FeederConstants {
-    public static final Voltage FEED_VOLTAGE = Volts.of(5);
+    public static final Voltage FEED_VOLTAGE = Volts.of(9);
     public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
-    public static final int LEFT_CAN_ID = 0;
-    public static final int RIGHT_CAN_ID = 0;
-    public static final boolean LEFT_INVERTED = false;
-    public static final boolean RIGHT_INVERTED = false;
   }
 }

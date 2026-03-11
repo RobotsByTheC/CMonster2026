@@ -62,6 +62,11 @@ public class SimFeederIO implements FeederIO {
   }
 
   @Override
+  public double getProximity() {
+    return 0;
+  }
+
+  @Override
   public Current getCurrentDraw() {
     return Amps.of(flywheelSim.getCurrentDrawAmps());
   }

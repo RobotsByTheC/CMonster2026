@@ -21,7 +21,7 @@ public class SimFlywheelIO implements FlywheelIO {
   private final SimpleMotorFeedforward flywheelFeedForward;
   private final PIDController flywheelPIDController;
 
-  private MutAngularVelocity targetFlywheelSpeed;
+  private MutAngularVelocity targetFlywheelSpeed = RPM.mutable(0);
 
   public SimFlywheelIO() {
     flywheelSim = new FlywheelSim(
@@ -62,23 +62,67 @@ public class SimFlywheelIO implements FlywheelIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    targetFlywheelSpeed = null;
     flywheelSim.setInputVoltage(flywheelMechanismSim.outputVoltage(voltage.in(Volts)));
   }
 
   @Override
-  public Angle getPosition() {
+  public Angle getAlternatePosition() {
     return Radians.zero();
   }
 
   @Override
-  public boolean atTargetVelocity() {
-    return targetFlywheelSpeed.isNear(getVelocity(), RPM.of(20));
+  public Angle getPrimaryPosition() {
+    return null;
   }
 
   @Override
-  public AngularVelocity getVelocity() {
+  public Angle getFollowerPosition() {
+    return null;
+  }
+
+  @Override
+  public boolean atTargetVelocity() {
+    return targetFlywheelSpeed.isNear(getAlternateVelocity(), RPM.of(20));
+  }
+
+  @Override
+  public Current getCurrentA() {
+    return null;
+  }
+
+  @Override
+  public Current getCurrentB() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageA() {
+    return null;
+  }
+
+  @Override
+  public Voltage getVoltageB() {
+    return null;
+  }
+
+  @Override
+  public AngularVelocity getAlternateVelocity() {
     return flywheelSim.getAngularVelocity();
+  }
+
+  @Override
+  public AngularVelocity getPrimaryVelocity() {
+    return null;
+  }
+
+  @Override
+  public AngularVelocity getFollowerVelocity() {
+    return null;
+  }
+
+  @Override
+  public AngularVelocity getTargetVelocity() {
+    return null;
   }
 
   @Override
@@ -89,10 +133,5 @@ public class SimFlywheelIO implements FlywheelIO {
   @Override
   public Voltage getVoltageDraw() {
     return Volts.of(flywheelSim.getInputVoltage());
-  }
-
-  @Override
-  public double getRPM() {
-    return flywheelSim.getAngularVelocityRPM();
   }
 }

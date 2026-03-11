@@ -1,11 +1,11 @@
 package frc.robot.subsystems.shooter.flywheel;
 
 import static edu.wpi.first.units.Units.*;
-import static frc.robot.Constants.CANConstants.*;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
+import com.revrobotics.spark.FeedbackSensor;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
@@ -18,55 +18,74 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.revroboticshacks.HackedSparkMaxAlternateEncoder;
 
 @Logged
 public class RealFlywheelIO implements FlywheelIO {
-  private final SparkMax sparkA;
-  private final SparkMax sparkB;
+  private final SparkMax leadMotor;
+  private final SparkMax followerMotor;
 
   private final SparkClosedLoopController controller;
-  private final RelativeEncoder encoder;
+  private final RelativeEncoder alternateEncoder;
+  private final RelativeEncoder primaryEncoder;
+  private final RelativeEncoder followerEncoder;
   private final MutAngularVelocity target = RPM.mutable(0);
 
-  public RealFlywheelIO(boolean inverted, int canA, int canB, double P, double I, double D, double S, double V) {
-    sparkA = new SparkMax(canA, SparkLowLevel.MotorType.kBrushless);
-    SparkBaseConfig configA = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configA.closedLoop.pid(P, I, D);
-    configA.closedLoop.feedForward.sv(S, V);
-    configA.smartCurrentLimit(40);
-    configA.encoder.velocityConversionFactor(1);
-    configA.encoder.positionConversionFactor(1);
+  public RealFlywheelIO(boolean inverted, int leaderId, int followerId, double P, double I, double D, double S,
+      double V) {
+    leadMotor = new SparkMax(leaderId, SparkLowLevel.MotorType.kBrushless);
+    SparkMaxConfig leadConfig = (SparkMaxConfig) new SparkMaxConfig().inverted(inverted)
+        .idleMode(SparkBaseConfig.IdleMode.kCoast);
+    leadConfig.closedLoop.pid(P, I, D);
+    leadConfig.closedLoop.feedForward.sv(S, V);
+    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
+    leadConfig.alternateEncoder.countsPerRevolution(8192).inverted(inverted).averageDepth(2).measurementPeriod(1);
+    leadConfig.smartCurrentLimit(40);
+    leadConfig.encoder.quadratureAverageDepth(2).quadratureMeasurementPeriod(1);
 
-    sparkA.configure(configA, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    leadMotor.configure(leadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    sparkB = new SparkMax(canB, SparkLowLevel.MotorType.kBrushless);
-    SparkBaseConfig configB = new SparkMaxConfig().follow(sparkA, true).idleMode(SparkBaseConfig.IdleMode.kCoast);
-    configB.smartCurrentLimit(40);
+    followerMotor = new SparkMax(followerId, SparkLowLevel.MotorType.kBrushless);
+    SparkMaxConfig followerConfig = (SparkMaxConfig) new SparkMaxConfig().follow(leadMotor, true)
+        .idleMode(SparkBaseConfig.IdleMode.kCoast);
+    followerConfig.smartCurrentLimit(40);
 
-    sparkB.configure(configB, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    controller = sparkA.getClosedLoopController();
-    encoder = sparkA.getEncoder();
+    followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    controller = leadMotor.getClosedLoopController();
+    alternateEncoder = new HackedSparkMaxAlternateEncoder(leadMotor);
+    primaryEncoder = leadMotor.getEncoder();
+    followerEncoder = followerMotor.getEncoder();
   }
 
   @Override
-  public AngularVelocity getVelocity() {
-    return RPM.of(encoder.getVelocity());
+  public AngularVelocity getAlternateVelocity() {
+    return RPM.of(alternateEncoder.getVelocity());
   }
 
   @Override
-  public double getRPM() {
-    return encoder.getVelocity();
+  public AngularVelocity getPrimaryVelocity() {
+    return RPM.of(primaryEncoder.getVelocity());
+  }
+  @Override
+  public AngularVelocity getFollowerVelocity() {
+    return RPM.of(followerEncoder.getVelocity());
+  }
+
+  @Override
+  public AngularVelocity getTargetVelocity() {
+    return target;
   }
 
   @Override
   public Current getCurrentDraw() {
-    return Amps.of(sparkA.getOutputCurrent() + sparkB.getOutputCurrent());
+    return Amps.of(leadMotor.getOutputCurrent() + followerMotor.getOutputCurrent());
   }
 
   @Override
   public Voltage getVoltageDraw() {
-    return Volts
-        .of(sparkA.getAppliedOutput() * sparkA.getBusVoltage() + sparkB.getAppliedOutput() * sparkB.getBusVoltage());
+    double leadVolts = leadMotor.getAppliedOutput() * leadMotor.getBusVoltage();
+    double followerVolts = followerMotor.getAppliedOutput() * followerMotor.getBusVoltage();
+    return Volts.of((leadVolts + followerVolts) / 2);
   }
 
   @Override
@@ -77,16 +96,44 @@ public class RealFlywheelIO implements FlywheelIO {
 
   @Override
   public void setVoltage(Voltage voltage) {
-    sparkA.setVoltage(voltage);
+    leadMotor.setVoltage(voltage);
   }
 
   @Override
-  public Angle getPosition() {
-    return Rotations.of(encoder.getPosition());
+  public Angle getAlternatePosition() {
+    return Rotations.of(alternateEncoder.getPosition());
+  }
+  @Override
+  public Angle getPrimaryPosition() {
+    return Rotations.of(primaryEncoder.getPosition());
+  }
+  @Override
+  public Angle getFollowerPosition() {
+    return Rotations.of(followerEncoder.getPosition());
   }
 
   @Override
   public boolean atTargetVelocity() {
-    return RPM.of(controller.getSetpoint()).isNear(getVelocity(), RPM.of(20));
+    return RPM.of(controller.getSetpoint()).isNear(getAlternateVelocity(), RPM.of(20));
+  }
+
+  @Override
+  public Current getCurrentA() {
+    return Amps.of(leadMotor.getOutputCurrent());
+  }
+
+  @Override
+  public Current getCurrentB() {
+    return Amps.of(followerMotor.getOutputCurrent());
+  }
+
+  @Override
+  public Voltage getVoltageA() {
+    return Volts.of(leadMotor.getAppliedOutput() * leadMotor.getBusVoltage());
+  }
+
+  @Override
+  public Voltage getVoltageB() {
+    return Volts.of(followerMotor.getAppliedOutput() * followerMotor.getBusVoltage());
   }
 }

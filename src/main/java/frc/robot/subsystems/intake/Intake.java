@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.IntakeConstants.*;
 
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -12,8 +11,6 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants;
 
 @Logged
 public class Intake extends SubsystemBase {
@@ -22,15 +19,14 @@ public class Intake extends SubsystemBase {
   private final Extension extension;
   private final ArmFeedforward feedforward;
   private final ProfiledPIDController pidController;
-  @NotLogged private final SysIdRoutine sysIdRoutine;
 
   class Extension extends SubsystemBase {
     public Command extend() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_EXTEND_ANGLE);
+      return rotateToAngle(WRIST_EXTEND_ANGLE);
     }
 
     public Command stow() {
-      return rotateToAngle(Constants.MatchConstants.INTAKE_STOW_ANGLE);
+      return rotateToAngle(WRIST_STOW_ANGLE);
     }
 
     public Command stop() {
@@ -51,7 +47,7 @@ public class Intake extends SubsystemBase {
 
   class Roller extends SubsystemBase {
     public Command runIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(Constants.MatchConstants.INTAKE_APPLY_VOLTAGE));
+      return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
     }
 
     public Command stop() {
@@ -74,27 +70,12 @@ public class Intake extends SubsystemBase {
     pidController.setTolerance(0.0001);
     pidController.enableContinuousInput(0, 2 * Math.PI);
     feedforward = new ArmFeedforward(KS, KG, KV, KA);
-    sysIdRoutine = new SysIdRoutine(new SysIdRoutine.Config(Volts.per(Second).of(0.5), Volts.of(4), null),
-        new SysIdRoutine.Mechanism(io::setWristVoltage, null, this));
-  }
-
-  public Command runSysIdRoutine() {
-    return sysIdRoutine.dynamic(SysIdRoutine.Direction.kForward)
-        .until(() -> io.getWristPosition().gte(Radians.of(Math.PI)))
-        .andThen(
-            sysIdRoutine.dynamic(SysIdRoutine.Direction.kReverse).until(() -> io.getWristPosition().lte(Radians.zero())))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kForward)
-            .until(() -> io.getWristPosition().gte(Radians.of(Math.PI))))
-        .andThen(sysIdRoutine.quasistatic(SysIdRoutine.Direction.kReverse)
-            .until(() -> io.getWristPosition().lte(Radians.zero())));
   }
 
   public Command claim(Command command) {
     command.addRequirements(this);
     return command;
   }
-
-  // f before a method means forever, l means it has an end condition, o means run once.
 
   public Command f_stowAndIdle() {
     return claim(extension.stow());

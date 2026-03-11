@@ -84,4 +84,8 @@ public class Swerve extends SubsystemBase {
             RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(), lockedAngle.get().in(Radians))),
             io.getHeading())));
   }
+
+  public Command o_resetGyro() {
+    return Commands.runOnce(() -> io.setGyro(new Rotation2d(-90)));
+  }
 }

@@ -4,8 +4,8 @@ import static edu.wpi.first.units.Units.*;
 import static frc.robot.Constants.CANConstants.*;
 
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -18,7 +18,7 @@ import edu.wpi.first.units.measure.Voltage;
 public class RealIntakeIO implements IntakeIO {
   private final SparkMax intakeMotor;
   private final SparkMax wristMotor;
-  private final SparkAbsoluteEncoder wristEncoder;
+  private final RelativeEncoder wristEncoder;
 
   public RealIntakeIO() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
@@ -27,7 +27,7 @@ public class RealIntakeIO implements IntakeIO {
     wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-    wristEncoder = wristMotor.getAbsoluteEncoder();
+    wristEncoder = wristMotor.getEncoder();
   }
 
   @Override
