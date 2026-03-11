@@ -112,6 +112,9 @@ public class PoseEstimation {
     swerveEstimator.update(gyro, swervePositions);
   }
 
+  @Logged
+  private Pose2d lastVisionEstimate = Pose2d.kZero;
+
   private void applyVisionPose(EstimatedRobotPose visionEstimate) {
     if (visionEstimate.targetsUsed.isEmpty()) {
       // Sanity check: the estimate should use at least one target
@@ -120,6 +123,7 @@ public class PoseEstimation {
 
     Pose3d estimatedPose3d = visionEstimate.estimatedPose;
     Pose2d estimatedPose = estimatedPose3d.toPose2d();
+    this.lastVisionEstimate = estimatedPose; // for logging
 
     if (estimatedPose.minus(getPose()).getTranslation().getNorm() > TELEPORTATION_LIMIT.in(Meters)) {
       // The vision estimate places us too far away from the previously estimated position
