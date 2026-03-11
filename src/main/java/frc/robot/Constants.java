@@ -114,10 +114,10 @@ public class Constants {
       public static final double KP = 27.5;
       public static final double KI = 0.001;
       public static final double KD = 0;
-      public static final double KS = 0; //0.18
-      public static final double KG = 0; //0.10827
-      public static final double KV = 0; //0.59923
-      public static final double KA = 0; //0.26246
+      public static final double KS = 0; // 0.18
+      public static final double KG = 0; // 0.10827
+      public static final double KV = 0; // 0.59923
+      public static final double KA = 0; // 0.26246
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
       public static final Angle MAX_ANGLE = Degrees.of(30);

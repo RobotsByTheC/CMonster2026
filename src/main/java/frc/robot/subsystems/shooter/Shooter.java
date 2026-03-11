@@ -80,7 +80,8 @@ public class Shooter extends SubsystemBase {
     rightFeeder.setDefaultCommand(rightFeeder.o_stop());
     hood.setDefaultCommand(hood.o_stop());
 
-    isReadyToShoot = new Trigger(() -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
+    isReadyToShoot = new Trigger(
+        () -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {

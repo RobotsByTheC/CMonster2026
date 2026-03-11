@@ -18,18 +18,18 @@ import edu.wpi.first.units.measure.Voltage;
 public class RealFeederIO implements FeederIO {
   private final SparkMax spark;
 
-   private final Canandcolor bottom;
-   private final Canandcolor middle;
-   private final Canandcolor top;
+  private final Canandcolor bottom;
+  private final Canandcolor middle;
+  private final Canandcolor top;
 
   public RealFeederIO(boolean inverted, int sparkCAN, int bottomCAN, int middleCAN, int topCAN) {
     spark = new SparkMax(sparkCAN, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig config = new SparkMaxConfig().inverted(inverted).idleMode(SparkBaseConfig.IdleMode.kBrake);
     spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-     bottom = new Canandcolor(bottomCAN);
-     middle = new Canandcolor(middleCAN);
-     top = new Canandcolor(topCAN);
+    bottom = new Canandcolor(bottomCAN);
+    middle = new Canandcolor(middleCAN);
+    top = new Canandcolor(topCAN);
   }
 
   @Override

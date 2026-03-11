@@ -22,7 +22,7 @@ public class HackedSparkMaxAlternateEncoder implements RelativeEncoder {
       MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(SparkMax.class, MethodHandles.lookup());
       SPARK_HANDLE = lookup.findVarHandle(SparkMax.class, "sparkHandle", long.class);
       SPARKMAX_THROW_IF_CLOSED = lookup.findVirtual(SparkMax.class, "throwIfClosed", MethodType.methodType(void.class));
-    }  catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
+    } catch (NoSuchMethodException | NoSuchFieldException | IllegalAccessException e) {
       throw new Error(e);
     }
   }
@@ -51,15 +51,15 @@ public class HackedSparkMaxAlternateEncoder implements RelativeEncoder {
 
   public REVLibError setPosition(double position) {
     throwIfClosed();
-    return REVLibError.fromInt(
-        CANSparkJNI.c_Spark_SetAltEncoderPosition(sparkHandle, (float) position));
+    return REVLibError.fromInt(CANSparkJNI.c_Spark_SetAltEncoderPosition(sparkHandle, (float) position));
   }
 
   private void throwIfClosed() {
     if (SPARKMAX_THROW_IF_CLOSED != null) {
       try {
         SPARKMAX_THROW_IF_CLOSED.invoke(sparkMax);
-      } catch (Throwable t) {}
+      } catch (Throwable t) {
+      }
     }
   }
 }
