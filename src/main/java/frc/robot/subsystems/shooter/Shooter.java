@@ -93,11 +93,7 @@ public class Shooter extends SubsystemBase {
     return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
   }
 
-  public Command hoodify() {
-    return hood.f_holdDesiredAngle(() -> Degrees.of(30));
-  }
-
-  public Command feed() {
+  public Command f_feed() {
     return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 
@@ -105,15 +101,11 @@ public class Shooter extends SubsystemBase {
     return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
   }
 
-  public Command l_normalize_hood() {
+  public Command l_normalizeHood() {
     return hood.l_returnToNormalcy();
   }
 
-  public Command l_kapow() {
-    return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
-  }
-
-  public Command voltify(Supplier<Voltage> voltage) {
-    return rightFlywheel.applyAFuckingVoltage(voltage).alongWith(leftFlywheel.applyAFuckingVoltage(voltage));
+  public Command f_idleAtSpeed() {
+    return rightFlywheel.f_idleAtSpeed().alongWith(leftFlywheel.f_idleAtSpeed());
   }
 }
