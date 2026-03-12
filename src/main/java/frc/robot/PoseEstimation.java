@@ -195,7 +195,6 @@ public class PoseEstimation {
     return LookupTable.getAngle();
   }
 
-  @Logged
   public Pose2d getPose() {
     return swerveEstimator.getEstimatedPosition();
   }
