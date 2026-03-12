@@ -72,20 +72,19 @@ public class Intake extends SubsystemBase {
     feedforward = new ArmFeedforward(KS, KG, KV, KA);
   }
 
-  public Command claim(Command command) {
-    command.addRequirements(this);
-    return command;
+  public Command f_idle() {
+    return extension.stop().alongWith(roller.stop());
   }
 
-  public Command f_stowAndIdle() {
-    return claim(extension.stow());
-  }
-
-  public Command f_extendAndGrab() {
-    return claim(extension.extend().alongWith(roller.runIntakeMotor()));
+  public Command f_extend() {
+    return extension.extend();
   }
 
   public Command l_retractAndGrab() {
-    return claim(extension.stow().until(pidController::atSetpoint).deadlineFor(roller.runIntakeMotor()));
+    return extension.stow().until(pidController::atSetpoint);
+  }
+
+  public Command f_activate_rollers() {
+    return roller.runIntakeMotor();
   }
 }
