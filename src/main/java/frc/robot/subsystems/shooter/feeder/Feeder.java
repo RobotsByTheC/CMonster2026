@@ -24,13 +24,12 @@ public class Feeder extends SubsystemBase {
     return idle().until(readyToFire);
   }
 
-  public Command queueBall() {
-    return idleUntilReadyToFire().andThen(f_activate().until(io::isBallAtFlywheel))
-        .andThen(f_activate().until(() -> !io.isBallAtFlywheel())).andThen(o_stop());
-  }
-
   public Command f_activate() {
     return run(() -> io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE));
+  }
+
+  public Command f_idleThenActivate() {
+    return idleUntilReadyToFire().andThen(f_activate());
   }
 
   public Command o_stop() {

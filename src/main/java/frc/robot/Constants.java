@@ -17,6 +17,9 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.*;
 
 public class Constants {
+  public enum OverrideState {
+    SAFE, OVERRIDE
+  }
   public static class SwerveConstants {
     public static class DriveConstants {
       public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(4.5);
