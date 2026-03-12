@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
 
      DriverStation.getAlliance().ifPresent((alliance -> LookupTable.update(poseEstimation
-     .getDistanceToHub((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
+     .getDistanceToPose((alliance.equals(DriverStation.Alliance.Blue)) ? BLUE_HUB : RED_HUB).distance())));
     Epilogue.update(this);
   }
 
