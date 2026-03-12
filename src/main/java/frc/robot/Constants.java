@@ -109,6 +109,9 @@ public class Constants {
   }
 
   public static class ShooterConstants {
+    public enum ShooterState {
+      IDLE, STOP, TARGET
+    }
     public static class HoodConstants {
       public static final double KP = 27.5;
       public static final double KI = 0.001;

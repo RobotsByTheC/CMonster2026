@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FEEDER_RIGHT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
@@ -16,7 +15,6 @@ import static frc.robot.Constants.CANConstants.RIGHT_CNC_TOP;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -93,8 +91,11 @@ public class Shooter extends SubsystemBase {
     return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
   }
 
-  public Command f_feed() {
-    return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
+  public Command f_feed(Supplier<Constants.OverrideState> override) {
+    return switch (override.get()) {
+      case SAFE -> leftFeeder.f_idleThenActivate().alongWith(rightFeeder.f_idleThenActivate());
+      case OVERRIDE -> leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
+    };
   }
 
   public Command f_aimAndRev() {
@@ -106,6 +107,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command f_idleAtSpeed() {
-    return rightFlywheel.f_idleAtSpeed().alongWith(leftFlywheel.f_idleAtSpeed());
+    return rightFlywheel.f_idleAtSpeed().alongWith(leftFlywheel.f_idleAtSpeed()).alongWith(hood.l_returnToNormalcy());
+  }
+
+  public Command f_runWithState(Supplier<Constants.ShooterConstants.ShooterState> state) {
+    return switch (state.get()) {
+      case IDLE -> f_idleAtSpeed();
+      case STOP ->
+        hood.l_returnToNormalcy().alongWith(leftFlywheel.o_stop()).alongWith(rightFlywheel.o_stop()).andThen(idle());
+      case TARGET -> f_aimAndRev();
+    };
   }
 }
