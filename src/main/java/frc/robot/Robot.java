@@ -71,9 +71,6 @@ public class Robot extends TimedRobot {
   @NotLogged private final CommandJoystick leftFlightStick;
   @NotLogged private final CommandJoystick rightFlightStick;
 
-  private final AddressableLED led = new AddressableLED(9);
-  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(34 + 23);
-
   public Robot() {
     if (Robot.isSimulation()) {
       // intake = new Intake(new SimIntakeIO());
@@ -89,9 +86,6 @@ public class Robot extends TimedRobot {
 
     poseEstimation = new PoseEstimation();
     leds = new LEDs();
-    led.setLength(ledBuffer.getLength());
-    led.start();
-    led.setData(ledBuffer);
 
     DriverStation.silenceJoystickConnectionWarning(true);
 
@@ -114,18 +108,6 @@ public class Robot extends TimedRobot {
 
     bindDriverButtons();
     bindOperatorButtons();
-
-//    Dashboard.addField(new DashboardField("Operator Controller Connected", operatorController::isConnected));
-//    Dashboard.addField(new DashboardField("Left Flight Stick Connected", leftFlightStick::isConnected));
-//    Dashboard.addField(new DashboardField("Right Flight Stick Connected", rightFlightStick::isConnected));
-
-    // Dim by 1/6th because the servo power module outputs 6 volts, but the LED strips take 5 volts
-    LEDPattern rslBlink = LEDPattern.solid(Color.kOrangeRed).atBrightness(Percent.of(83))
-        .synchronizedBlink(RobotController::getRSLState);
-    CommandScheduler.getInstance().schedule(Commands.run(() -> {
-      rslBlink.applyTo(ledBuffer);
-      led.setData(ledBuffer);
-    }).ignoringDisable(true).withName("RSL Blink"));
   }
 
   public void bindDriverButtons() {
