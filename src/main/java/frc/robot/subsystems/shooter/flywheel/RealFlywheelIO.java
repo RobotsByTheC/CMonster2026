@@ -18,7 +18,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
-import frc.robot.revroboticshacks.HackedSparkMaxAlternateEncoder;
 
 @Logged
 public class RealFlywheelIO implements FlywheelIO {

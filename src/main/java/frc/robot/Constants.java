@@ -128,7 +128,7 @@ public class Constants {
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0.17;
-        public static final double KV = 12/5676d;
+        public static final double KV = 12 / 5676d;
       }
 
       public static final class LeftConstants {
@@ -136,7 +136,7 @@ public class Constants {
         public static final double KI = 0;
         public static final double KD = 0;
         public static final double KS = 0.17;
-        public static final double KV = 12/5676d;
+        public static final double KV = 12 / 5676d;
       }
 
       public static final AngularVelocity IDLE_SPEED = RPM.of(1000);

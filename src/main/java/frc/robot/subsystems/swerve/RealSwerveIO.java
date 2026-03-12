@@ -27,7 +27,7 @@ public class RealSwerveIO implements SwerveIO {
 
     gyro = new Pigeon2(GYRO_CAN_ID);
 
-//    Dashboard.addField(new DashboardField("Gyro Connected", gyro::isConnected));
+    // Dashboard.addField(new DashboardField("Gyro Connected", gyro::isConnected));
   }
 
   public void setDesiredStates(SwerveModuleState[] states) {
