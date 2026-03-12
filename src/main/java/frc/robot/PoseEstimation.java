@@ -175,6 +175,14 @@ public class PoseEstimation {
     return getDistanceToPose(BLUE_HUB).distance();
   }
 
+  public Angle getAngleToBlueHub() {
+    return getDistanceToPose(BLUE_HUB).angle();
+  }
+
+  public Angle getAngleToRedHub() {
+    return getDistanceToPose(RED_HUB).angle();
+  }
+
   public Distance getDistanceToRedHub() {
     return getDistanceToPose(RED_HUB).distance();
   }
