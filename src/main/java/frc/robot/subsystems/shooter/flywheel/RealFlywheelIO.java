@@ -26,7 +26,6 @@ public class RealFlywheelIO implements FlywheelIO {
   private final SparkMax followerMotor;
 
   private final SparkClosedLoopController controller;
-  private final RelativeEncoder alternateEncoder;
   private final RelativeEncoder primaryEncoder;
   private final RelativeEncoder followerEncoder;
   private final MutAngularVelocity target = RPM.mutable(0);
@@ -38,7 +37,6 @@ public class RealFlywheelIO implements FlywheelIO {
         .idleMode(SparkBaseConfig.IdleMode.kCoast);
     leadConfig.closedLoop.pid(P, I, D);
     leadConfig.closedLoop.feedForward.sv(S, V);
-    leadConfig.alternateEncoder.countsPerRevolution(8192).inverted(inverted).averageDepth(2).measurementPeriod(1);
     leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     leadConfig.smartCurrentLimit(40);
     leadConfig.encoder.quadratureAverageDepth(2).quadratureMeasurementPeriod(1);
@@ -52,14 +50,13 @@ public class RealFlywheelIO implements FlywheelIO {
 
     followerMotor.configure(followerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     controller = leadMotor.getClosedLoopController();
-    alternateEncoder = new HackedSparkMaxAlternateEncoder(leadMotor);
     primaryEncoder = leadMotor.getEncoder();
     followerEncoder = followerMotor.getEncoder();
   }
 
   @Override
   public AngularVelocity getAlternateVelocity() {
-    return RPM.of(alternateEncoder.getVelocity());
+    return RPM.of(0);
   }
 
   @Override
@@ -101,7 +98,7 @@ public class RealFlywheelIO implements FlywheelIO {
 
   @Override
   public Angle getAlternatePosition() {
-    return Rotations.of(alternateEncoder.getPosition());
+    return Radians.zero();
   }
   @Override
   public Angle getPrimaryPosition() {
