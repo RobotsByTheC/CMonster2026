@@ -34,10 +34,10 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 /**
- * Pose estimation class. This uses multi-tag pose estimation from PhotonVision (which requires
- * each camera to have 2 or more AprilTags in view to get any data!) and swerve module odometry
- * to estimate the position of the robot on the field. Robot heading is based purely on the gyro
- * measurement, which is much more accurate than both vision and odometry.
+ * Pose estimation class. This uses multi-tag pose estimation from PhotonVision (which requires each camera to have 2 or
+ * more AprilTags in view to get any data!) and swerve module odometry to estimate the position of the robot on the
+ * field. Robot heading is based purely on the gyro measurement, which is much more accurate than both vision and
+ * odometry.
  */
 @Logged
 public class PoseEstimation {
@@ -50,22 +50,19 @@ public class PoseEstimation {
   private static final double DISTANCE_SCALE_FACTOR = 0.5;
 
   /**
-   * How far a pose estimate from vision can be from the last estimated position for it to be
-   * discarded. Note that because we update at about 50Hz, this is a limit on maximum robot
-   * velocity (eg 1 foot in 20ms -> 50 feet per second, well over the physical limit of about
-   * 16 ft/s)
+   * How far a pose estimate from vision can be from the last estimated position for it to be discarded. Note that
+   * because we update at about 50Hz, this is a limit on maximum robot velocity (eg 1 foot in 20ms -> 50 feet per second,
+   * well over the physical limit of about 16 ft/s)
    */
   private static final Distance TELEPORTATION_LIMIT = Feet.of(1);
 
-  private static final Vector<N3> BASE_VISION_STDDEVS =
-      VecBuilder.fill(
-          // X
-          Inches.of(4).in(Meters),
-          // Y (should be the same as X)
-          Inches.of(4).in(Meters),
-          // Heading - the super high std. dev means only the gyro heading get used
-          Rotations.of(99999).in(Radians)
-      );
+  private static final Vector<N3> BASE_VISION_STDDEVS = VecBuilder.fill(
+      // X
+      Inches.of(4).in(Meters),
+      // Y (should be the same as X)
+      Inches.of(4).in(Meters),
+      // Heading - the super high std. dev means only the gyro heading get used
+      Rotations.of(99999).in(Radians));
 
   private final PhotonCamera frontCamera;
   private final PhotonCamera rearCamera;
@@ -88,15 +85,9 @@ public class PoseEstimation {
     // the robot on facing the same absolute direction as on blue, reset the gyro heading 180°
     // after getting the alliance color, or gather vision data while disabled to approximate the
     // true heading based on AprilTag data.
-    swerveEstimator = new SwerveDrivePoseEstimator(
-        Constants.SwerveConstants.DriveConstants.KINEMATICS,
-        Rotation2d.kZero,
-        new SwerveModulePosition[]{
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition(),
-            new SwerveModulePosition()
-        },
+    swerveEstimator = new SwerveDrivePoseEstimator(Constants.SwerveConstants.DriveConstants.KINEMATICS, Rotation2d.kZero,
+        new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(),
+            new SwerveModulePosition()},
         Pose2d.kZero);
   }
 
@@ -117,8 +108,7 @@ public class PoseEstimation {
     swerveEstimator.update(gyro, swervePositions);
   }
 
-  @Logged
-  private Pose2d lastVisionEstimate = Pose2d.kZero;
+  @Logged private Pose2d lastVisionEstimate = Pose2d.kZero;
 
   private void applyVisionPose(EstimatedRobotPose visionEstimate) {
     if (visionEstimate.targetsUsed.isEmpty()) {
@@ -133,8 +123,8 @@ public class PoseEstimation {
     if (estimatedPose.minus(getPose()).getTranslation().getNorm() > TELEPORTATION_LIMIT.in(Meters)) {
       // The vision estimate places us too far away from the previously estimated position
       // TODO: The early exit is commented about because excessive wheel slip will cause all
-      //       vision measurements to be rejected. Consider tracking vision-based estimates over
-      //       time and only reject ones that differ too much from the latest accepted estimates
+      // vision measurements to be rejected. Consider tracking vision-based estimates over
+      // time and only reject ones that differ too much from the latest accepted estimates
       // return;
     }
 
@@ -150,9 +140,7 @@ public class PoseEstimation {
 
     double stdDevScale = getStdDevScale(visionEstimate, averageDistance);
 
-    swerveEstimator.addVisionMeasurement(
-        estimatedPose,
-        visionEstimate.timestampSeconds,
+    swerveEstimator.addVisionMeasurement(estimatedPose, visionEstimate.timestampSeconds,
         BASE_VISION_STDDEVS.times(stdDevScale));
   }
 
