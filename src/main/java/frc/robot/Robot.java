@@ -115,8 +115,10 @@ public class Robot extends TimedRobot {
   }
 
   public void bindOperatorButtons() {
-    operatorController.x().whileTrue(shooter.feed());
-    operatorController.leftBumper().onTrue(shooter.f_aimAndRev());
+    operatorController.x().whileTrue(shooter.f_feed());
+    operatorController.leftBumper().onTrue(shooter.f_idleAtSpeed().alongWith(shooter.l_normalizeHood()));
+    operatorController.rightBumper().whileTrue(shooter.f_aimAndRev());
+    operatorController.rightBumper().onFalse(shooter.f_idleAtSpeed().alongWith(shooter.l_normalizeHood()));
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
     operatorController.povDown()
