@@ -5,8 +5,10 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
+import static frc.robot.Constants.VisionConstants.BLUE_HUB;
 import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_OFFSET;
 import static frc.robot.Constants.VisionConstants.REAR_CAMERA_OFFSET;
+import static frc.robot.Constants.VisionConstants.RED_HUB;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -170,7 +172,7 @@ public class PoseEstimation {
     return stdDevScale;
   }
 
-  public PolarPoint getDistanceToHub(Pose2d target) {
+  public PolarPoint getDistanceToPose(Pose2d target) {
     Pose2d myPosition = swerveEstimator.getEstimatedPosition();
     Pose2d relative = myPosition.relativeTo(target);
 
@@ -181,8 +183,12 @@ public class PoseEstimation {
     return swerveEstimator.getEstimatedPosition();
   }
 
-  public Distance getMeasureDistanceToHub(Pose2d target) {
-    return getDistanceToHub(target).distance();
+  public Distance getDistanceToBlueHub() {
+    return getDistanceToPose(BLUE_HUB).distance();
+  }
+
+  public Distance getDistanceToRedHub() {
+    return getDistanceToPose(RED_HUB).distance();
   }
 
   public AngularVelocity getTargetVelocity() {
