@@ -38,8 +38,8 @@ public class RealFlywheelIO implements FlywheelIO {
         .idleMode(SparkBaseConfig.IdleMode.kCoast);
     leadConfig.closedLoop.pid(P, I, D);
     leadConfig.closedLoop.feedForward.sv(S, V);
-    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
     leadConfig.alternateEncoder.countsPerRevolution(8192).inverted(inverted).averageDepth(2).measurementPeriod(1);
+    leadConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     leadConfig.smartCurrentLimit(40);
     leadConfig.encoder.quadratureAverageDepth(2).quadratureMeasurementPeriod(1);
 
