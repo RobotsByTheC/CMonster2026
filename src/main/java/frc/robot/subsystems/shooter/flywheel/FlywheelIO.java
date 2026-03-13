@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.flywheel;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -58,4 +59,6 @@ public interface FlywheelIO {
   Current getCurrentB();
   Voltage getVoltageA();
   Voltage getVoltageB();
+  SparkMax getLeader();
+  SparkMax getFollower();
 }

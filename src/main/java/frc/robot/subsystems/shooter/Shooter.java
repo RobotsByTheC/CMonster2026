@@ -86,6 +86,12 @@ public class Shooter extends SubsystemBase {
         () -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
     leftSpeedPercentage = leftFlywheel::getPercentageSpeed;
     rightSpeedPercentage = rightFlywheel::getPercentageSpeed;
+
+    SparkPinger.INSTANCE.rightFlywheelLeader = () -> rightFlywheel.getLeaderMotor().getLastError();
+    SparkPinger.INSTANCE.rightFlywheelFollower = () -> rightFlywheel.getFollowerMotor().getLastError();
+    SparkPinger.INSTANCE.leftFlywheelLeader = () -> leftFlywheel.getLeaderMotor().getLastError();
+    SparkPinger.INSTANCE.leftFlywheelFollower = () -> leftFlywheel.getFollowerMotor().getLastError();
+
     SparkPinger.INSTANCE.leftFeeder = () -> leftFeeder.getSpark().getLastError();
     SparkPinger.INSTANCE.rightFeeder = () -> rightFeeder.getSpark().getLastError();
   }

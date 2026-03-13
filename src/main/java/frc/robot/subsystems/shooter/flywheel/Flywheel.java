@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.flywheel;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -11,6 +12,7 @@ import frc.robot.Constants;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Percent;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
 
 @Logged
@@ -20,6 +22,14 @@ public class Flywheel extends SubsystemBase {
   public Flywheel(FlywheelIO io) {
     this.io = io;
     this.setDefaultCommand(o_stop());
+  }
+
+  public SparkMax getLeaderMotor() {
+    return io.getLeader();
+  }
+
+  public SparkMax getFollowerMotor() {
+    return io.getFollower();
   }
 
   @NotLogged

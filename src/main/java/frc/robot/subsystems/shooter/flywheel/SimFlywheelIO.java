@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.flywheel;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -91,12 +92,12 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public Current getCurrentB() {
+  public SparkMax getLeader() {
     return null;
   }
 
   @Override
-  public Voltage getVoltageA() {
+  public SparkMax getFollower() {
     return null;
   }
 
