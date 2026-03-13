@@ -165,6 +165,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+    SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
     Epilogue.update(this);
     runCounts++;
