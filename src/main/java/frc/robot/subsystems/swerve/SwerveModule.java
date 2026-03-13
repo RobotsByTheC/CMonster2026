@@ -98,4 +98,12 @@ public class SwerveModule {
     driveController.setSetpoint(0, SparkBase.ControlType.kVoltage);
     turnController.setSetpoint(0, SparkBase.ControlType.kVoltage);
   }
+
+  public SparkMax getDriveSpark() {
+    return driveSpark;
+  }
+
+  public SparkMax getTurnSpark() {
+    return turnSpark;
+  }
 }

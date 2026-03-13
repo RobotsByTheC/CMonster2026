@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.SparkPinger;
+import java.util.function.BooleanSupplier;
 
 @Logged
 public class RealSwerveIO implements SwerveIO {
@@ -18,6 +20,7 @@ public class RealSwerveIO implements SwerveIO {
   private final SwerveModule backRight;
 
   private final Pigeon2 gyro;
+  @Logged private final BooleanSupplier DASHBOARD_FIELD_GYRO_CONNECTED;
 
   public RealSwerveIO() {
     frontLeft = new SwerveModule(FRONT_LEFT_DRIVE_CAN_ID, FRONT_LEFT_TURN_CAN_ID);
@@ -26,8 +29,16 @@ public class RealSwerveIO implements SwerveIO {
     backRight = new SwerveModule(BACK_RIGHT_DRIVE_CAN_ID, BACK_RIGHT_TURN_CAN_ID);
 
     gyro = new Pigeon2(GYRO_CAN_ID);
+    DASHBOARD_FIELD_GYRO_CONNECTED = gyro::isConnected;
 
-    // Dashboard.addField(new DashboardField("Gyro Connected", gyro::isConnected));
+    SparkPinger.INSTANCE.frontLeftDrive = () -> frontLeft.getDriveSpark().getLastError();
+    SparkPinger.INSTANCE.frontLeftTurn = () -> frontLeft.getTurnSpark().getLastError();
+    SparkPinger.INSTANCE.frontRightDrive = () -> frontRight.getDriveSpark().getLastError();
+    SparkPinger.INSTANCE.frontRightTurn = () -> frontRight.getTurnSpark().getLastError();
+    SparkPinger.INSTANCE.backLeftDrive = () -> backLeft.getDriveSpark().getLastError();
+    SparkPinger.INSTANCE.backLeftTurn = () -> backLeft.getTurnSpark().getLastError();
+    SparkPinger.INSTANCE.backRightDrive = () -> backRight.getDriveSpark().getLastError();
+    SparkPinger.INSTANCE.backRightTurn = () -> backRight.getTurnSpark().getLastError();
   }
 
   public void setDesiredStates(SwerveModuleState[] states) {
