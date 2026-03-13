@@ -13,6 +13,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.SparkPinger;
 
 @Logged
 public class RealIntakeIO implements IntakeIO {
@@ -28,6 +29,9 @@ public class RealIntakeIO implements IntakeIO {
     wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristEncoder = wristMotor.getEncoder();
+
+    SparkPinger.INSTANCE.intakeWrist = wristMotor::getLastError;
+    SparkPinger.INSTANCE.intakeRoller = intakeMotor::getLastError;
   }
 
   @Override
