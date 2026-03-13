@@ -125,7 +125,7 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-    // leftFlightStick.trigger().whileTrue(f_lockOnAndRev());
+    leftFlightStick.button(8).onTrue(swerve.o_resetGyro());
   }
 
   public void bindOperatorButtons() {
