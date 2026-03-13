@@ -120,11 +120,13 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command f_runWithState(Supplier<Constants.ShooterConstants.ShooterState> state) {
-    return switch (state.get()) {
+    Command command = switch (state.get()) {
       case IDLE -> f_idleAtSpeed();
       case STOP ->
         hood.l_returnToNormalcy().alongWith(leftFlywheel.o_stop()).alongWith(rightFlywheel.o_stop()).andThen(idle());
       case TARGET -> f_aimAndRev();
     };
+    command.addRequirements(this);
+    return command;
   }
 }
