@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.SparkPinger;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.RPM;
@@ -45,6 +46,8 @@ public class RealHoodIO implements HoodIO {
     isPressed = new Trigger(limitSwitch::isPressed);
 
     isPressed.whileTrue(Commands.run(() -> encoder.setPosition(0)).ignoringDisable(true));
+
+    SparkPinger.INSTANCE.hood = spark::getLastError;
   }
 
   @Override
