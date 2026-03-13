@@ -67,11 +67,6 @@ public class SimFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public Angle getAlternatePosition() {
-    return Radians.zero();
-  }
-
-  @Override
   public Angle getPrimaryPosition() {
     return null;
   }
@@ -83,12 +78,7 @@ public class SimFlywheelIO implements FlywheelIO {
 
   @Override
   public boolean atTargetVelocity() {
-    return targetFlywheelSpeed.isNear(getAlternateVelocity(), RPM.of(20));
-  }
-
-  @Override
-  public Current getCurrentA() {
-    return null;
+    return targetFlywheelSpeed.isNear(getPrimaryVelocity(), RPM.of(20));
   }
 
   @Override
@@ -99,16 +89,6 @@ public class SimFlywheelIO implements FlywheelIO {
   @Override
   public SparkMax getFollower() {
     return null;
-  }
-
-  @Override
-  public Voltage getVoltageB() {
-    return null;
-  }
-
-  @Override
-  public AngularVelocity getAlternateVelocity() {
-    return flywheelSim.getAngularVelocity();
   }
 
   @Override

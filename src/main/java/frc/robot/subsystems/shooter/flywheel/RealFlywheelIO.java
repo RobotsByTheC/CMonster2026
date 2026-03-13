@@ -54,11 +54,6 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public AngularVelocity getAlternateVelocity() {
-    return RPM.of(0);
-  }
-
-  @Override
   public AngularVelocity getPrimaryVelocity() {
     return RPM.of(primaryEncoder.getVelocity());
   }
@@ -96,10 +91,6 @@ public class RealFlywheelIO implements FlywheelIO {
   }
 
   @Override
-  public Angle getAlternatePosition() {
-    return Radians.zero();
-  }
-  @Override
   public Angle getPrimaryPosition() {
     return Rotations.of(primaryEncoder.getPosition());
   }
@@ -110,26 +101,16 @@ public class RealFlywheelIO implements FlywheelIO {
 
   @Override
   public boolean atTargetVelocity() {
-    return RPM.of(controller.getSetpoint()).isNear(getAlternateVelocity(), RPM.of(20));
+    return RPM.of(controller.getSetpoint()).isNear(getPrimaryVelocity(), RPM.of(20));
   }
 
   @Override
-  public Current getCurrentA() {
-    return Amps.of(leadMotor.getOutputCurrent());
+  public SparkMax getLeader() {
+    return leadMotor;
   }
 
   @Override
-  public Current getCurrentB() {
-    return Amps.of(followerMotor.getOutputCurrent());
-  }
-
-  @Override
-  public Voltage getVoltageA() {
-    return Volts.of(leadMotor.getAppliedOutput() * leadMotor.getBusVoltage());
-  }
-
-  @Override
-  public Voltage getVoltageB() {
-    return Volts.of(followerMotor.getAppliedOutput() * followerMotor.getBusVoltage());
+  public SparkMax getFollower() {
+    return followerMotor;
   }
 }

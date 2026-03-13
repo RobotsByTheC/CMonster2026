@@ -14,8 +14,6 @@ public interface FlywheelIO {
    *
    * @return The flywheel's velocity.
    */
-  AngularVelocity getAlternateVelocity();
-
   AngularVelocity getPrimaryVelocity();
 
   AngularVelocity getFollowerVelocity();
@@ -47,18 +45,12 @@ public interface FlywheelIO {
    */
   void setVoltage(Voltage voltage);
 
-  Angle getAlternatePosition();
-
   Angle getPrimaryPosition();
 
   Angle getFollowerPosition();
 
   boolean atTargetVelocity();
 
-  Current getCurrentA();
-  Current getCurrentB();
-  Voltage getVoltageA();
-  Voltage getVoltageB();
   SparkMax getLeader();
   SparkMax getFollower();
 }
