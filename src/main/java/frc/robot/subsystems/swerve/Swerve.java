@@ -60,10 +60,6 @@ public class Swerve extends SubsystemBase {
     return io.getModulePositions();
   }
 
-  public Command o_zeroGyro() {
-    return Commands.runOnce(() -> io.setGyro(Rotation2d.kZero));
-  }
-
   public Command f_drive(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<AngularVelocity> vTheta) {
     return run(
         () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading())));
