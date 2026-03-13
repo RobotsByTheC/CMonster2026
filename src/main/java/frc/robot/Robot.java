@@ -64,6 +64,7 @@ public class Robot extends TimedRobot {
   private final PoseEstimation poseEstimation;
   private final LEDs leds;
   private final Hopper hopper;
+  private final SparkPinger sparkPinger;
 
   private Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
   private Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
@@ -74,8 +75,13 @@ public class Robot extends TimedRobot {
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
   @NotLogged private final CommandJoystick rightFlightStick;
+  @Logged public final BooleanSupplier OPERATOR_CONTROLLER_CONNECTED;
+  @Logged public final BooleanSupplier LEFT_FLIGHT_STICK_CONNECTED;
+  @Logged public final BooleanSupplier RIGHT_FLIGHT_STICK_CONNECTED;
 
   public Robot() {
+    sparkPinger = new SparkPinger();
+
     if (Robot.isSimulation()) {
       intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
@@ -96,6 +102,9 @@ public class Robot extends TimedRobot {
     operatorController = new CommandXboxController(CONTROLLER_PORT);
     leftFlightStick = new CommandJoystick(LEFT_JOYSTICK_PORT);
     rightFlightStick = new CommandJoystick(RIGHT_JOYSTICK_PORT);
+    OPERATOR_CONTROLLER_CONNECTED = operatorController::isConnected;
+    LEFT_FLIGHT_STICK_CONNECTED = leftFlightStick::isConnected;
+    RIGHT_FLIGHT_STICK_CONNECTED = rightFlightStick::isConnected;
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
