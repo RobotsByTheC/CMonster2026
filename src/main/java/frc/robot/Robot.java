@@ -6,14 +6,11 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED;
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
-import static frc.robot.Constants.VisionConstants.BLUE_HUB;
-import static frc.robot.Constants.VisionConstants.RED_HUB;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.reduxrobotics.canand.CanandEventLoop;
@@ -33,6 +30,7 @@ import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
@@ -41,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
@@ -54,6 +51,7 @@ import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.leds.LEDs;
+import java.util.function.BooleanSupplier;
 
 @Logged
 public class Robot extends TimedRobot {
