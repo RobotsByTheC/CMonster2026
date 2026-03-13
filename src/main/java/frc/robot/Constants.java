@@ -53,8 +53,8 @@ public class Constants {
       public static final double AUTO_D = 0;
     }
 
-    public static final Distance DRIVETRAIN_WIDTH = Inches.of(27);
-    public static final Distance DRIVETRAIN_HEIGHT = Inches.of(27);
+    public static final Distance DRIVETRAIN_WIDTH = Inches.of(23.5);
+    public static final Distance DRIVETRAIN_HEIGHT = Inches.of(23.5);
     public static final Angle TOLERANCE = Degrees.of(2);
   }
 
@@ -95,13 +95,13 @@ public class Constants {
   }
 
   public static class IntakeConstants {
-    public static final double KP = 5;
+    public static final double KP = 100;
     public static final double KI = 0;
-    public static final double KD = 0.85;
-    public static final double KS = 0.014847;
-    public static final double KG = 0.3732;
-    public static final double KV = 1.1878;
-    public static final double KA = 0.0024773;
+    public static final double KD = 0;
+    public static final double KS = 1;
+    public static final double KG = 0;
+    public static final double KV = 0;
+    public static final double KA = 0;
 
     public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
@@ -145,12 +145,12 @@ public class Constants {
         public static final double KV = 12 / 5676d;
       }
 
-      public static final AngularVelocity IDLE_SPEED = RPM.of(1000);
+      public static final AngularVelocity IDLE_SPEED = RPM.of(850);
     }
   }
 
   public static class HopperConstants {
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(3);
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
   }
 

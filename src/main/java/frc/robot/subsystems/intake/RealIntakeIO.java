@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Angle;
@@ -23,10 +24,15 @@ public class RealIntakeIO implements IntakeIO {
 
   public RealIntakeIO() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-    intakeMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intakeMotor.configure(new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kCoast).smartCurrentLimit(40), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-    wristMotor.configure(new SparkMaxConfig(), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    sparkMaxConfig.idleMode(SparkBaseConfig.IdleMode.kCoast).smartCurrentLimit(40);
+    sparkMaxConfig.encoder.positionConversionFactor(1/67.5d);
+    sparkMaxConfig.encoder.velocityConversionFactor(1/67.5d);
+
+    wristMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristEncoder = wristMotor.getEncoder();
 
@@ -57,5 +63,10 @@ public class RealIntakeIO implements IntakeIO {
   @Override
   public Voltage getWristVoltage() {
     return Volts.of(wristMotor.getAppliedOutput() * wristMotor.getBusVoltage());
+  }
+
+  @Override
+  public void zero() {
+    wristEncoder.setPosition(0);
   }
 }

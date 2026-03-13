@@ -76,6 +76,11 @@ public class SimIntakeIO implements IntakeIO {
     return Volts.of(wristSim.getInput(0));
   }
 
+  @Override
+  public void zero() {
+
+  }
+
   public AngularVelocity getMotorVelocity() {
     return RPM.of(motorSim.getAngularVelocityRPM());
   }

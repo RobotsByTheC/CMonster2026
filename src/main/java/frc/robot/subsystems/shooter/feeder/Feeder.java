@@ -34,7 +34,8 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command f_idleThenActivate() {
-    return idleUntilReadyToFire().andThen(f_activate());
+//    return idleUntilReadyToFire().andThen(f_activate());
+    return f_activate();
   }
 
   public Command o_stop() {

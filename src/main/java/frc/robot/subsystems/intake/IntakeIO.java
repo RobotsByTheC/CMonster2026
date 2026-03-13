@@ -44,4 +44,6 @@ public interface IntakeIO {
    * @return The voltage being applied to the wrist.
    */
   Voltage getWristVoltage();
+
+  void zero();
 }

@@ -1,5 +1,7 @@
 package frc.robot.subsystems.shooter;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
 import static frc.robot.Constants.CANConstants.FEEDER_LEFT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FEEDER_RIGHT_CAN_ID;
 import static frc.robot.Constants.CANConstants.FLYWHEEL_LEFT_A_CAN_ID;
@@ -119,14 +121,11 @@ public class Shooter extends SubsystemBase {
     return rightFlywheel.f_idleAtSpeed().alongWith(leftFlywheel.f_idleAtSpeed()).alongWith(hood.l_returnToNormalcy());
   }
 
+  public Command f_zoom() {
+    return rightFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
+  }
+
   public Command f_runWithState(Supplier<Constants.ShooterConstants.ShooterState> state) {
-    Command command = switch (state.get()) {
-      case IDLE -> f_idleAtSpeed();
-      case STOP ->
-        hood.l_returnToNormalcy().alongWith(leftFlywheel.o_stop()).alongWith(rightFlywheel.o_stop()).andThen(idle());
-      case TARGET -> f_aimAndRev();
-    };
-    command.addRequirements(this);
-    return command;
+    return null;
   }
 }

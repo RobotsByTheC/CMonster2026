@@ -6,6 +6,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -111,9 +112,8 @@ public class Robot extends TimedRobot {
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
-    intake.setDefaultCommand(intake.f_idle());
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-    shooter.setDefaultCommand(shooter.f_runWithState(() -> shooterState));
+//    shooter.setDefaultCommand(shooter.idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
     leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
@@ -149,14 +149,18 @@ public class Robot extends TimedRobot {
       }
     }));
     operatorController.leftTrigger().whileTrue(shooter.f_feed(() -> overrideState).alongWith(hopper.f_hopperIntake()));
-    operatorController.rightTrigger().whileTrue(intake.f_activate_rollers());
-    operatorController.a().whileTrue(intake.f_extend());
-    operatorController.a().onFalse(intake.l_retractAndGrab());
+//    operatorController.rightTrigger().whileTrue(intake.f_activate_rollers());
+//    operatorController.a().whileTrue(intake.f_extend());
+//    operatorController.a().onFalse(intake.l_retractAndGrab());
+    operatorController.y().whileTrue(shooter.f_idleAtSpeed());
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
     operatorController.povDown()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() - 0.1)));
+    operatorController.b().whileTrue(intake.applyVoltageToPivot(() -> Volts.of(operatorFudgeFactor.in((Meters)))));
+    operatorController.x().whileTrue(intake.applyVoltageToRollers());
+    operatorController.a().whileTrue(shooter.f_zoom());
   }
 
   @Override
@@ -164,6 +168,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
+    System.out.println("bloaweht " + shooterState.toString());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
     Epilogue.update(this);
     runCounts++;
