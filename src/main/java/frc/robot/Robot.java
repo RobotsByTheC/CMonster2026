@@ -210,15 +210,19 @@ public class Robot extends TimedRobot {
 
   public Distance getDistanceToHub() {
     DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
-    if (alliance == DriverStation.Alliance.Red) return poseEstimation.getDistanceToRedHub();
-    if (alliance == DriverStation.Alliance.Blue) return poseEstimation.getDistanceToBlueHub();
+    if (alliance == DriverStation.Alliance.Red)
+      return poseEstimation.getDistanceToRedHub();
+    if (alliance == DriverStation.Alliance.Blue)
+      return poseEstimation.getDistanceToBlueHub();
     return Meters.zero();
   }
 
   public Angle getAngleToHub() {
     DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
-    if (alliance == DriverStation.Alliance.Red) return poseEstimation.getAngleToRedHub();
-    if (alliance == DriverStation.Alliance.Blue) return poseEstimation.getAngleToBlueHub();
+    if (alliance == DriverStation.Alliance.Red)
+      return poseEstimation.getAngleToRedHub();
+    if (alliance == DriverStation.Alliance.Blue)
+      return poseEstimation.getAngleToBlueHub();
     return Degrees.zero();
   }
 
