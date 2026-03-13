@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
   private Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
 
   public MutDistance operatorFudgeFactor = Meters.mutable(0);
+  private int runCounts = 0;
 
   @NotLogged private final CommandXboxController operatorController;
   @NotLogged private final CommandJoystick leftFlightStick;
@@ -157,6 +158,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
     Epilogue.update(this);
+    runCounts++;
+    if (runCounts >= 50) {
+      sparkPinger.periodicPing();
+      runCounts = 0;
+    }
   }
 
   @Override
