@@ -48,6 +48,10 @@ public class Flywheel extends SubsystemBase {
   }
 
   public double getPercentageSpeed() {
+    if (io.getPrimaryVelocity().isNear(RPM.zero(), RPM.of(0.001)))
+      return 0;
+    if (io.getTargetVelocity().equals(RPM.zero()))
+      return 0;
     return Math.round(io.getPrimaryVelocity().div(io.getTargetVelocity()).in(Percent) * 10) / 10d;
   }
 }
