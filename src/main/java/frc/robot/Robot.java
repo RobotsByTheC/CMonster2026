@@ -5,7 +5,10 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -28,6 +31,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -95,7 +99,7 @@ public class Robot extends TimedRobot {
 
     poseEstimation = new PoseEstimation();
     leds = new LEDs();
-
+    autonomousCommand = swerve.f_drive(()-> FeetPerSecond.of(2), ()-> FeetPerSecond.of(0), ()-> RadiansPerSecond.of(180));
     DriverStation.silenceJoystickConnectionWarning(true);
 
     operatorController = new CommandXboxController(CONTROLLER_PORT);
