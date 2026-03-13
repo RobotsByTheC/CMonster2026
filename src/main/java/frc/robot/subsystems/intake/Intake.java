@@ -73,7 +73,9 @@ public class Intake extends SubsystemBase {
   }
 
   public Command f_idle() {
-    return extension.stop().alongWith(roller.stop());
+    Command command = extension.stop().alongWith(roller.stop());
+    command.addRequirements(this);
+    return command;
   }
 
   public Command f_extend() {
