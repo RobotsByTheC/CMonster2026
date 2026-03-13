@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.feeder;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -64,6 +65,11 @@ public class SimFeederIO implements FeederIO {
   @Override
   public double getProximity() {
     return 0;
+  }
+
+  @Override
+  public SparkMax getSpark() {
+    return null;
   }
 
   @Override

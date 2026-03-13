@@ -61,4 +61,9 @@ public class RealFeederIO implements FeederIO {
   public double getProximity() {
     return bottom.getProximity();
   }
+
+  @Override
+  public SparkMax getSpark() {
+    return spark;
+  }
 }

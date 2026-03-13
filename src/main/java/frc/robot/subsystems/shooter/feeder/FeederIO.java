@@ -1,5 +1,6 @@
 package frc.robot.subsystems.shooter.feeder;
 
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -41,4 +42,6 @@ public interface FeederIO {
   boolean isBallReadyToFire();
 
   double getProximity();
+
+  SparkMax getSpark();
 }

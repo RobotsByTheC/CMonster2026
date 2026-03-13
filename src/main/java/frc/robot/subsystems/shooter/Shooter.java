@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.SparkPinger;
 import frc.robot.data.LookupTable;
 import frc.robot.subsystems.shooter.feeder.Feeder;
 import frc.robot.subsystems.shooter.feeder.RealFeederIO;
@@ -85,6 +86,8 @@ public class Shooter extends SubsystemBase {
         () -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
     leftSpeedPercentage = leftFlywheel::getPercentageSpeed;
     rightSpeedPercentage = rightFlywheel::getPercentageSpeed;
+    SparkPinger.INSTANCE.leftFeeder = () -> leftFeeder.getSpark().getLastError();
+    SparkPinger.INSTANCE.rightFeeder = () -> rightFeeder.getSpark().getLastError();
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {
