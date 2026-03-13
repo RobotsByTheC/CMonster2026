@@ -1,0 +1,142 @@
+{
+  "version": 1.0,
+  "grid_size": 32,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "F Cam",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/poseEstimation/DASHBOARD_FIELD_FRONT_CAMERA_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "R Cam",
+            "x": 96.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/poseEstimation/DASHBOARD_FIELD_REAR_CAMERA_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "L Flight",
+            "x": 0.0,
+            "y": 96.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/LEFT_FLIGHT_STICK_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "R Flight",
+            "x": 96.0,
+            "y": 96.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/RIGHT_FLIGHT_STICK_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Xbox",
+            "x": 192.0,
+            "y": 96.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/OPERATOR_CONTROLLER_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Gyro",
+            "x": 192.0,
+            "y": 0.0,
+            "width": 96.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/swerve/io/DASHBOARD_FIELD_GYRO_CONNECTED",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Left Flywheel %",
+            "x": 0.0,
+            "y": 288.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/shooter/leftSpeedPercentage",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Right Flywheel %",
+            "x": 160.0,
+            "y": 288.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/shooter/rightSpeedPercentage",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
