@@ -203,8 +203,8 @@ public class Robot extends TimedRobot {
   }
 
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX() * -1),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getY() * -1),
+        () -> getLinearJoystickVelocity(rightFlightStick.getX() * -1),
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
   }
 
