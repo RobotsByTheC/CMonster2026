@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkLowLevel;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.SparkPinger;
 
 @Logged
 public class RealHopperIO implements HopperIO {
@@ -22,6 +23,8 @@ public class RealHopperIO implements HopperIO {
     spark = new SparkMax(HOPPER_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     SparkBaseConfig config = new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kBrake);
     spark.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    SparkPinger.INSTANCE.hopper = spark::getLastError;
   }
 
   @Override
