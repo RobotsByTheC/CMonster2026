@@ -82,6 +82,6 @@ public class Swerve extends SubsystemBase {
   }
 
   public Command o_resetGyro() {
-    return Commands.runOnce(() -> io.setGyro(new Rotation2d(-90)));
+    return Commands.runOnce(() -> io.setGyro(Rotation2d.kZero));
   }
 }
