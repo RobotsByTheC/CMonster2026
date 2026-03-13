@@ -13,7 +13,6 @@ import static frc.robot.Constants.VisionConstants.RED_HUB;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -27,6 +26,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.data.LookupTable;
 import frc.robot.data.PolarPoint;
+import java.util.function.BooleanSupplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -41,6 +41,9 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  */
 @Logged
 public class PoseEstimation {
+  private final BooleanSupplier DASHBOARD_FIELD_FRONT_CAMERA_CONNECTED;
+  private final BooleanSupplier DASHBOARD_FIELD_REAR_CAMERA_CONNECTED;
+
   // Loading the field JSON is very slow. Storing it in a static final field means we only need to
   // load it once.
   private static final AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
@@ -74,6 +77,9 @@ public class PoseEstimation {
   public PoseEstimation() {
     frontCamera = new PhotonCamera("OV9281-1");
     rearCamera = new PhotonCamera("OV9281-2");
+
+    DASHBOARD_FIELD_FRONT_CAMERA_CONNECTED = frontCamera::isConnected;
+    DASHBOARD_FIELD_REAR_CAMERA_CONNECTED = rearCamera::isConnected;
 
     frontEstimator = new PhotonPoseEstimator(fieldTags, FRONT_CAMERA_OFFSET);
     rearEstimator = new PhotonPoseEstimator(fieldTags, REAR_CAMERA_OFFSET);
