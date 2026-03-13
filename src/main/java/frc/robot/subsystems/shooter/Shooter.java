@@ -122,7 +122,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command f_zoom() {
-    return rightFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
+    return rightFlywheel.f_shoot(() -> RPM.of(2000))
+        .alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
   }
 
   public Command f_runWithState(Supplier<Constants.ShooterConstants.ShooterState> state) {

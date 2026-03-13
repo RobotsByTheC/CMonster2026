@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
@@ -31,7 +30,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.MutDistance;
-import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -99,7 +97,8 @@ public class Robot extends TimedRobot {
 
     poseEstimation = new PoseEstimation();
     leds = new LEDs();
-    autonomousCommand = swerve.f_drive(()-> FeetPerSecond.of(2), ()-> FeetPerSecond.of(0), ()-> RadiansPerSecond.of(180));
+    autonomousCommand = swerve.f_drive(() -> FeetPerSecond.of(2), () -> FeetPerSecond.of(0),
+        () -> RadiansPerSecond.of(180));
     DriverStation.silenceJoystickConnectionWarning(true);
 
     operatorController = new CommandXboxController(CONTROLLER_PORT);
@@ -117,7 +116,7 @@ public class Robot extends TimedRobot {
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-//    shooter.setDefaultCommand(shooter.idle());
+    // shooter.setDefaultCommand(shooter.idle());
     hopper.setDefaultCommand(hopper.f_idle());
 
     leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
@@ -153,9 +152,9 @@ public class Robot extends TimedRobot {
       }
     }));
     operatorController.leftTrigger().whileTrue(shooter.f_feed(() -> overrideState).alongWith(hopper.f_hopperIntake()));
-//    operatorController.rightTrigger().whileTrue(intake.f_activate_rollers());
-//    operatorController.a().whileTrue(intake.f_extend());
-//    operatorController.a().onFalse(intake.l_retractAndGrab());
+    // operatorController.rightTrigger().whileTrue(intake.f_activate_rollers());
+    // operatorController.a().whileTrue(intake.f_extend());
+    // operatorController.a().onFalse(intake.l_retractAndGrab());
     operatorController.y().whileTrue(shooter.f_idleAtSpeed());
 
     operatorController.povUp()
