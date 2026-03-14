@@ -153,7 +153,12 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
+    operatorController.leftTrigger().whileTrue(
+        shooter.f_feed()
+            .alongWith(hopper.f_hopperIntake())
+            .alongWith(intake.applyVoltageToRollers())
+            .deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue)))
+    );
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
