@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
+import frc.robot.Robot;
 import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.Percent;
@@ -42,7 +43,13 @@ public class Flywheel extends SubsystemBase {
   }
 
   public Command f_shoot(Supplier<AngularVelocity> target) {
-    return run(() -> io.setVelocity(target.get()));
+    return run(() -> {
+      switch (Robot.shooterState) {
+        case IDLE -> io.setVelocity(Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED);
+        case STOP -> io.setVoltage(Volts.zero());
+        case TARGET -> io.setVelocity(target.get());
+      }
+    });
   }
 
   public Command f_idle() {

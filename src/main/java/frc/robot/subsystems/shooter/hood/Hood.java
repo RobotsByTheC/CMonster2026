@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.ConstantTuner;
 import java.util.function.Supplier;
 
@@ -42,7 +44,13 @@ public class Hood extends SubsystemBase {
 
   public Command f_holdDesiredAngle(Supplier<Angle> target) {
     return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
-        () -> io.setVoltage(calculatePIDVoltage(target.get())));
+        () -> {
+          if (Robot.shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
+            io.setVoltage(calculatePIDVoltage(target.get()));
+          } else {
+            io.setVoltage(Volts.of(0));
+          }
+        });
   }
   public Command applyVoltage(Supplier<Voltage> voltage) {
     return run(() -> io.setVoltage(voltage.get()));

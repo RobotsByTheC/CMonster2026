@@ -102,15 +102,14 @@ public class Shooter extends SubsystemBase {
     return leftFlywheel.f_shoot(velocity).alongWith(rightFlywheel.f_shoot(velocity));
   }
 
-  public Command f_feed(Supplier<Constants.OverrideState> override) {
-    return switch (override.get()) {
-      case SAFE -> leftFeeder.f_idleThenActivate().alongWith(rightFeeder.f_idleThenActivate());
-      case OVERRIDE -> leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
-    };
+  public Command f_feed() {
+      return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 
   public Command f_aimAndRev() {
-    return synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
+    Command command = synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
+    command.addRequirements(this);
+    return command;
   }
 
   public Command l_normalizeHood() {
@@ -125,7 +124,7 @@ public class Shooter extends SubsystemBase {
     return rightFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
   }
 
-  public Command f_runWithState(Supplier<Constants.ShooterConstants.ShooterState> state) {
+  public Command f_runWithState() {
     return null;
   }
 }

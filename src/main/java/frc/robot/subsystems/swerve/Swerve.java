@@ -74,11 +74,9 @@ public class Swerve extends SubsystemBase {
         .until(driveController::atReference);
   }
 
-  public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Angle> lockedAngle) {
-    return startRun(() -> thetaController.reset(io.getHeading().getRadians()),
-        () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(),
-            RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(), lockedAngle.get().in(Radians))),
-            io.getHeading())));
+  public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<AngularVelocity> lockedAngle) {
+    return run(
+        () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), lockedAngle.get(), io.getHeading()))).alongWith(Commands.run(() -> System.out.println("blegg " + lockedAngle.get())));
   }
 
   public Command o_resetGyro() {

@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -40,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.data.LookupTable;
 import frc.robot.sim.SimulationContext;
 import frc.robot.subsystems.hopper.Hopper;
 import frc.robot.subsystems.hopper.RealHopperIO;
@@ -53,6 +56,7 @@ import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.leds.LEDs;
 import java.util.function.BooleanSupplier;
+import jdk.dynalink.linker.support.Lookup;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -65,8 +69,8 @@ public class Robot extends TimedRobot {
   private final Hopper hopper;
   private final SparkPinger sparkPinger;
 
-  private Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
-  private Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
+  public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
+  public static Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
 
   public MutDistance operatorFudgeFactor = Meters.mutable(0);
   private int runCounts = 0;
@@ -113,7 +117,7 @@ public class Robot extends TimedRobot {
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
 
     swerve.setDefaultCommand(f_driveWithFlightSticks());
-//    shooter.setDefaultCommand(shooter.idle());
+    shooter.setDefaultCommand(shooter.f_aimAndRev());
     hopper.setDefaultCommand(hopper.f_idle());
 
     leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
@@ -124,6 +128,7 @@ public class Robot extends TimedRobot {
 
   public void bindDriverButtons() {
     leftFlightStick.button(8).onTrue(swerve.o_resetGyro());
+    leftFlightStick.button(2).whileTrue(f_driveLockedOn());
   }
 
   public void bindOperatorButtons() {
@@ -148,19 +153,16 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(shooter.f_feed(() -> overrideState).alongWith(hopper.f_hopperIntake()));
-//    operatorController.rightTrigger().whileTrue(intake.f_activate_rollers());
-//    operatorController.a().whileTrue(intake.f_extend());
-//    operatorController.a().onFalse(intake.l_retractAndGrab());
-    operatorController.y().whileTrue(shooter.f_idleAtSpeed());
+    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
     operatorController.povDown()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() - 0.1)));
-    operatorController.b().whileTrue(intake.applyVoltageToPivot(() -> Volts.of(operatorFudgeFactor.in((Meters)))));
-    operatorController.x().whileTrue(intake.applyVoltageToRollers());
-    operatorController.a().whileTrue(shooter.f_zoom());
+    operatorController.y().whileTrue(intake.f_pivotUp());
+    operatorController.a().whileTrue(intake.f_pivotDown());
+    operatorController.b().whileTrue(intake.applyVoltageToRollers());
+    operatorController.x().whileTrue(intake.reverseIntakeMotor());
   }
 
   @Override
@@ -168,8 +170,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     SmartDashboard.putNumber("Battery Voltage", RobotController.getBatteryVoltage());
-    System.out.println("bloaweht " + shooterState.toString());
     poseEstimation.update(swerve.getHeading(), swerve.getModulePositions());
+    LookupTable.update(getDistanceToHub());
     Epilogue.update(this);
     runCounts++;
     if (runCounts >= 50) {
@@ -239,14 +241,14 @@ public class Robot extends TimedRobot {
   public Angle getAngleToHub() {
     DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
     if (alliance == DriverStation.Alliance.Red)
-      return poseEstimation.getAngleToRedHub();
+      return poseEstimation.getAngleToRedHub().unaryMinus().times(3);
     if (alliance == DriverStation.Alliance.Blue)
-      return poseEstimation.getAngleToBlueHub();
+      return poseEstimation.getAngleToBlueHub().unaryMinus().times(3);
     return Degrees.zero();
   }
 
   public Command f_driveLockedOn() {
-    return swerve.f_driveLocked(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()), this::getAngleToHub);
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+        () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)*10)).alongWith(Commands.run(() -> System.out.println(" rads " + RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)*10))));
   }
 }

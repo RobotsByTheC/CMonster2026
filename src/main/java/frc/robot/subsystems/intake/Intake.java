@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.ConstantTuner;
 import java.util.function.Supplier;
 
@@ -24,8 +25,8 @@ public class Intake extends SubsystemBase {
   private final ProfiledPIDController pidController;
 
   class Extension extends SubsystemBase {
-    public Command applyVoltage(Supplier<Voltage> voltage) {
-      return run(() -> io.setWristVoltage(voltage.get()));
+    public Command applyVoltage(Voltage voltage) {
+      return run(() -> io.setWristVoltage(voltage));
     }
 
     public Command stop() {
@@ -35,15 +36,15 @@ public class Intake extends SubsystemBase {
 
   class Roller extends SubsystemBase {
     public Command runIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
+      return run(() -> io.setIntakeVoltage(INTAKE_VOLTAGE));
     }
 
     public Command stop() {
-      return runOnce(() -> io.setIntakeVoltage(Volts.zero()));
+      return run(() -> io.setIntakeVoltage(Volts.zero()));
     }
 
     public Command reverseIntakeMotor() {
-      return runOnce(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
+      return run(() -> io.setIntakeVoltage(OUTTAKE_VOLTAGE));
     }
   }
 
@@ -61,15 +62,22 @@ public class Intake extends SubsystemBase {
   }
 
   public Command applyVoltageToRollers() {
-    return roller.runIntakeMotor().alongWith(Commands.run(() -> System.out.println("blegg")));
+    return roller.runIntakeMotor();
   }
 
-  public Command applyVoltageToPivot(Supplier<Voltage> voltage) {
-    Command command = extension.applyVoltage(voltage).alongWith(Commands.run(() -> System.out.println("blegg " + voltage.get())));
-    return command;
+  public Command f_pivotUp() {
+    return extension.applyVoltage(UP_VOLTAGE);
+  }
+
+  public Command f_pivotDown() {
+    return extension.applyVoltage(DOWN_VOLTAGE);
   }
 
   public Command zero() {
-    return runOnce(() -> io.zero());
+    return runOnce(io::zero);
+  }
+
+  public Command reverseIntakeMotor() {
+    return roller.reverseIntakeMotor();
   }
 }

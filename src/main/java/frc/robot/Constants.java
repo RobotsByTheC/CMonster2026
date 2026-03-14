@@ -22,7 +22,7 @@ public class Constants {
   }
   public static class SwerveConstants {
     public static class DriveConstants {
-      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(4.5);
+      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(10);
       public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
       public static final Distance WHEEL_DIAMETER = Inches.of(3);
       public static final double DRIVE_MOTOR_REDUCTION = 4.71428571;
@@ -42,13 +42,13 @@ public class Constants {
     }
 
     public static class TurnConstants {
-      public static final AngularVelocity MAX_TURN_SPEED = RotationsPerSecond.of(2);
+      public static final AngularVelocity MAX_TURN_SPEED = RotationsPerSecond.of(4);
       public static final AngularAcceleration MAX_TURN_ACCELERATION = RadiansPerSecondPerSecond.of(10);
 
       public static final double KP = 1;
       public static final double KI = 0;
       public static final double KD = 0;
-      public static final double AUTO_P = 0;
+      public static final double AUTO_P = 1;
       public static final double AUTO_I = 0;
       public static final double AUTO_D = 0;
     }
@@ -103,8 +103,10 @@ public class Constants {
     public static final double KV = 0;
     public static final double KA = 0;
 
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(10);
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
+    public static final Voltage DOWN_VOLTAGE = Volts.of(-3);
+    public static final Voltage UP_VOLTAGE = Volts.of(1.5);
     public static final AngularVelocity MAX_WRIST_SPEED = RadiansPerSecond.of(10);
     public static final AngularAcceleration MAX_WRIST_ACCELERATION = RadiansPerSecondPerSecond.of(3);
     public static final Angle WRIST_STOW_ANGLE = Radians.of(Math.PI);
@@ -164,6 +166,5 @@ public class Constants {
 
   public static class FeederConstants {
     public static final Voltage FEED_VOLTAGE = Volts.of(9);
-    public static final Voltage SPIT_VOLTAGE = Volts.of(-5);
   }
 }

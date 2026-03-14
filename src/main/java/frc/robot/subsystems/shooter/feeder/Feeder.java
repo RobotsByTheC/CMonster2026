@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 @Logged
 public class Feeder extends SubsystemBase {
@@ -14,7 +15,7 @@ public class Feeder extends SubsystemBase {
 
   public Feeder(FeederIO io, Trigger readyToFire) {
     this.io = io;
-    this.readyToFire = readyToFire.and(io::isBallReadyToFire);
+    this.readyToFire = readyToFire;
   }
 
   public boolean canShoot() {
@@ -30,7 +31,15 @@ public class Feeder extends SubsystemBase {
   }
 
   public Command f_activate() {
-    return run(() -> io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE));
+    return run(() -> {
+      if (Robot.overrideState == Constants.OverrideState.SAFE) {
+        if (readyToFire.getAsBoolean()) {
+          io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE);
+        }
+      } else {
+        io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE);
+      }
+    });
   }
 
   public Command f_idleThenActivate() {
