@@ -24,13 +24,14 @@ public class RealIntakeIO implements IntakeIO {
 
   public RealIntakeIO() {
     intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
-    intakeMotor.configure(new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kCoast).smartCurrentLimit(40), ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    intakeMotor.configure(new SparkMaxConfig().idleMode(SparkBaseConfig.IdleMode.kCoast).smartCurrentLimit(40),
+        ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     wristMotor = new SparkMax(INTAKE_WRIST_CAN_ID, SparkLowLevel.MotorType.kBrushless);
     SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
     sparkMaxConfig.idleMode(SparkBaseConfig.IdleMode.kCoast).smartCurrentLimit(40);
-    sparkMaxConfig.encoder.positionConversionFactor(1/67.5d);
-    sparkMaxConfig.encoder.velocityConversionFactor(1/67.5d);
+    sparkMaxConfig.encoder.positionConversionFactor(1 / 67.5d);
+    sparkMaxConfig.encoder.velocityConversionFactor(1 / 67.5d);
 
     wristMotor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 

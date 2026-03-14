@@ -4,7 +4,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.math.interpolation.InverseInterpolator;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Measure;
@@ -15,9 +14,7 @@ import edu.wpi.first.units.measure.Dimensionless;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.Preferences;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import org.opencv.dnn.Net;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -27,7 +24,7 @@ public class LookupTable {
 
   private static final class TuningKeys {
     private static String makeKey(int distanceMeters, String type) {
-      return "Shooter Tuning - " + distanceMeters + " meters - " +  type;
+      return "Shooter Tuning - " + distanceMeters + " meters - " + type;
     }
 
     private static final class RPM {
@@ -38,14 +35,8 @@ public class LookupTable {
       public static final String FOUR_METERS = makeKey(4, "RPM");
       public static final String FIVE_METERS = makeKey(5, "RPM");
 
-      public static final Map<Distance, String> ALL_KEYS = Map.of(
-          Meters.of(0), ZERO_METERS,
-          Meters.of(1), ONE_METERS,
-          Meters.of(2), TWO_METERS,
-          Meters.of(3), THREE_METERS,
-          Meters.of(4), FOUR_METERS,
-          Meters.of(5), FIVE_METERS
-      );
+      public static final Map<Distance, String> ALL_KEYS = Map.of(Meters.of(0), ZERO_METERS, Meters.of(1), ONE_METERS,
+          Meters.of(2), TWO_METERS, Meters.of(3), THREE_METERS, Meters.of(4), FOUR_METERS, Meters.of(5), FIVE_METERS);
     }
 
     private static final class Angle {
@@ -56,14 +47,8 @@ public class LookupTable {
       public static final String FOUR_METERS = makeKey(4, "Angle");
       public static final String FIVE_METERS = makeKey(5, "Angle");
 
-      public static final Map<Distance, String> ALL_KEYS = Map.of(
-          Meters.of(0), ZERO_METERS,
-          Meters.of(1), ONE_METERS,
-          Meters.of(2), TWO_METERS,
-          Meters.of(3), THREE_METERS,
-          Meters.of(4), FOUR_METERS,
-          Meters.of(5), FIVE_METERS
-      );
+      public static final Map<Distance, String> ALL_KEYS = Map.of(Meters.of(0), ZERO_METERS, Meters.of(1), ONE_METERS,
+          Meters.of(2), TWO_METERS, Meters.of(3), THREE_METERS, Meters.of(4), FOUR_METERS, Meters.of(5), FIVE_METERS);
     }
   }
 
@@ -141,7 +126,6 @@ public class LookupTable {
 
     Preferences.initDouble(TuningKeys.RPM.FIVE_METERS, 2800);
     Preferences.initDouble(TuningKeys.Angle.FIVE_METERS, 12.5);
-
 
     TuningKeys.RPM.ALL_KEYS.forEach((distance, key) -> {
       NetworkTableInstance.getDefault().addListener(new String[]{key}, flags, event -> {

@@ -23,8 +23,7 @@ public class Hopper extends SubsystemBase {
         // Run forward to pull balls towards the feeder
         run(() -> io.setVoltage(INTAKE_VOLTAGE)).withTimeout(Seconds.of(0.75)),
         // Briefly run in reverse to try to clear jams
-        run(() -> io.setVoltage(OUTTAKE_VOLTAGE)).withTimeout(Seconds.of(0.25))
-    ).withName("Hopper Intake");
+        run(() -> io.setVoltage(OUTTAKE_VOLTAGE)).withTimeout(Seconds.of(0.25))).withName("Hopper Intake");
   }
 
   public Command f_hopperReverse() {

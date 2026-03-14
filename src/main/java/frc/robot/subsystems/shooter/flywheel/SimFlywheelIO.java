@@ -68,12 +68,12 @@ public class SimFlywheelIO implements FlywheelIO {
 
   @Override
   public Angle getPrimaryPosition() {
-    return null;
+    return Degrees.zero();
   }
 
   @Override
   public Angle getFollowerPosition() {
-    return null;
+    return Degrees.zero();
   }
 
   @Override
@@ -93,17 +93,17 @@ public class SimFlywheelIO implements FlywheelIO {
 
   @Override
   public AngularVelocity getPrimaryVelocity() {
-    return null;
+    return RPM.zero();
   }
 
   @Override
   public AngularVelocity getFollowerVelocity() {
-    return null;
+    return RPM.zero();
   }
 
   @Override
   public AngularVelocity getTargetVelocity() {
-    return null;
+    return targetFlywheelSpeed;
   }
 
   @Override

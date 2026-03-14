@@ -112,12 +112,13 @@ public class Shooter extends SubsystemBase {
 
   public Command f_feed() {
     // NOTE: This command does NOT require the shooter subsystem itself and can run concurrently
-    //       with f_aimAndRev
+    // with f_aimAndRev
     return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 
   public Command f_aimAndRev() {
-    Command command = synchronizedRev(LookupTable::getVelocity).alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
+    Command command = synchronizedRev(LookupTable::getVelocity)
+        .alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
     command.addRequirements(this);
     return command;
   }
@@ -131,7 +132,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command f_zoom() {
-    return rightFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
+    return rightFlywheel.f_shoot(() -> RPM.of(2000))
+        .alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
   }
 
   public Command f_runWithState() {

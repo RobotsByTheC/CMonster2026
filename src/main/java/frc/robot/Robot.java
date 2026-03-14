@@ -6,8 +6,10 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -23,6 +25,7 @@ import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -66,7 +69,6 @@ import java.util.function.BooleanSupplier;
 // left/right flywheel speed percentage
 
 // auto
-
 
 @Logged
 public class Robot extends TimedRobot {
@@ -165,12 +167,8 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(
-        shooter.f_feed()
-            .alongWith(hopper.f_hopperIntake())
-            .alongWith(intake.applyVoltageToRollers())
-            .deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue)))
-    );
+    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
+        .alongWith(intake.applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
@@ -192,7 +190,7 @@ public class Robot extends TimedRobot {
     Epilogue.update(this);
     runCounts++;
     if (runCounts % 50 == 0) {
-      sparkPinger.periodicPing();
+//      sparkPinger.periodicPing();
       overrideDisplay = overrideState.toString();
       shooterStateDisplay = shooterState.toString();
     }
@@ -208,6 +206,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    autonomousCommand = a_revThenFire();
+
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
     }
@@ -222,7 +222,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    swerve.zeroGyro();
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
@@ -271,9 +270,9 @@ public class Robot extends TimedRobot {
   public Angle getAngleToHub() {
     return DriverStation.getAlliance().map(a -> {
       if (a == DriverStation.Alliance.Red) {
-        return poseEstimation.getAngleToRedHub().unaryMinus().times(3);
+        return poseEstimation.getAngleToRedHub().unaryMinus();
       } else if (a == DriverStation.Alliance.Blue) {
-        return poseEstimation.getAngleToBlueHub().unaryMinus().times(3);
+        return poseEstimation.getAngleToBlueHub().unaryMinus();
       } else {
         return null;
       }
@@ -282,6 +281,15 @@ public class Robot extends TimedRobot {
 
   public Command f_driveLockedOn() {
     return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()), () -> RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)*10)).alongWith(Commands.run(() -> System.out.println(" rads " + RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)*10))));
+        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
+        () -> RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)));
+  }
+
+  public Command a_revFlywheels() {
+    return shooter.synchronizedRev(() -> RPM.of(1200)).withTimeout(Seconds.of(2));
+  }
+
+  public Command a_revThenFire() {
+    return a_revFlywheels().andThen(shooter.synchronizedRev(() -> RPM.of(1200))).alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
   }
 }

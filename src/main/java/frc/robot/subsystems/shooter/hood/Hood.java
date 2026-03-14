@@ -43,16 +43,15 @@ public class Hood extends SubsystemBase {
   }
 
   public Command f_holdDesiredAngle(Supplier<Angle> target) {
-    return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)),
-        () -> {
-          if (Robot.shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
-            io.setVoltage(calculatePIDVoltage(target.get()));
-          } else if (Robot.shooterState == Constants.ShooterConstants.ShooterState.FERRY) {
-            io.setVoltage(calculatePIDVoltage(FERRY_ANGLE));
-          } else {
-            io.setVoltage(Volts.of(0));
-          }
-        });
+    return startRun(() -> pidController.reset(io.getAngle().in(Radians), io.getVelocity().in(RadiansPerSecond)), () -> {
+      if (Robot.shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
+        io.setVoltage(calculatePIDVoltage(target.get()));
+      } else if (Robot.shooterState == Constants.ShooterConstants.ShooterState.FERRY) {
+        io.setVoltage(calculatePIDVoltage(FERRY_ANGLE));
+      } else {
+        io.setVoltage(Volts.of(0));
+      }
+    });
   }
   public Command applyVoltage(Supplier<Voltage> voltage) {
     return run(() -> io.setVoltage(voltage.get()));

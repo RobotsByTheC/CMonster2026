@@ -1,6 +1,5 @@
 package frc.robot.subsystems.swerve;
 
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -74,16 +72,11 @@ public class Swerve extends SubsystemBase {
         .until(driveController::atReference);
   }
 
-  public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<AngularVelocity> lockedAngle) {
-    return run(
-        () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), lockedAngle.get(), io.getHeading()))).alongWith(Commands.run(() -> System.out.println("blegg " + lockedAngle.get())));
-  }
-
   public Command o_resetGyro() {
-    return Commands.runOnce(this::zeroGyro);
+    return Commands.runOnce(() -> setGyro(Rotation2d.kZero));
   }
 
-  public void zeroGyro() {
-    io.setGyro(Rotation2d.kZero);
+  public void setGyro(Rotation2d gyro) {
+    io.setGyro(gyro);
   }
 }
