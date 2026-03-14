@@ -22,7 +22,7 @@ public class Constants {
   }
   public static class SwerveConstants {
     public static class DriveConstants {
-      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(10);
+      public static final LinearVelocity MAX_DRIVE_SPEED = MetersPerSecond.of(18);
       public static final LinearAcceleration MAX_DRIVE_ACCELERATION = MetersPerSecondPerSecond.of(2);
       public static final Distance WHEEL_DIAMETER = Inches.of(3);
       public static final double DRIVE_MOTOR_REDUCTION = 4.71428571;
@@ -115,7 +115,7 @@ public class Constants {
 
   public static class ShooterConstants {
     public enum ShooterState {
-      IDLE, STOP, TARGET
+      IDLE, STOP, TARGET, FERRY
     }
     public static class HoodConstants {
       public static final double KP = 27.5;
@@ -128,6 +128,7 @@ public class Constants {
       public static final AngularVelocity MAX_VELOCITY = RadiansPerSecond.of(5);
       public static final AngularAcceleration MAX_ACCELERATION = RadiansPerSecondPerSecond.of(3);
       public static final Angle MAX_ANGLE = Degrees.of(30);
+      public static final Angle FERRY_ANGLE = Degrees.of(30);
     }
 
     public static class FlywheelConstants {
@@ -147,7 +148,8 @@ public class Constants {
         public static final double KV = 12 / 5676d;
       }
 
-      public static final AngularVelocity IDLE_SPEED = RPM.of(850);
+      public static final AngularVelocity IDLE_SPEED = RPM.of(1200);
+      public static final AngularVelocity FERRY_SPEED = RPM.of(2500);
     }
   }
 

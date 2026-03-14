@@ -48,6 +48,7 @@ public class Flywheel extends SubsystemBase {
         case IDLE -> io.setVelocity(Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED);
         case STOP -> io.setVoltage(Volts.zero());
         case TARGET -> io.setVelocity(target.get());
+        case FERRY -> io.setVelocity(Constants.ShooterConstants.FlywheelConstants.FERRY_SPEED);
       }
     });
   }

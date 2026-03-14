@@ -56,7 +56,18 @@ import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 import frc.robot.subsystems.leds.LEDs;
 import java.util.function.BooleanSupplier;
-import jdk.dynalink.linker.support.Lookup;
+
+// flywheels at speed (left right)
+// override state
+// shooter state
+// spark pings
+// camera view
+// operator offset
+// left/right flywheel at speed
+// left/right flywheel speed percentage
+
+// auto
+
 
 @Logged
 public class Robot extends TimedRobot {
@@ -71,6 +82,8 @@ public class Robot extends TimedRobot {
 
   public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
   public static Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
+  public String overrideDisplay = overrideState.toString();
+  public String shooterStateDisplay = shooterState.toString();
 
   public MutDistance operatorFudgeFactor = Meters.mutable(0);
   private int runCounts = 0;
@@ -179,9 +192,10 @@ public class Robot extends TimedRobot {
     LookupTable.update(getDistanceToHub());
     Epilogue.update(this);
     runCounts++;
-    if (runCounts >= 50) {
+    if (runCounts % 50 == 0) {
       sparkPinger.periodicPing();
-      runCounts = 0;
+      overrideDisplay = overrideState.toString();
+      shooterStateDisplay = shooterState.toString();
     }
   }
 
@@ -201,17 +215,26 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    if (runCounts % 50 == 0) {
+      DataLogManager.getLog().resume();
+    }
+  }
 
   @Override
   public void teleopInit() {
+    swerve.zeroGyro();
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (runCounts % 50 == 0) {
+      DataLogManager.getLog().resume();
+    }
+  }
 
   @Override
   public void testPeriodic() {}

@@ -32,6 +32,7 @@ import frc.robot.subsystems.shooter.flywheel.SimFlywheelIO;
 import frc.robot.subsystems.shooter.hood.Hood;
 import frc.robot.subsystems.shooter.hood.RealHoodIO;
 import frc.robot.subsystems.shooter.hood.SimHoodIO;
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -46,6 +47,8 @@ public class Shooter extends SubsystemBase {
   private final Trigger isReadyToShoot;
   private DoubleSupplier leftSpeedPercentage;
   private DoubleSupplier rightSpeedPercentage;
+  private BooleanSupplier leftFlywheelAtSpeed;
+  private BooleanSupplier rightFlywheelAtSpeed;
 
   public Shooter(boolean real) {
     if (real) {
