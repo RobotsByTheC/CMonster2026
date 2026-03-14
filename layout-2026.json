@@ -8,11 +8,11 @@
         "layouts": [],
         "containers": [
           {
-            "title": "F Cam",
-            "x": 0.0,
+            "title": "FCM",
+            "x": 1312.0,
             "y": 0.0,
-            "width": 96.0,
-            "height": 96.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/poseEstimation/DASHBOARD_FIELD_FRONT_CAMERA_CONNECTED",
@@ -25,11 +25,11 @@
             }
           },
           {
-            "title": "R Cam",
-            "x": 96.0,
+            "title": "RCM",
+            "x": 1376.0,
             "y": 0.0,
-            "width": 96.0,
-            "height": 96.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/poseEstimation/DASHBOARD_FIELD_REAR_CAMERA_CONNECTED",
@@ -42,11 +42,11 @@
             }
           },
           {
-            "title": "L Flight",
-            "x": 0.0,
-            "y": 96.0,
-            "width": 96.0,
-            "height": 96.0,
+            "title": "LFS",
+            "x": 1280.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/LEFT_FLIGHT_STICK_CONNECTED",
@@ -59,11 +59,11 @@
             }
           },
           {
-            "title": "R Flight",
-            "x": 96.0,
-            "y": 96.0,
-            "width": 96.0,
-            "height": 96.0,
+            "title": "RFS",
+            "x": 1344.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/RIGHT_FLIGHT_STICK_CONNECTED",
@@ -76,11 +76,11 @@
             }
           },
           {
-            "title": "Xbox",
-            "x": 192.0,
-            "y": 96.0,
-            "width": 96.0,
-            "height": 96.0,
+            "title": "OPC",
+            "x": 1408.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/OPERATOR_CONTROLLER_CONNECTED",
@@ -93,11 +93,11 @@
             }
           },
           {
-            "title": "Gyro",
-            "x": 192.0,
-            "y": 0.0,
-            "width": 96.0,
-            "height": 96.0,
+            "title": "GYR",
+            "x": 1344.0,
+            "y": 192.0,
+            "width": 64.0,
+            "height": 64.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/swerve/io/DASHBOARD_FIELD_GYRO_CONNECTED",
@@ -133,6 +133,405 @@
               "topic": "Robot/shooter/rightSpeedPercentage",
               "period": 0.06,
               "data_type": "double"
+            }
+          },
+          {
+            "title": "Offset",
+            "x": 320.0,
+            "y": 288.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/operatorFudgeFactor",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "fLL",
+            "x": 992.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/leftFlywheelLeaderConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "fRL",
+            "x": 1120.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/rightFlywheelLeaderConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BLD",
+            "x": 992.0,
+            "y": 64.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/backLeftDriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BLT",
+            "x": 1056.0,
+            "y": 64.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/backLeftTurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BRD",
+            "x": 1120.0,
+            "y": 64.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/backRightDriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "BRT",
+            "x": 1184.0,
+            "y": 64.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/backRightTurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FLD",
+            "x": 992.0,
+            "y": 0.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/frontLeftDriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FLT",
+            "x": 1056.0,
+            "y": 0.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/frontLeftTurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FRD",
+            "x": 1120.0,
+            "y": 0.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/frontRightDriveConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "FRT",
+            "x": 1184.0,
+            "y": 0.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/frontRightTurnConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "HOD",
+            "x": 992.0,
+            "y": 160.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/hoodConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "HOP",
+            "x": 1056.0,
+            "y": 160.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/hopperConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "IROL",
+            "x": 1120.0,
+            "y": 160.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/intakeRollerConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "IPIV",
+            "x": 1184.0,
+            "y": 160.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/intakeWristConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "fRF",
+            "x": 1184.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/rightFlywheelFollowerConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "LFE",
+            "x": 1056.0,
+            "y": 320.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/leftFeederConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "RFE",
+            "x": 1120.0,
+            "y": 320.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/rightFeederConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "fLF",
+            "x": 1056.0,
+            "y": 256.0,
+            "width": 64.0,
+            "height": 64.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/sparkPinger/leftFlywheelFollowerConnected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Shooter Tuning",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Preferences",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 480.0,
+            "height": 672.0,
+            "type": "RobotPreferences",
+            "properties": {
+              "topic": "/Preferences",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "targetFlywheelSpeed",
+            "x": 576.0,
+            "y": 288.0,
+            "width": 352.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "Robot/shooter/rightFlywheel/io/targetFlywheelSpeed",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "getAngle",
+            "x": 928.0,
+            "y": 288.0,
+            "width": 384.0,
+            "height": 256.0,
+            "type": "Graph",
+            "properties": {
+              "topic": "Robot/shooter/hood/io/getAngle",
+              "period": 0.033,
+              "data_type": "double",
+              "time_displayed": 5.0,
+              "color": 4278238420,
+              "line_width": 2.0
+            }
+          },
+          {
+            "title": "getDistanceToRedHub",
+            "x": 608.0,
+            "y": 0.0,
+            "width": 288.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Robot/poseEstimation/getDistanceToRedHub",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "getAngleToRedHub",
+            "x": 960.0,
+            "y": 0.0,
+            "width": 288.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "Robot/poseEstimation/getAngleToRedHub",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
             }
           }
         ]
