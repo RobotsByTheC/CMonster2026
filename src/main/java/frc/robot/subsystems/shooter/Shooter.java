@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.SparkPinger;
 import frc.robot.data.LookupTable;
 import frc.robot.subsystems.shooter.feeder.Feeder;
@@ -91,14 +92,18 @@ public class Shooter extends SubsystemBase {
         () -> leftFlywheel.atTargetSpeed() && rightFlywheel.atTargetSpeed() && hood.isAtTargetAngle());
     leftSpeedPercentage = leftFlywheel::getPercentageSpeed;
     rightSpeedPercentage = rightFlywheel::getPercentageSpeed;
+    leftFlywheelAtSpeed = leftFlywheel::atTargetSpeed;
+    rightFlywheelAtSpeed = rightFlywheel::atTargetSpeed;
 
-    SparkPinger.INSTANCE.rightFlywheelLeader = () -> rightFlywheel.getLeaderMotor().getLastError();
-    SparkPinger.INSTANCE.rightFlywheelFollower = () -> rightFlywheel.getFollowerMotor().getLastError();
-    SparkPinger.INSTANCE.leftFlywheelLeader = () -> leftFlywheel.getLeaderMotor().getLastError();
-    SparkPinger.INSTANCE.leftFlywheelFollower = () -> leftFlywheel.getFollowerMotor().getLastError();
+    if (Robot.isReal()) {
+      SparkPinger.INSTANCE.rightFlywheelLeader = () -> rightFlywheel.getLeaderMotor().getLastError();
+      SparkPinger.INSTANCE.rightFlywheelFollower = () -> rightFlywheel.getFollowerMotor().getLastError();
+      SparkPinger.INSTANCE.leftFlywheelLeader = () -> leftFlywheel.getLeaderMotor().getLastError();
+      SparkPinger.INSTANCE.leftFlywheelFollower = () -> leftFlywheel.getFollowerMotor().getLastError();
 
-    SparkPinger.INSTANCE.leftFeeder = () -> leftFeeder.getSpark().getLastError();
-    SparkPinger.INSTANCE.rightFeeder = () -> rightFeeder.getSpark().getLastError();
+      SparkPinger.INSTANCE.leftFeeder = () -> leftFeeder.getSpark().getLastError();
+      SparkPinger.INSTANCE.rightFeeder = () -> rightFeeder.getSpark().getLastError();
+    }
   }
 
   public Command synchronizedRev(Supplier<AngularVelocity> velocity) {

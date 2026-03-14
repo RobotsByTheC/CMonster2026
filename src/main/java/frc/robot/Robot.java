@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
@@ -50,11 +49,11 @@ import frc.robot.subsystems.hopper.SimHopperIO;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.RealIntakeIO;
 import frc.robot.subsystems.intake.SimIntakeIO;
+import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
-import frc.robot.subsystems.leds.LEDs;
 import java.util.function.BooleanSupplier;
 
 // flywheels at speed (left right)
@@ -258,21 +257,27 @@ public class Robot extends TimedRobot {
   }
 
   public Distance getDistanceToHub() {
-    DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
-    if (alliance == DriverStation.Alliance.Red)
-      return poseEstimation.getDistanceToRedHub();
-    if (alliance == DriverStation.Alliance.Blue)
-      return poseEstimation.getDistanceToBlueHub();
-    return Meters.zero();
+    return DriverStation.getAlliance().map(a -> {
+      if (a == DriverStation.Alliance.Red) {
+        return poseEstimation.getDistanceToRedHub();
+      } else if (a == DriverStation.Alliance.Blue) {
+        return poseEstimation.getDistanceToBlueHub();
+      } else {
+        return null;
+      }
+    }).orElse(Meters.zero());
   }
 
   public Angle getAngleToHub() {
-    DriverStation.Alliance alliance = DriverStation.getAlliance().orElseThrow();
-    if (alliance == DriverStation.Alliance.Red)
-      return poseEstimation.getAngleToRedHub().unaryMinus().times(3);
-    if (alliance == DriverStation.Alliance.Blue)
-      return poseEstimation.getAngleToBlueHub().unaryMinus().times(3);
-    return Degrees.zero();
+    return DriverStation.getAlliance().map(a -> {
+      if (a == DriverStation.Alliance.Red) {
+        return poseEstimation.getAngleToRedHub().unaryMinus().times(3);
+      } else if (a == DriverStation.Alliance.Blue) {
+        return poseEstimation.getAngleToBlueHub().unaryMinus().times(3);
+      } else {
+        return null;
+      }
+    }).orElse(Degrees.zero());
   }
 
   public Command f_driveLockedOn() {
