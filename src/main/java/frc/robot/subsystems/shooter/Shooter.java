@@ -103,7 +103,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command f_feed() {
-      return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
+    // NOTE: This command does NOT require the shooter subsystem itself and can run concurrently
+    //       with f_aimAndRev
+    return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 
   public Command f_aimAndRev() {
