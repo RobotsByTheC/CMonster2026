@@ -45,6 +45,7 @@ public class Swerve extends SubsystemBase {
     thetaController = new ProfiledPIDController(TurnConstants.AUTO_P, TurnConstants.AUTO_I, TurnConstants.AUTO_D,
         new TrapezoidProfile.Constraints(TurnConstants.MAX_TURN_SPEED.in(RadiansPerSecond),
             TurnConstants.MAX_TURN_ACCELERATION.in(RadiansPerSecondPerSecond)));
+    thetaController.enableContinuousInput(-2*Math.PI, 0);
     driveController = new HolonomicDriveController(xController, yController, thetaController);
     filter = new ChassisSpeedsFilter(DriveConstants.MAX_DRIVE_ACCELERATION, TurnConstants.MAX_TURN_ACCELERATION);
   }
@@ -66,7 +67,11 @@ public class Swerve extends SubsystemBase {
 
   public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Rotation2d> vTheta) {
     return run(
-        () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(), vTheta.get().getRadians())), io.getHeading())));
+        () -> {
+          AngularVelocity targetOmega = RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(), vTheta.get().getRadians()));
+          System.out.println("hi " + targetOmega);
+          io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), targetOmega, io.getHeading()));
+        });
   }
 
   public Command l_driveToPose(Pose2d targetRelativePose, Supplier<Pose2d> currentPose) {
