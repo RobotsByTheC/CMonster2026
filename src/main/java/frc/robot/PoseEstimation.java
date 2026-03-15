@@ -171,7 +171,7 @@ public class PoseEstimation {
     double dx = target.getTranslation().getX() - myPosition.getTranslation().getX();
     double dy = target.getTranslation().getY() - myPosition.getTranslation().getY();
 
-    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan2(dy, dx)));
+    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.PI - Math.atan2(dy, dx)));
   }
 
   public Pose2d getEstimatedPosition() {
