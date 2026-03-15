@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = Commands.run(() -> System.out.println("blegg"));
+    autonomousCommand = a_revThenFire();
 
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
@@ -222,6 +222,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    shooterState = Constants.ShooterConstants.ShooterState.STOP;
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
@@ -280,12 +281,22 @@ public class Robot extends TimedRobot {
         () -> RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)));
   }
 
+  public Command a_toggleState() {
+    return Commands.runOnce(() -> {
+      if (shooterState == Constants.ShooterConstants.ShooterState.STOP) {
+        shooterState = Constants.ShooterConstants.ShooterState.TARGET;
+      } if  (shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
+        shooterState = Constants.ShooterConstants.ShooterState.STOP;
+      }
+    });
+  }
+
   public Command a_revFlywheels() {
-    return shooter.synchronizedRev(() -> RPM.of(1200)).withTimeout(Seconds.of(2));
+    return shooter.f_aimAndRev().withTimeout(Seconds.of(2));
   }
 
   public Command a_revThenFire() {
-    return a_revFlywheels().andThen(shooter.synchronizedRev(() -> RPM.of(1200))).alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
+    return a_toggleState().andThen(a_revFlywheels()).andThen(shooter.f_aimAndRev()).alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
   }
 
   public double getOperatorFudgeFactor() {
