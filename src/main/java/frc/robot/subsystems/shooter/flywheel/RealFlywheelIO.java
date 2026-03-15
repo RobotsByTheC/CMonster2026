@@ -18,6 +18,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.units.measure.Voltage;
+import frc.robot.Robot;
 
 @Logged
 public class RealFlywheelIO implements FlywheelIO {
@@ -81,8 +82,8 @@ public class RealFlywheelIO implements FlywheelIO {
 
   @Override
   public void setVelocity(AngularVelocity velocity) {
-    controller.setSetpoint(velocity.in(RPM), SparkBase.ControlType.kVelocity);
-    target.mut_setMagnitude(velocity.in(RPM));
+    controller.setSetpoint(velocity.in(RPM)+(Robot.operatorFudgeFactor*10), SparkBase.ControlType.kVelocity);
+    target.mut_setMagnitude(velocity.in(RPM)+(Robot.operatorFudgeFactor*10));
   }
 
   @Override

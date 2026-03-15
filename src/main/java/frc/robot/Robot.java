@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
   public String overrideDisplay = overrideState.toString();
   public String shooterStateDisplay = shooterState.toString();
 
-  public MutDistance operatorFudgeFactor = Meters.mutable(0);
+  public static double operatorFudgeFactor = 0;
   private int runCounts = 0;
 
   @NotLogged private final CommandXboxController operatorController;
@@ -160,6 +160,11 @@ public class Robot extends TimedRobot {
         shooterState = Constants.ShooterConstants.ShooterState.IDLE;
       }
     }));
+    operatorController.rightTrigger().onTrue(Commands.runOnce(() -> {
+      if (!(shooterState == Constants.ShooterConstants.ShooterState.IDLE)) {
+        shooterState = Constants.ShooterConstants.ShooterState.FERRY;
+      }
+    }));
     operatorController.start().onTrue(Commands.runOnce(() -> {
       if (overrideState == Constants.OverrideState.SAFE) {
         overrideState = Constants.OverrideState.OVERRIDE;
@@ -171,9 +176,9 @@ public class Robot extends TimedRobot {
         .alongWith(intake.applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
-        .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() + 0.1)));
+        .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));
     operatorController.povDown()
-        .onTrue(Commands.runOnce(() -> operatorFudgeFactor.mut_setMagnitude(operatorFudgeFactor.magnitude() - 0.1)));
+        .onTrue(Commands.runOnce(() -> operatorFudgeFactor-=1));
     operatorController.y().whileTrue(intake.f_pivotUp());
     operatorController.a().whileTrue(intake.f_pivotDown());
     operatorController.b().whileTrue(intake.applyVoltageToRollers());
@@ -236,11 +241,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {}
-
-  @Override
-  public void robotInit() {
-    operatorFudgeFactor.mut_setMagnitude(0);
-  }
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
     return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.1));
