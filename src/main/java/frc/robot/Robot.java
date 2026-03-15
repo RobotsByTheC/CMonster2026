@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
     Epilogue.update(this);
     runCounts++;
     if (runCounts % 50 == 0) {
-//      sparkPinger.periodicPing();
+      sparkPinger.periodicPing();
     }
   }
 
