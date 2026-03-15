@@ -83,9 +83,6 @@ public class Robot extends TimedRobot {
 
   public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
   public static Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
-  public String overrideDisplay = overrideState.toString();
-  public String shooterStateDisplay = shooterState.toString();
-
   public static double operatorFudgeFactor = 0;
   private int runCounts = 0;
 
@@ -196,8 +193,6 @@ public class Robot extends TimedRobot {
     runCounts++;
     if (runCounts % 50 == 0) {
 //      sparkPinger.periodicPing();
-      overrideDisplay = overrideState.toString();
-      shooterStateDisplay = shooterState.toString();
     }
   }
 
@@ -291,5 +286,17 @@ public class Robot extends TimedRobot {
 
   public Command a_revThenFire() {
     return a_revFlywheels().andThen(shooter.synchronizedRev(() -> RPM.of(1200))).alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
+  }
+
+  public double getOperatorFudgeFactor() {
+    return operatorFudgeFactor;
+  }
+
+  public String getOverrideState() {
+    return overrideState.toString();
+  }
+
+  public String getShooterState() {
+    return shooterState.toString();
   }
 }
