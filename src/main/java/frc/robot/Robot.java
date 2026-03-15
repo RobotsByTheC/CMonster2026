@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = a_revThenFire();
+    autonomousCommand = Commands.run(() -> System.out.println("blegg"));
 
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);

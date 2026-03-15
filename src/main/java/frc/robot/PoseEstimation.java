@@ -169,6 +169,7 @@ public class PoseEstimation {
   public PolarPoint getDistanceToPose(Pose2d target) {
     Pose2d myPosition = swerveEstimator.getEstimatedPosition();
     Pose2d relative = myPosition.relativeTo(target);
+    System.out.println("x: " + relative.getX() + ", y: " + relative.getY());
 
     return new PolarPoint(Meters.of(Math.hypot(relative.getX(), relative.getY())), relative.getRotation().getMeasure());
   }
