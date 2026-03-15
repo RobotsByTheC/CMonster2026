@@ -262,16 +262,16 @@ public class Robot extends TimedRobot {
     }).orElse(Meters.zero());
   }
 
-  public Angle getAngleToHub() {
+  public Rotation2d getAngleToHub() {
     return DriverStation.getAlliance().map(a -> {
       if (a == DriverStation.Alliance.Red) {
-        return poseEstimation.getAngleToRedHub().unaryMinus();
+        return new Rotation2d(poseEstimation.getAngleToRedHub().unaryMinus());
       } else if (a == DriverStation.Alliance.Blue) {
-        return poseEstimation.getAngleToBlueHub().unaryMinus();
+        return new Rotation2d(poseEstimation.getAngleToBlueHub().unaryMinus());
       } else {
         return null;
       }
-    }).orElse(Degrees.zero());
+    }).orElse(Rotation2d.kZero);
   }
 
   public Command f_driveLockedOn() {
