@@ -148,7 +148,7 @@ public class Constants {
         public static final double KV = 12 / 5676d;
       }
 
-      public static final AngularVelocity IDLE_SPEED = RPM.of(600);
+      public static final AngularVelocity IDLE_SPEED = RPM.of(1200);
       public static final AngularVelocity FERRY_SPEED = RPM.of(2500);
     }
   }
