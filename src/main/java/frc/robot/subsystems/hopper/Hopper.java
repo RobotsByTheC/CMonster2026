@@ -21,7 +21,7 @@ public class Hopper extends SubsystemBase {
   public Command f_hopperIntake() {
     return Commands.repeatingSequence(
         // Run forward to pull balls towards the feeder
-        run(() -> io.setVoltage(INTAKE_VOLTAGE)).withTimeout(Seconds.of(0.75)),
+        run(() -> io.setVoltage(INTAKE_VOLTAGE)).withTimeout(Seconds.of(1)),
         // Briefly run in reverse to try to clear jams
         run(() -> io.setVoltage(OUTTAKE_VOLTAGE)).withTimeout(Seconds.of(0.25))).withName("Hopper Intake");
   }
