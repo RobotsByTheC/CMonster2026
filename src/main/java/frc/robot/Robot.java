@@ -289,7 +289,7 @@ public class Robot extends TimedRobot {
   }
 
   public Command a_revThenFire() {
-    return a_revFlywheels().andThen(shooter.f_aimAndRev()).alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake()));
+    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
   }
 
   public double getOperatorFudgeFactor() {
