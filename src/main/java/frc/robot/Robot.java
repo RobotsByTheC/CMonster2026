@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
-    CanandEventLoop.getInstance();
+//    CanandEventLoop.getInstance();
 
     Epilogue.configure(config -> config.backend = EpilogueBackend.multi(new FileBackend(DataLogManager.getLog()),
         new NTEpilogueBackend(NetworkTableInstance.getDefault())));
