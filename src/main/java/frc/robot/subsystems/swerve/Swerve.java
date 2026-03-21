@@ -1,7 +1,10 @@
 package frc.robot.subsystems.swerve;
 
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
@@ -18,11 +21,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.data.ChassisSpeedsFilter;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
@@ -36,6 +43,9 @@ public class Swerve extends SubsystemBase {
   private final ChassisSpeedsFilter filter;
 
   private Pose2d targetPose = Pose2d.kZero;
+
+  public AngularVelocity supposedTurnSpeed = RPM.zero();
+  public Angle targetLockonAngle = Radians.zero();
 
   public Swerve(SwerveIO io) {
     this.io = io;
