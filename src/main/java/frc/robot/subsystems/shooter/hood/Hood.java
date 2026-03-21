@@ -49,7 +49,7 @@ public class Hood extends SubsystemBase {
       } else if (Robot.shooterState == Constants.ShooterConstants.ShooterState.FERRY) {
         io.setVoltage(calculatePIDVoltage(FERRY_ANGLE));
       } else {
-        io.setVoltage(Volts.of(0));
+        io.setVoltage(Volts.of(-1));
       }
     });
   }
