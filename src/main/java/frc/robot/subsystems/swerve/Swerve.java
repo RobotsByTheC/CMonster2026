@@ -62,15 +62,12 @@ public class Swerve extends SubsystemBase {
 
   public Command f_drive(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<AngularVelocity> vTheta) {
     return run(
-        () -> io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading())));
-  }
-
-  public Command f_driveLocked(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Rotation2d> vTheta) {
-    return run(
         () -> {
-          AngularVelocity targetOmega = RadiansPerSecond.of(thetaController.calculate(io.getHeading().getRadians(), vTheta.get().getRadians()));
-          System.out.println("hi " + targetOmega);
-          io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), targetOmega, io.getHeading()));
+          if (Robot.shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
+
+          } else {
+            io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading()));
+          }
         });
   }
 
