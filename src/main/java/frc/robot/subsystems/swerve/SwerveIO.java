@@ -41,4 +41,6 @@ public interface SwerveIO {
    * @return The modules positions.
    */
   SwerveModulePosition[] getModulePositions();
+
+  void setModulePositions(SwerveModulePosition[] modulePositions);
 }

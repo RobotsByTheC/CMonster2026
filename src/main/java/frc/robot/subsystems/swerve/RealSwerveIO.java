@@ -76,4 +76,14 @@ public class RealSwerveIO implements SwerveIO {
     return new SwerveModulePosition[]{frontLeft.getPosition(), frontRight.getPosition(), backLeft.getPosition(),
         backRight.getPosition()};
   }
+
+  @Override
+  public void setModulePositions(SwerveModulePosition[] modulePositions) {
+    setDesiredStates(new SwerveModuleState[]{
+        new SwerveModuleState(0, modulePositions[0].angle),
+        new SwerveModuleState(0, modulePositions[1].angle),
+        new SwerveModuleState(0, modulePositions[2].angle),
+        new SwerveModuleState(0, modulePositions[3].angle)
+    });
+  }
 }

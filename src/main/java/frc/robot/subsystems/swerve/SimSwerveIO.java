@@ -24,4 +24,9 @@ public class SimSwerveIO implements SwerveIO {
     return new SwerveModulePosition[]{new SwerveModulePosition(), new SwerveModulePosition(), new SwerveModulePosition(),
         new SwerveModulePosition()};
   }
+
+  @Override
+  public void setModulePositions(SwerveModulePosition[] modulePositions) {
+
+  }
 }
