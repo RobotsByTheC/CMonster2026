@@ -94,6 +94,14 @@ public class Swerve extends SubsystemBase {
     return Commands.runOnce(() -> setGyro(Rotation2d.kZero));
   }
 
+  public Command o_setGyroToVisionIfPossible(Supplier<Angle> visionEstimate, DoubleSupplier timestamp) {
+    return Commands.runOnce(() -> {
+      if (Math.abs(RobotController.getMeasureTime().in(Seconds) - timestamp.getAsDouble()) <= 0.05) {
+        setGyro(new Rotation2d(visionEstimate.get()));
+      }
+    });
+  }
+
   public void setGyro(Rotation2d gyro) {
     io.setGyro(gyro);
   }
