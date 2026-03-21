@@ -45,7 +45,7 @@ public class Swerve extends SubsystemBase {
     thetaController = new ProfiledPIDController(TurnConstants.AUTO_P, TurnConstants.AUTO_I, TurnConstants.AUTO_D,
         new TrapezoidProfile.Constraints(TurnConstants.MAX_TURN_SPEED.in(RadiansPerSecond),
             TurnConstants.MAX_TURN_ACCELERATION.in(RadiansPerSecondPerSecond)));
-    thetaController.enableContinuousInput(-2*Math.PI, 0);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
     driveController = new HolonomicDriveController(xController, yController, thetaController);
     filter = new ChassisSpeedsFilter(DriveConstants.MAX_DRIVE_ACCELERATION, TurnConstants.MAX_TURN_ACCELERATION);
   }
