@@ -72,7 +72,12 @@ public class PoseEstimation {
 
   private final PhotonPoseEstimator frontEstimator;
   private final PhotonPoseEstimator rearEstimator;
+  private EstimatedRobotPose currentVisionEstimate;
+  private double lastVisionTimestamp = 0;
   private final SwerveDrivePoseEstimator swerveEstimator;
+
+  public Distance dx;
+  public Distance dy;
 
   public PoseEstimation() {
     frontCamera = new PhotonCamera("OV9281-1");
@@ -114,7 +119,8 @@ public class PoseEstimation {
     swerveEstimator.update(gyro, swervePositions);
   }
 
-  @Logged private Pose2d lastVisionEstimate = Pose2d.kZero;
+  @Logged
+  private Pose2d lastVisionEstimate = Pose2d.kZero;
 
   private void applyVisionPose(EstimatedRobotPose visionEstimate) {
     if (visionEstimate.targetsUsed.isEmpty()) {
@@ -134,6 +140,8 @@ public class PoseEstimation {
       // return;
     }
 
+    lastVisionTimestamp = visionEstimate.timestampSeconds;
+
     // The average distance to the detected AprilTags
     double averageDistance = 0;
 
@@ -148,6 +156,7 @@ public class PoseEstimation {
 
     swerveEstimator.addVisionMeasurement(estimatedPose, visionEstimate.timestampSeconds,
         BASE_VISION_STDDEVS.times(stdDevScale));
+    currentVisionEstimate = visionEstimate;
   }
 
   private static double getStdDevScale(EstimatedRobotPose visionEstimate, double averageDistance) {
@@ -171,7 +180,10 @@ public class PoseEstimation {
     double dx = target.getTranslation().getX() - myPosition.getTranslation().getX();
     double dy = target.getTranslation().getY() - myPosition.getTranslation().getY();
 
-    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.PI - Math.atan2(dy, dx)));
+    this.dx = Meters.of(dx);
+    this.dy = Meters.of(dy);
+
+    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan2(dy, dx)));
   }
 
   public Pose2d getEstimatedPosition() {
@@ -204,5 +216,13 @@ public class PoseEstimation {
 
   public Pose2d getPose() {
     return swerveEstimator.getEstimatedPosition();
+  }
+
+  public Angle getJustVisionAngle() {
+    return currentVisionEstimate.estimatedPose.getRotation().getMeasureAngle();
+  }
+
+  public double getLastVisionTimestamp() {
+    return lastVisionTimestamp;
   }
 }
