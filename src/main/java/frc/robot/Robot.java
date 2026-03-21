@@ -4,11 +4,7 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Radians;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
@@ -17,7 +13,6 @@ import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.reduxrobotics.canand.CanandEventLoop;
 import edu.wpi.first.epilogue.Epilogue;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
@@ -27,11 +22,9 @@ import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
-import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -73,12 +66,12 @@ import java.util.function.BooleanSupplier;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  private final Intake intake;
+//  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   private final PoseEstimation poseEstimation;
   private final LEDs leds;
-  private final Hopper hopper;
+//  private final Hopper hopper;
   private final SparkPinger sparkPinger;
 
   public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
@@ -97,15 +90,15 @@ public class Robot extends TimedRobot {
     sparkPinger = new SparkPinger();
 
     if (Robot.isSimulation()) {
-      intake = new Intake(new SimIntakeIO());
+//      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-      hopper = new Hopper(new SimHopperIO());
+//      hopper = new Hopper(new SimHopperIO());
     } else {
-      intake = new Intake(new RealIntakeIO());
+//      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-      hopper = new Hopper(new RealHopperIO());
+//      hopper = new Hopper(new RealHopperIO());
     }
 
     poseEstimation = new PoseEstimation();
@@ -129,15 +122,16 @@ public class Robot extends TimedRobot {
 
     swerve.setDefaultCommand(f_driveWithFlightSticks());
     shooter.setDefaultCommand(shooter.f_aimAndRev());
-    hopper.setDefaultCommand(hopper.f_idle());
+//    hopper.setDefaultCommand(hopper.f_idle());
 
-    leds.setDefaultCommand(leds.runPattern(LEDPattern.solid(Color.kRed)));
+    leds.setDefaultCommand(leds.rslBlink());
 
     bindDriverButtons();
     bindOperatorButtons();
   }
 
   public void bindDriverButtons() {
+    operatorController.back().onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
     leftFlightStick.button(8).onTrue(swerve.o_resetGyro());
     leftFlightStick.button(2).whileTrue(f_driveLockedOn());
   }
@@ -169,17 +163,17 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
-        .alongWith(intake.applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
+//    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
+//        .alongWith(intake.applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));
     operatorController.povDown()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor-=1));
-    operatorController.y().whileTrue(intake.f_pivotUp());
-    operatorController.a().whileTrue(intake.f_pivotDown());
-    operatorController.b().whileTrue(intake.applyVoltageToRollers());
-    operatorController.x().whileTrue(intake.reverseIntakeMotor());
+//    operatorController.y().whileTrue(intake.f_pivotUp());
+//    operatorController.a().whileTrue(intake.f_pivotDown());
+//    operatorController.b().whileTrue(intake.applyVoltageToRollers());
+//    operatorController.x().whileTrue(intake.reverseIntakeMotor());
   }
 
   @Override
@@ -208,7 +202,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     shooterState = Constants.ShooterConstants.ShooterState.TARGET;
     overrideState = Constants.OverrideState.OVERRIDE;
-    autonomousCommand = a_revThenFire();
+//    autonomousCommand = a_revThenFire();
 
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
@@ -279,18 +273,20 @@ public class Robot extends TimedRobot {
   }
 
   public Command f_driveLockedOn() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getX()),
+    return swerve.f_driveLockedOntoTarget(
+        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
         () -> getLinearJoystickVelocity(rightFlightStick.getY()),
-        () -> RadiansPerSecond.of(poseEstimation.getAngleToRedHub().unaryMinus().in(Radians)));
+        () -> getAngleToHub().getMeasure(),
+        () -> swerve.getHeading().getMeasure());
   }
 
   public Command a_revFlywheels() {
     return shooter.f_aimAndRev().withTimeout(Seconds.of(2));
   }
 
-  public Command a_revThenFire() {
-    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
-  }
+//  public Command a_revThenFire() {
+//    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
+//  }
 
   public double getOperatorFudgeFactor() {
     return operatorFudgeFactor;
