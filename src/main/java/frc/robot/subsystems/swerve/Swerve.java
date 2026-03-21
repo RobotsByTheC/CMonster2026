@@ -71,6 +71,16 @@ public class Swerve extends SubsystemBase {
         });
   }
 
+  public Command f_driveLockedOntoTarget(Supplier<LinearVelocity> vX, Supplier<LinearVelocity> vY, Supplier<Angle> targetTheta, Supplier<Angle> currentTheta) {
+    return f_drive(vX, vY, () -> {
+      AngularVelocity output = RadiansPerSecond.of(thetaController.calculate(currentTheta.get().in(Radians), targetTheta.get().in(Radians)));
+      supposedTurnSpeed = output;
+      targetLockonAngle = targetTheta.get();
+
+      return output;
+    });
+  }
+
   public Command l_driveToPose(Pose2d targetRelativePose, Supplier<Pose2d> currentPose) {
     return startRun(() -> {
       targetPose = targetRelativePose;
