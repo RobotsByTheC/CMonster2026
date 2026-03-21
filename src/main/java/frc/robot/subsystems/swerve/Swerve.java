@@ -90,4 +90,14 @@ public class Swerve extends SubsystemBase {
   public void setGyro(Rotation2d gyro) {
     io.setGyro(gyro);
   }
+
+  private void setX() {
+    io.setModulePositions(
+        new SwerveModulePosition[] {
+            new SwerveModulePosition(0, Rotation2d.fromDegrees(45)),
+            new SwerveModulePosition(0, Rotation2d.fromDegrees(-45)),
+            new SwerveModulePosition(0, Rotation2d.fromDegrees(-45)),
+            new SwerveModulePosition(0, Rotation2d.fromDegrees(45))
+        });
+  }
 }
