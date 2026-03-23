@@ -50,7 +50,6 @@ public class SparkPinger {
     INSTANCE = this;
   }
 
-  @NotLogged
   public void periodicPing() {
     frontLeftDriveConnected = isConnected(frontLeftDrive);
     frontLeftTurnConnected = isConnected(frontLeftTurn);
