@@ -26,6 +26,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import frc.robot.data.LookupTable;
 import frc.robot.data.PolarPoint;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -72,7 +73,7 @@ public class PoseEstimation {
 
   private final PhotonPoseEstimator frontEstimator;
   private final PhotonPoseEstimator rearEstimator;
-  private EstimatedRobotPose currentVisionEstimate;
+  private EstimatedRobotPose currentVisionEstimate = new EstimatedRobotPose(Pose3d.kZero, 0, List.of());
   private double lastVisionTimestamp = 0;
   private final SwerveDrivePoseEstimator swerveEstimator;
 
