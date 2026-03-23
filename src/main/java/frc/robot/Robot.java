@@ -120,7 +120,8 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-    operatorController.back().onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
+//    operatorController.back().onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
+    operatorController.back().onTrue(swerve.o_resetGyro());
     leftFlightStick.button(8).onTrue(swerve.o_resetGyro());
     leftFlightStick.button(2).whileTrue(f_driveLockedOn());
   }
@@ -232,10 +233,20 @@ public class Robot extends TimedRobot {
     return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.1));
   }
 
+  //ANYTHING YOU CHANGE WITH ONE METHOD CHANGE WITH THE OTHER!!
+
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getY() * -1),
-        () -> getLinearJoystickVelocity(rightFlightStick.getX() * -1),
+    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getY()),
+        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
         () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
+  }
+
+  public Command f_driveLockedOn() {
+    return swerve.f_driveLockedOntoTarget(
+        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
+        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
+        () -> getAngleToHub().getMeasure(),
+        () -> swerve.getHeading().getMeasure());
   }
 
   public Distance getDistanceToHub() {
@@ -257,9 +268,9 @@ public class Robot extends TimedRobot {
   public Rotation2d getAngleToHub() {
     return DriverStation.getAlliance().map(a -> {
       if (a == DriverStation.Alliance.Red) {
-        return new Rotation2d(poseEstimation.getAngleToRedHub().unaryMinus());
+        return new Rotation2d(poseEstimation.getAngleToRedHub());
       } else if (a == DriverStation.Alliance.Blue) {
-        return new Rotation2d(poseEstimation.getAngleToBlueHub().unaryMinus());
+        return new Rotation2d(poseEstimation.getAngleToBlueHub());
       } else {
         return null;
       }
@@ -268,14 +279,6 @@ public class Robot extends TimedRobot {
 
   public double getDisplayDegreesAngleToHub() {
     return Math.round(getAngleToHub().getDegrees()*10)/10d;
-  }
-
-  public Command f_driveLockedOn() {
-    return swerve.f_driveLockedOntoTarget(
-        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
-        () -> getAngleToHub().getMeasure(),
-        () -> swerve.getHeading().getMeasure());
   }
 
   public Command a_revFlywheels() {

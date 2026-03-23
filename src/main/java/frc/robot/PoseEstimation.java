@@ -184,7 +184,7 @@ public class PoseEstimation {
     this.dx = Meters.of(dx);
     this.dy = Meters.of(dy);
 
-    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan2(dy, dx)));
+    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan(dy / dx)));
   }
 
   public Pose2d getEstimatedPosition() {

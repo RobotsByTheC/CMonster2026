@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
+import static frc.robot.Constants.SwerveConstants.TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
 import edu.wpi.first.epilogue.Logged;
@@ -55,7 +56,7 @@ public class Swerve extends SubsystemBase {
     thetaController = new ProfiledPIDController(TurnConstants.AUTO_P, TurnConstants.AUTO_I, TurnConstants.AUTO_D,
         new TrapezoidProfile.Constraints(TurnConstants.MAX_TURN_SPEED.in(RadiansPerSecond),
             TurnConstants.MAX_TURN_ACCELERATION.in(RadiansPerSecondPerSecond)));
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    thetaController.enableContinuousInput(-Math.PI/2, Math.PI/2);
     driveController = new HolonomicDriveController(xController, yController, thetaController);
     filter = new ChassisSpeedsFilter(DriveConstants.MAX_DRIVE_ACCELERATION, TurnConstants.MAX_TURN_ACCELERATION);
   }
@@ -74,7 +75,7 @@ public class Swerve extends SubsystemBase {
     return run(
         () -> {
           if (Robot.shooterState == Constants.ShooterConstants.ShooterState.TARGET) {
-
+            io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading()));
           } else {
             io.driveSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(vX.get(), vY.get(), vTheta.get(), io.getHeading()));
           }
@@ -86,8 +87,9 @@ public class Swerve extends SubsystemBase {
       AngularVelocity output = RadiansPerSecond.of(thetaController.calculate(currentTheta.get().in(Radians), targetTheta.get().in(Radians)));
       supposedTurnSpeed = output;
       targetLockonAngle = targetTheta.get();
+      if (targetTheta.get().isNear(currentTheta.get(), TOLERANCE)) return RadiansPerSecond.zero();
 
-      return output;
+      return output.unaryMinus();
     });
   }
 
