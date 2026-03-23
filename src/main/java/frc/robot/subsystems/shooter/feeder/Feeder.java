@@ -26,10 +26,6 @@ public class Feeder extends SubsystemBase {
     return io.getSpark();
   }
 
-  public Command idleUntilReadyToFire() {
-    return idle().until(readyToFire);
-  }
-
   public Command f_activate() {
     return run(() -> {
       if (Robot.overrideState == Constants.OverrideState.SAFE) {
@@ -40,11 +36,6 @@ public class Feeder extends SubsystemBase {
         io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE);
       }
     });
-  }
-
-  public Command f_idleThenActivate() {
-    // return idleUntilReadyToFire().andThen(f_activate());
-    return f_activate();
   }
 
   public Command o_stop() {
