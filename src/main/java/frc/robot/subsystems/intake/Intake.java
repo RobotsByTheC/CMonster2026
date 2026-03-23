@@ -56,7 +56,7 @@ public class Intake extends SubsystemBase {
     feedforward = new ArmFeedforward(KS, KG, KV, KA);
   }
 
-  public Command applyVoltageToRollers() {
+  public Command f_applyVoltageToRollers() {
     return roller.runIntakeMotor();
   }
 
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
     return runOnce(io::zero);
   }
 
-  public Command reverseIntakeMotor() {
+  public Command f_reverseIntakeMotor() {
     return roller.reverseIntakeMotor();
   }
 }
