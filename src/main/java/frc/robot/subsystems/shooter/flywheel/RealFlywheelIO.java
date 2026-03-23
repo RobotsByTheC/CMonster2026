@@ -102,7 +102,7 @@ public class RealFlywheelIO implements FlywheelIO {
 
   @Override
   public boolean atTargetVelocity() {
-    return RPM.of(controller.getSetpoint()).isNear(getPrimaryVelocity(), RPM.of(20));
+    return RPM.of(controller.getSetpoint()).isNear(getPrimaryVelocity(), RPM.of(50));
   }
 
   @Override
