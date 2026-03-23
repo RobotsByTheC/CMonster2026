@@ -55,12 +55,12 @@ import java.util.function.BooleanSupplier;
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-//  private final Intake intake;
+  private final Intake intake;
   private final Swerve swerve;
   private final Shooter shooter;
   private final PoseEstimation poseEstimation;
   private final LEDs leds;
-//  private final Hopper hopper;
+  private final Hopper hopper;
   private final SparkPinger sparkPinger;
 
   public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
@@ -79,15 +79,15 @@ public class Robot extends TimedRobot {
     sparkPinger = new SparkPinger();
 
     if (Robot.isSimulation()) {
-//      intake = new Intake(new SimIntakeIO());
+      intake = new Intake(new SimIntakeIO());
       swerve = new Swerve(new SimSwerveIO());
       shooter = new Shooter(false);
-//      hopper = new Hopper(new SimHopperIO());
+      hopper = new Hopper(new SimHopperIO());
     } else {
-//      intake = new Intake(new RealIntakeIO());
+      intake = new Intake(new RealIntakeIO());
       swerve = new Swerve(new RealSwerveIO());
       shooter = new Shooter(true);
-//      hopper = new Hopper(new RealHopperIO());
+      hopper = new Hopper(new RealHopperIO());
     }
 
     poseEstimation = new PoseEstimation();
@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
 
     swerve.setDefaultCommand(f_driveWithFlightSticks());
     shooter.setDefaultCommand(shooter.f_aimAndRev());
-//    hopper.setDefaultCommand(hopper.f_idle());
+    hopper.setDefaultCommand(hopper.f_idle());
 
     leds.setDefaultCommand(leds.rslBlink());
 
@@ -152,17 +152,17 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-//    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
-//        .alongWith(intake.applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
+    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
+        .alongWith(intake.f_applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));
     operatorController.povDown()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor-=1));
-//    operatorController.y().whileTrue(intake.f_pivotUp());
-//    operatorController.a().whileTrue(intake.f_pivotDown());
-//    operatorController.b().whileTrue(intake.applyVoltageToRollers());
-//    operatorController.x().whileTrue(intake.reverseIntakeMotor());
+    operatorController.y().whileTrue(intake.f_pivotUp());
+    operatorController.a().whileTrue(intake.f_pivotDown());
+    operatorController.b().whileTrue(intake.f_applyVoltageToRollers());
+    operatorController.x().whileTrue(intake.f_reverseIntakeMotor());
   }
 
   @Override
@@ -191,7 +191,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     shooterState = Constants.ShooterConstants.ShooterState.TARGET;
     overrideState = Constants.OverrideState.OVERRIDE;
-//    autonomousCommand = a_revThenFire();
+    autonomousCommand = a_revThenFire();
+
 
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
@@ -273,9 +274,9 @@ public class Robot extends TimedRobot {
     return shooter.f_aimAndRev().withTimeout(Seconds.of(2));
   }
 
-//  public Command a_revThenFire() {
-//    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
-//  }
+  public Command a_revThenFire() {
+    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
+  }
 
   public double getOperatorFudgeFactor() {
     return operatorFudgeFactor;
