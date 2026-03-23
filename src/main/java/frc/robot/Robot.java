@@ -250,6 +250,10 @@ public class Robot extends TimedRobot {
     }).orElse(Meters.zero());
   }
 
+  public double getDisplayDistanceToHub() {
+    return Math.round(getDistanceToHub().in(Meters)*10)/10d;
+  }
+
   public Rotation2d getAngleToHub() {
     return DriverStation.getAlliance().map(a -> {
       if (a == DriverStation.Alliance.Red) {
@@ -260,6 +264,10 @@ public class Robot extends TimedRobot {
         return null;
       }
     }).orElse(Rotation2d.kZero);
+  }
+
+  public double getDisplayDegreesAngleToHub() {
+    return Math.round(getAngleToHub().getDegrees()*10)/10d;
   }
 
   public Command f_driveLockedOn() {
