@@ -495,10 +495,10 @@
           },
           {
             "title": "Left Shooter @",
-            "x": 480.0,
+            "x": 320.0,
             "y": 320.0,
             "width": 160.0,
-            "height": 192.0,
+            "height": 96.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/shooter/leftFlywheel/io/atTargetVelocity",
@@ -512,10 +512,10 @@
           },
           {
             "title": "Right Shooter @",
-            "x": 320.0,
+            "x": 480.0,
             "y": 320.0,
             "width": 160.0,
-            "height": 192.0,
+            "height": 96.0,
             "type": "Boolean Box",
             "properties": {
               "topic": "Robot/shooter/rightFlywheel/io/atTargetVelocity",
@@ -574,6 +574,40 @@
                 192.0,
                 108.0
               ]
+            }
+          },
+          {
+            "title": "Left Feed Ready",
+            "x": 320.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/shooter/leftFeeder/readyToFire",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Right Feed Ready",
+            "x": 480.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 96.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/shooter/rightFeeder/readyToFire",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
