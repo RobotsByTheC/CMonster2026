@@ -111,8 +111,8 @@
           },
           {
             "title": "Left Flywheel %",
-            "x": 0.0,
-            "y": 288.0,
+            "x": 672.0,
+            "y": 160.0,
             "width": 160.0,
             "height": 160.0,
             "type": "Large Text Display",
@@ -124,26 +124,13 @@
           },
           {
             "title": "Right Flywheel %",
-            "x": 160.0,
-            "y": 288.0,
+            "x": 512.0,
+            "y": 160.0,
             "width": 160.0,
             "height": 160.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "Robot/shooter/rightSpeedPercentage",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "Offset",
-            "x": 320.0,
-            "y": 288.0,
-            "width": 160.0,
-            "height": 160.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "Robot/operatorFudgeFactor",
               "period": 0.06,
               "data_type": "double"
             }
@@ -452,6 +439,141 @@
               "false_color": 4294198070,
               "true_icon": "None",
               "false_icon": "None"
+            }
+          },
+          {
+            "title": "Operator Offset",
+            "x": 672.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/getOperatorFudgeFactor",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Override State",
+            "x": 672.0,
+            "y": 0.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/getOverrideState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Shooter State",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/getShooterState",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Distance To Hub",
+            "x": 352.0,
+            "y": 160.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/getDisplayDistanceToHub",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Left Shooter @",
+            "x": 512.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/shooter/leftFlywheel/io/atTargetVelocity",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Right Shooter @",
+            "x": 352.0,
+            "y": 416.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "Robot/shooter/rightFlywheel/io/atTargetVelocity",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Angle To Hub",
+            "x": 352.0,
+            "y": 0.0,
+            "width": 160.0,
+            "height": 160.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "Robot/getDisplayDegreesAngleToHub",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Rear",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 352.0,
+            "height": 288.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1182_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 30,
+              "resolution": [
+                192.0,
+                108.0
+              ]
+            }
+          },
+          {
+            "title": "Front",
+            "x": 0.0,
+            "y": 288.0,
+            "width": 352.0,
+            "height": 288.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/photonvision_Port_1184_Output_MJPEG_Server",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "fps": 30,
+              "resolution": [
+                192.0,
+                108.0
+              ]
             }
           }
         ]
