@@ -48,7 +48,7 @@ public class Constants {
       public static final double KP = 1;
       public static final double KI = 0;
       public static final double KD = 0;
-      public static final double AUTO_P = 1;
+      public static final double AUTO_P = 10;
       public static final double AUTO_I = 0;
       public static final double AUTO_D = 0;
     }
