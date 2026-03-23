@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
       }
     }));
     operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake())
-        .alongWith(intake.f_applyVoltageToRollers()).deadlineFor(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
+        .alongWith(intake.f_pulseIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));

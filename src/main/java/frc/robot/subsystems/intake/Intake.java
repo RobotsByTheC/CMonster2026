@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 @Logged
@@ -74,5 +75,13 @@ public class Intake extends SubsystemBase {
 
   public Command f_reverseIntakeMotor() {
     return roller.reverseIntakeMotor();
+  }
+
+  public Command f_pulseIntake() {
+    return Commands.repeatingSequence(
+        f_pivotUp().withTimeout(Seconds.of(0.75)),
+        f_pivotDown().withTimeout(Seconds.of(0.25)),
+        idle().withTimeout(0.5)
+    );
   }
 }
