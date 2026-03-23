@@ -79,9 +79,9 @@ public class Intake extends SubsystemBase {
 
   public Command f_pulseIntake() {
     return Commands.repeatingSequence(
-        f_pivotUp().withTimeout(Seconds.of(0.75)),
+        f_pivotUp().withTimeout(Seconds.of(0.5)),
         f_pivotDown().withTimeout(Seconds.of(0.25)),
-        idle().withTimeout(0.5)
+        idle().withTimeout(0.25)
     );
   }
 }
