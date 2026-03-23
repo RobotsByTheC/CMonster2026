@@ -15,7 +15,7 @@ public class Feeder extends SubsystemBase {
 
   public Feeder(FeederIO io, Trigger readyToFire) {
     this.io = io;
-    this.readyToFire = readyToFire;
+    this.readyToFire = new Trigger(() -> !readyToFire.debounce(0.1).negate().getAsBoolean());
   }
 
   public boolean canShoot() {
