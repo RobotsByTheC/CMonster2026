@@ -52,17 +52,6 @@ import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 import java.util.function.BooleanSupplier;
 
-// flywheels at speed (left right)
-// override state
-// shooter state
-// spark pings
-// camera view
-// operator offset
-// left/right flywheel at speed
-// left/right flywheel speed percentage
-
-// auto
-
 @Logged
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
