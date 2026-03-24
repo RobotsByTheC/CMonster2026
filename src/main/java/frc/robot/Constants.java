@@ -153,7 +153,7 @@ public class Constants {
 
   public static class HopperConstants {
     public static final Voltage INTAKE_VOLTAGE = Volts.of(7);
-    public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
+    public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-7);
   }
 
   public static class VisionConstants {
