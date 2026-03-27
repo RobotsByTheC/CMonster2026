@@ -63,7 +63,8 @@ public class RealSwerveIO implements SwerveIO {
 
   @Override
   public void setGyro(Rotation2d heading) {
-    gyro.setYaw(heading.getDegrees());
+    gyro.reset();
+    gyro.setYaw(heading.getMeasure());
   }
 
   @Override

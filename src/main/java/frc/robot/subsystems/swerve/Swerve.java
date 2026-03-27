@@ -1,13 +1,11 @@
 package frc.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.FeetPerSecond;
+import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.SwerveConstants.DriveConstants;
-import static frc.robot.Constants.SwerveConstants.TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.TurnConstants;
 
 import edu.wpi.first.epilogue.Logged;
@@ -23,15 +21,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.data.ChassisSpeedsFilter;
-
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 @Logged
@@ -65,8 +61,12 @@ public class Swerve extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (io.getHeading().getDegrees() > 180) io.setGyro(io.getHeading().minus(new Rotation2d(Math.PI*2)));
-    if (io.getHeading().getDegrees() < -180) io.setGyro(io.getHeading().plus(new Rotation2d(Math.PI*2)));
+//    if (io.getHeading().getDegrees() > 180){
+//      io.setGyro(io.getHeading().minus(new Rotation2d(Math.PI*2)));
+//    }
+//    if (io.getHeading().getDegrees() < -180) {
+//      io.setGyro(io.getHeading().plus(new Rotation2d(Math.PI*2)));
+//    }
   }
 
   @NotLogged
@@ -87,24 +87,45 @@ public class Swerve extends SubsystemBase {
 
   public Command o_resetGyro() {
     return Commands.runOnce(() -> {
-      setGyro(Rotation2d.kZero);
-      System.out.println("GYRO RESET: Estimated at 0 deg.");
+      DriverStation.getAlliance().ifPresent(a -> {
+        switch (a) {
+          case Red -> {
+            io.setGyro(Rotation2d.k180deg);
+            System.out.println("GYRO RESET: 180 degrees (towards blue wall)");
+          }
+          case Blue -> {
+            io.setGyro(Rotation2d.kZero);
+            System.out.println("GYRO RESET: 0 degrees (towards red wall)");
+          }
+        }
+      });
     }).ignoringDisable(true);
   }
 
-  public Command o_setGyroToVisionIfPossible(Supplier<Angle> visionEstimate, DoubleSupplier timestamp) {
+  public Command o_setGyroToVisionIfPossible(Supplier<Angle> visionEstimate, Supplier<Time> timestamp) {
+    Time acceptanceThreshold = Milliseconds.of(100);
     return Commands.runOnce(() -> {
-      if (Math.abs(RobotController.getMeasureTime().in(Seconds) - timestamp.getAsDouble()) <= 0.05) {
-        setGyro(new Rotation2d(visionEstimate.get()));
-        System.out.println("GYRO RESET: Estimated at " + Math.round(visionEstimate.get().in(Degrees)*10)/10d + " deg.");
+      Time ts = timestamp.get();
+      Time dt = RobotController.getMeasureTime().minus(ts);
+      if (dt.lte(acceptanceThreshold)) {
+        Angle angle = visionEstimate.get();
+        double angleRads = angle.in(Radians);
+        // ensure we're within ±2π°e
+        double twoPi = 2 * Math.PI;
+        while (angleRads > twoPi) {
+          angleRads -= twoPi;
+        }
+
+        while (angleRads < -2 * Math.PI) {
+          angleRads += twoPi;
+        }
+
+        io.setGyro(new Rotation2d(angleRads));
+        System.out.printf("GYRO RESET: Estimated at %.1f deg, computed to %.2f rads.%n", angle.in(Degrees), angleRads);
       } else {
-        System.out.println("GYRO RESET FAILED: CAN'T SEE APRILTAG");
+        System.out.println("GYRO RESET FAILED: CAN'T SEE APRILTAG - Timestamp " + ts + " is " + dt + " seconds out of date!");
       }
     }).ignoringDisable(true);
-  }
-
-  public void setGyro(Rotation2d gyro) {
-    io.setGyro(gyro);
   }
 
   private void setX() {

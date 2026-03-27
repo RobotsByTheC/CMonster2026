@@ -1,10 +1,13 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.VisionConstants.BLUE_HUB;
 import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_OFFSET;
 import static frc.robot.Constants.VisionConstants.REAR_CAMERA_OFFSET;
@@ -24,6 +27,9 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.data.LookupTable;
 import frc.robot.data.PolarPoint;
 import java.util.List;
@@ -58,7 +64,7 @@ public class PoseEstimation {
    * because we update at about 50Hz, this is a limit on maximum robot velocity (eg 1 foot in 20ms -> 50 feet per second,
    * well over the physical limit of about 16 ft/s)
    */
-  private static final Distance TELEPORTATION_LIMIT = Feet.of(1);
+  private static final Distance TELEPORTATION_LIMIT = Feet.of(3);
 
   private static final Vector<N3> BASE_VISION_STDDEVS = VecBuilder.fill(
       // X
@@ -74,7 +80,7 @@ public class PoseEstimation {
   private final PhotonPoseEstimator frontEstimator;
   private final PhotonPoseEstimator rearEstimator;
   private EstimatedRobotPose currentVisionEstimate = new EstimatedRobotPose(Pose3d.kZero, 0, List.of());
-  private double lastVisionTimestamp = 0;
+  private Time lastVisionTimestamp = Seconds.of(0);
   private final SwerveDrivePoseEstimator swerveEstimator;
 
   public PoseEstimation() {
@@ -106,7 +112,14 @@ public class PoseEstimation {
 
     for (PhotonPipelineResult result : frontResults) {
       // Note: this will only do anything the result has 2 or more tags in view
-      frontEstimator.estimateCoprocMultiTagPose(result).ifPresent(this::applyVisionPose);
+      if (result.getMultiTagResult().isPresent()) {
+        var multiRes = result.getMultiTagResult().get();
+        if (multiRes.estimatedPose.ambiguity < 0.2) {
+          frontEstimator.estimateCoprocMultiTagPose(result).ifPresent(this::applyVisionPose);
+        } else {
+          System.out.println("Rejecting pose estimate " + multiRes.estimatedPose + " because its ambiguity is too high");
+        }
+      }
     }
 
     for (PhotonPipelineResult result : rearResults) {
@@ -130,15 +143,19 @@ public class PoseEstimation {
     Pose2d estimatedPose = estimatedPose3d.toPose2d();
     this.lastVisionEstimate = estimatedPose; // for logging
 
-    if (estimatedPose.minus(getPose()).getTranslation().getNorm() > TELEPORTATION_LIMIT.in(Meters)) {
+    double distanceFromPreviousPose = estimatedPose.minus(lastVisionEstimate).getTranslation().getNorm();
+    if (distanceFromPreviousPose > TELEPORTATION_LIMIT.in(Meters)) {
       // The vision estimate places us too far away from the previously estimated position
       // TODO: The early exit is commented about because excessive wheel slip will cause all
       // vision measurements to be rejected. Consider tracking vision-based estimates over
       // time and only reject ones that differ too much from the latest accepted estimates
-      // return;
+//      System.out.printf(
+//          "Rejecting pose estimate because it's %.2f meters from the last know position%n",
+//          distanceFromPreviousPose);
+//      return;
     }
 
-    lastVisionTimestamp = visionEstimate.timestampSeconds;
+    lastVisionTimestamp = RobotController.getMeasureTime();
 
     // The average distance to the detected AprilTags
     double averageDistance = 0;
@@ -174,11 +191,11 @@ public class PoseEstimation {
   }
 
   public PolarPoint getDistanceToPose(Pose2d target) {
-    Pose2d myPosition = swerveEstimator.getEstimatedPosition();
+    Pose2d myPosition = lastVisionEstimate;
     double dx = target.getTranslation().getX() - myPosition.getTranslation().getX();
     double dy = target.getTranslation().getY() - myPosition.getTranslation().getY();
 
-    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan(dy / dx)));
+    return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.PI + Math.atan(dy / dx)));
   }
 
   public Pose2d getEstimatedPosition() {
@@ -209,15 +226,11 @@ public class PoseEstimation {
     return LookupTable.getAngle();
   }
 
-  public Pose2d getPose() {
-    return swerveEstimator.getEstimatedPosition();
-  }
-
   public Angle getJustVisionAngle() {
     return currentVisionEstimate.estimatedPose.getRotation().getMeasureAngle();
   }
 
-  public double getLastVisionTimestamp() {
+  public Time getLastVisionTimestamp() {
     return lastVisionTimestamp;
   }
 }

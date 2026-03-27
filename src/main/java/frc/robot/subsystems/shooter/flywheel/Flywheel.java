@@ -61,10 +61,6 @@ public class Flywheel extends SubsystemBase {
     return f_shoot(() -> Constants.ShooterConstants.FlywheelConstants.IDLE_SPEED);
   }
 
-  public Command applyAFuckingVoltage(Supplier<Voltage> voltage) {
-    return run(() -> io.setVoltage(voltage.get()));
-  }
-
   public double getPercentageSpeed() {
     if (io.getPrimaryVelocity().isNear(RPM.zero(), RPM.of(0.001)))
       return 0;

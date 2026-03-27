@@ -172,5 +172,7 @@ public class Constants {
 
   public static class FeederConstants {
     public static final Voltage FEED_VOLTAGE = Volts.of(12);
+    public static final Voltage REVERSE_VOLTAGE = Volts.of(-12);
+    public static final Voltage SOFT_REVERSE_VOLTAGE = Volts.of(-1);
   }
 }

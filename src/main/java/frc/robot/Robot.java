@@ -259,8 +259,24 @@ public class Robot extends TimedRobot {
     Supplier<Angle> targetTheta = () -> getAngleToHub().getMeasure();
     Supplier<Angle> currentTheta = () -> swerve.getHeading().getMeasure();
 
-    return swerve.f_drive(() -> getLinearJoystickVelocity(leftFlightStick.getY()*-1),
-        () -> getLinearJoystickVelocity(leftFlightStick.getX()*-1),
+    // Invert controls when on the red alliance so forward on the sticks is away from the driver,
+    // regardless of which alliance we're on.
+    // If we don't have an alliance yet, assume we're on red
+    return swerve.f_drive(
+        () -> {
+          int inversion = -1;
+          if (DriverStation.getAlliance().isEmpty() || DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            inversion = 1;
+          }
+          return getLinearJoystickVelocity(leftFlightStick.getY() * inversion);
+        },
+        () -> {
+          int inversion = -1;
+          if (DriverStation.getAlliance().isEmpty() || DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            inversion = 1;
+          }
+          return getLinearJoystickVelocity(leftFlightStick.getX() * inversion);
+        },
         () -> {
           if (driveState == Swerve.DriveState.NORMAL) return getAngularJoystickVelocity(rightFlightStick.getTwist());
           else if (driveState == Swerve.DriveState.LOCKED) {
@@ -308,7 +324,16 @@ public class Robot extends TimedRobot {
   }
 
   public Command a_revThenFire() {
-    return a_revFlywheels().andThen(shooter.f_aimAndRev().alongWith(shooter.f_feed().alongWith(hopper.f_hopperIntake())));
+    return Commands.sequence(
+        Commands.deadline(
+            a_revFlywheels(),
+            shooter.f_reverseFeed()
+        ),
+        Commands.parallel(
+            shooter.f_aimAndRev(),
+            shooter.f_feed(),
+            hopper.f_hopperIntake()
+        ));
   }
 
   public double getOperatorFudgeFactor() {

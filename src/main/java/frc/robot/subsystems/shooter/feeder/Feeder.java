@@ -1,8 +1,11 @@
 package frc.robot.subsystems.shooter.feeder;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.NotLogged;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -45,6 +48,24 @@ public class Feeder extends SubsystemBase {
         }
       } else {
         io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE);
+      }
+    });
+  }
+
+  public Command f_softReverse() {
+    return run(() -> {
+      io.setVoltage(Constants.FeederConstants.SOFT_REVERSE_VOLTAGE);
+    }).withName("Soft Reverse");
+  }
+
+  public Command f_reverse() {
+    return run(() -> {
+      if (Robot.overrideState == Constants.OverrideState.SAFE) {
+        if (readyToFire.getAsBoolean()) {
+          io.setVoltage(Constants.FeederConstants.FEED_VOLTAGE);
+        }
+      } else {
+        io.setVoltage(Constants.FeederConstants.REVERSE_VOLTAGE);
       }
     });
   }

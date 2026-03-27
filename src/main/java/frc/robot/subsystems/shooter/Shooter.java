@@ -84,8 +84,8 @@ public class Shooter extends SubsystemBase {
 
     leftFlywheel.setDefaultCommand(leftFlywheel.f_idle());
     rightFlywheel.setDefaultCommand(rightFlywheel.f_idle());
-    leftFeeder.setDefaultCommand(leftFeeder.o_stop());
-    rightFeeder.setDefaultCommand(rightFeeder.o_stop());
+    leftFeeder.setDefaultCommand(leftFeeder.f_softReverse());
+    rightFeeder.setDefaultCommand(rightFeeder.f_softReverse());
     hood.setDefaultCommand(hood.o_stop());
 
     isReadyToShoot = new Trigger(
@@ -116,6 +116,12 @@ public class Shooter extends SubsystemBase {
     return leftFeeder.f_activate().alongWith(rightFeeder.f_activate());
   }
 
+  public Command f_reverseFeed() {
+    // NOTE: This command does NOT require the shooter subsystem itself and can run concurrently
+    // with f_aimAndRev
+    return leftFeeder.f_reverse().alongWith(rightFeeder.f_reverse());
+  }
+
   public Command f_aimAndRev() {
     Command command = synchronizedRev(LookupTable::getVelocity)
         .alongWith(hood.f_holdDesiredAngle(LookupTable::getAngle));
@@ -134,9 +140,5 @@ public class Shooter extends SubsystemBase {
   public Command f_zoom() {
     return rightFlywheel.f_shoot(() -> RPM.of(2000))
         .alongWith(leftFlywheel.f_shoot(() -> RPM.of(2000)).alongWith(hood.f_holdDesiredAngle(() -> Degrees.of(25))));
-  }
-
-  public Command f_runWithState() {
-    return null;
   }
 }
