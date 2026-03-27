@@ -77,9 +77,6 @@ public class PoseEstimation {
   private double lastVisionTimestamp = 0;
   private final SwerveDrivePoseEstimator swerveEstimator;
 
-  public Distance dx;
-  public Distance dy;
-
   public PoseEstimation() {
     frontCamera = new PhotonCamera("OV9281-1");
     rearCamera = new PhotonCamera("OV9281-2");
@@ -180,9 +177,6 @@ public class PoseEstimation {
     Pose2d myPosition = swerveEstimator.getEstimatedPosition();
     double dx = target.getTranslation().getX() - myPosition.getTranslation().getX();
     double dy = target.getTranslation().getY() - myPosition.getTranslation().getY();
-
-    this.dx = Meters.of(dx);
-    this.dy = Meters.of(dy);
 
     return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.atan(dy / dx)));
   }

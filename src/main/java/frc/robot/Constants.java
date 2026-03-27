@@ -39,6 +39,9 @@ public class Constants {
       public static final double AUTO_P = 0;
       public static final double AUTO_I = 0;
       public static final double AUTO_D = 0;
+
+      public static final double DEADBAND = 0.25;
+      public static final double SCALE_MULTIPLIER = 1/(1-DEADBAND);
     }
 
     public static class TurnConstants {
@@ -49,8 +52,11 @@ public class Constants {
       public static final double KI = 0;
       public static final double KD = 0;
       public static final double AUTO_P = 10;
-      public static final double AUTO_I = 0;
+      public static final double AUTO_I = 0.02;
       public static final double AUTO_D = 0;
+
+      public static final double DEADBAND = 0.25;
+      public static final double SCALE_MULTIPLIER = 1/(1-DEADBAND);
     }
 
     public static final Distance DRIVETRAIN_WIDTH = Inches.of(23.5);
@@ -152,8 +158,8 @@ public class Constants {
   }
 
   public static class HopperConstants {
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(7);
-    public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-7);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(5);
+    public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-2);
   }
 
   public static class VisionConstants {
@@ -165,6 +171,6 @@ public class Constants {
   }
 
   public static class FeederConstants {
-    public static final Voltage FEED_VOLTAGE = Volts.of(9);
+    public static final Voltage FEED_VOLTAGE = Volts.of(12);
   }
 }

@@ -69,6 +69,10 @@ public class Intake extends SubsystemBase {
     return extension.applyVoltage(DOWN_VOLTAGE);
   }
 
+  public Command f_pivotSlide() {
+    return extension.applyVoltage(Volts.of(0));
+  }
+
   public Command zero() {
     return runOnce(io::zero);
   }
@@ -79,9 +83,9 @@ public class Intake extends SubsystemBase {
 
   public Command f_pulseIntake() {
     return Commands.repeatingSequence(
-        f_pivotUp().withTimeout(Seconds.of(0.5)),
-        f_pivotDown().withTimeout(Seconds.of(0.25)),
-        idle().withTimeout(0.25)
+        f_pivotDown().withTimeout(Seconds.of(0.45)),
+        f_pivotSlide().withTimeout(Seconds.of(0.65))
+        //idle().withTimeout(0.0625)
     );
   }
 }

@@ -4,12 +4,17 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.InputConstants.CONTROLLER_PORT;
 import static frc.robot.Constants.InputConstants.LEFT_JOYSTICK_PORT;
 import static frc.robot.Constants.InputConstants.RIGHT_JOYSTICK_PORT;
+import static frc.robot.Constants.SwerveConstants.DriveConstants.DEADBAND;
 import static frc.robot.Constants.SwerveConstants.DriveConstants.MAX_DRIVE_SPEED;
+import static frc.robot.Constants.SwerveConstants.DriveConstants.SCALE_MULTIPLIER;
+import static frc.robot.Constants.SwerveConstants.TOLERANCE;
 import static frc.robot.Constants.SwerveConstants.TurnConstants.MAX_TURN_SPEED;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -19,9 +24,9 @@ import edu.wpi.first.epilogue.NotLogged;
 import edu.wpi.first.epilogue.logging.EpilogueBackend;
 import edu.wpi.first.epilogue.logging.FileBackend;
 import edu.wpi.first.epilogue.logging.NTEpilogueBackend;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
@@ -51,6 +56,7 @@ import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 @Logged
 public class Robot extends TimedRobot {
@@ -65,12 +71,13 @@ public class Robot extends TimedRobot {
 
   public static Constants.OverrideState overrideState = Constants.OverrideState.SAFE;
   public static Constants.ShooterConstants.ShooterState shooterState = Constants.ShooterConstants.ShooterState.STOP;
+  public static Swerve.DriveState driveState = Swerve.DriveState.NORMAL;
   public static double operatorFudgeFactor = 0;
   private int runCounts = 0;
 
   @NotLogged private final CommandXboxController operatorController;
-  @NotLogged private final CommandJoystick leftFlightStick;
   @NotLogged private final CommandJoystick rightFlightStick;
+  @NotLogged private final CommandJoystick leftFlightStick;
   @Logged public final BooleanSupplier OPERATOR_CONTROLLER_CONNECTED;
   @Logged public final BooleanSupplier LEFT_FLIGHT_STICK_CONNECTED;
   @Logged public final BooleanSupplier RIGHT_FLIGHT_STICK_CONNECTED;
@@ -99,8 +106,8 @@ public class Robot extends TimedRobot {
     leftFlightStick = new CommandJoystick(LEFT_JOYSTICK_PORT);
     rightFlightStick = new CommandJoystick(RIGHT_JOYSTICK_PORT);
     OPERATOR_CONTROLLER_CONNECTED = operatorController::isConnected;
-    LEFT_FLIGHT_STICK_CONNECTED = leftFlightStick::isConnected;
-    RIGHT_FLIGHT_STICK_CONNECTED = rightFlightStick::isConnected;
+    LEFT_FLIGHT_STICK_CONNECTED = rightFlightStick::isConnected;
+    RIGHT_FLIGHT_STICK_CONNECTED = leftFlightStick::isConnected;
 
     SignalLogger.start();
     DriverStation.startDataLog(DataLogManager.getLog(), true);
@@ -120,13 +127,15 @@ public class Robot extends TimedRobot {
   }
 
   public void bindDriverButtons() {
-//    operatorController.back().onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
-    operatorController.back().onTrue(swerve.o_resetGyro());
-    leftFlightStick.button(8).onTrue(swerve.o_resetGyro());
-    leftFlightStick.button(2).whileTrue(f_driveLockedOn());
+    rightFlightStick.button(1).whileTrue(swerve.commandSetX());
+    rightFlightStick.button(7).onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
+    rightFlightStick.button(8).onTrue(swerve.o_resetGyro());
   }
 
   public void bindOperatorButtons() {
+    rightFlightStick.button(2).whileTrue(Commands.runOnce(() -> driveState = Swerve.DriveState.LOCKED));
+    rightFlightStick.button(2).onFalse(Commands.runOnce(() -> driveState = Swerve.DriveState.NORMAL));
+
     operatorController.leftBumper().onTrue(Commands.runOnce(() -> {
       if (shooterState == Constants.ShooterConstants.ShooterState.STOP) {
         shooterState = Constants.ShooterConstants.ShooterState.IDLE;
@@ -153,7 +162,7 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
+    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))).alongWith(intake.f_pulseIntake()));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));
@@ -191,6 +200,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     shooterState = Constants.ShooterConstants.ShooterState.TARGET;
     overrideState = Constants.OverrideState.OVERRIDE;
+    driveState = Swerve.DriveState.NORMAL;
     autonomousCommand = a_revThenFire();
 
 
@@ -210,6 +220,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     shooterState = Constants.ShooterConstants.ShooterState.STOP;
     overrideState = Constants.OverrideState.SAFE;
+    driveState = Swerve.DriveState.NORMAL;
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
@@ -226,26 +237,38 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {}
 
   private LinearVelocity getLinearJoystickVelocity(double rawValue) {
-    return MAX_DRIVE_SPEED.times(MathUtil.applyDeadband(rawValue, 0.1));
+    if (rawValue == 0) return FeetPerSecond.zero();
+
+    if (rawValue > 0) {
+      return MAX_DRIVE_SPEED.times(Math.max(rawValue-DEADBAND, 0)*SCALE_MULTIPLIER);
+    } else {
+      return MAX_DRIVE_SPEED.times(Math.min(rawValue+DEADBAND, 0)*SCALE_MULTIPLIER);
+    }
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
-    return MAX_TURN_SPEED.times(MathUtil.applyDeadband(rawValue, 0.1));
-  }
+    if (rawValue == 0) return RadiansPerSecond.zero();
 
-  //ANYTHING YOU CHANGE WITH ONE METHOD CHANGE WITH THE OTHER!!
+    if (rawValue > 0) {
+      return MAX_TURN_SPEED.times(Math.max(rawValue-Constants.SwerveConstants.TurnConstants.DEADBAND, 0)* Constants.SwerveConstants.TurnConstants.SCALE_MULTIPLIER);
+    } else {
+      return MAX_TURN_SPEED.times(Math.min(rawValue+Constants.SwerveConstants.TurnConstants.DEADBAND, 0)* Constants.SwerveConstants.TurnConstants.SCALE_MULTIPLIER);
+    }
+  }
 
   public Command f_driveWithFlightSticks() {
-    return swerve.f_drive(() -> getLinearJoystickVelocity(rightFlightStick.getY()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getAngularJoystickVelocity(leftFlightStick.getTwist()));
-  }
+    Supplier<Angle> targetTheta = () -> getAngleToHub().getMeasure();
+    Supplier<Angle> currentTheta = () -> swerve.getHeading().getMeasure();
 
-  public Command f_driveLockedOn() {
-    return swerve.f_driveLockedOntoTarget(
-        () -> getLinearJoystickVelocity(rightFlightStick.getY()),
-        () -> getLinearJoystickVelocity(rightFlightStick.getX()),
-        () -> getAngleToHub().getMeasure(),
-        () -> swerve.getHeading().getMeasure());
+    return swerve.f_drive(() -> getLinearJoystickVelocity(leftFlightStick.getY()*-1),
+        () -> getLinearJoystickVelocity(leftFlightStick.getX()*-1),
+        () -> {
+          if (driveState == Swerve.DriveState.NORMAL) return getAngularJoystickVelocity(rightFlightStick.getTwist());
+          else if (driveState == Swerve.DriveState.LOCKED) {
+            if (targetTheta.get().isNear(currentTheta.get(), TOLERANCE)) return RadiansPerSecond.zero();
+            return swerve.calculateThetaController(currentTheta.get(), targetTheta.get()).unaryMinus();
+          }
+          return RadiansPerSecond.zero();
+        });
   }
 
   public Distance getDistanceToHub() {
@@ -298,5 +321,9 @@ public class Robot extends TimedRobot {
 
   public String getShooterState() {
     return shooterState.toString();
+  }
+
+  public String getDriveState() {
+    return driveState.toString();
   }
 }
