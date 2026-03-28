@@ -109,7 +109,7 @@ public class Constants {
     public static final double KV = 0;
     public static final double KA = 0;
 
-    public static final Voltage INTAKE_VOLTAGE = Volts.of(10);
+    public static final Voltage INTAKE_VOLTAGE = Volts.of(12);
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
     public static final Voltage DOWN_VOLTAGE = Volts.of(-3);
     public static final Voltage UP_VOLTAGE = Volts.of(3);
