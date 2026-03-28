@@ -129,7 +129,9 @@ public class Robot extends TimedRobot {
   public void bindDriverButtons() {
     rightFlightStick.button(1).whileTrue(swerve.commandSetX());
     rightFlightStick.button(7).onTrue(swerve.o_setGyroToVisionIfPossible(() -> swerve.getHeading().getMeasure(), poseEstimation::getLastVisionTimestamp));
-    rightFlightStick.button(8).onTrue(swerve.o_resetGyro());
+    rightFlightStick.button(8)
+        .onTrue(swerve.o_resetGyro()) // This will run first and reset the gyro heading...
+        .onTrue(poseEstimation.resetHeading(swerve::getHeading)); // ... which will be read here
   }
 
   public void bindOperatorButtons() {
@@ -202,7 +204,6 @@ public class Robot extends TimedRobot {
     overrideState = Constants.OverrideState.OVERRIDE;
     driveState = Swerve.DriveState.NORMAL;
     autonomousCommand = a_revThenFire();
-
 
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);

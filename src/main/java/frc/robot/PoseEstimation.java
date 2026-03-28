@@ -1,7 +1,5 @@
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Degree;
-import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -28,12 +26,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.data.LookupTable;
 import frc.robot.data.PolarPoint;
 import java.util.List;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -196,6 +196,21 @@ public class PoseEstimation {
     double dy = target.getTranslation().getY() - myPosition.getTranslation().getY();
 
     return new PolarPoint(Meters.of(Math.hypot(dx, dy)), Radians.of(Math.PI + Math.atan(dy / dx)));
+  }
+
+  /**
+   * A command that resets the pose estimator's heading while retaining its current location. This
+   * must be used whenever the gyro's heading is reset, otherwise the odometry-based pose estimation
+   * will drift and not match reality. A common symptom is seeing the pose estimate move backwards
+   * relative to the robot when there's no AprilTags in view.
+   *
+   * @param heading A supplier for the heading to reset to when the command runs.
+   * @return A command to reset the heading.
+   */
+  public Command resetHeading(Supplier<Rotation2d> heading) {
+    return Commands.runOnce(() -> swerveEstimator.resetRotation(heading.get()))
+        .ignoringDisable(true)
+        .withName("Zero Pose Estimator Heading");
   }
 
   public Pose2d getEstimatedPosition() {
