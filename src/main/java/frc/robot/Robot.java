@@ -241,9 +241,9 @@ public class Robot extends TimedRobot {
     if (rawValue == 0) return FeetPerSecond.zero();
 
     if (rawValue > 0) {
-      return MAX_DRIVE_SPEED.times(Math.max(rawValue-DEADBAND, 0)*SCALE_MULTIPLIER);
+      return MAX_DRIVE_SPEED.times(Math.max(rawValue-DEADBAND, 0)*SCALE_MULTIPLIER).unaryMinus();
     } else {
-      return MAX_DRIVE_SPEED.times(Math.min(rawValue+DEADBAND, 0)*SCALE_MULTIPLIER);
+      return MAX_DRIVE_SPEED.times(Math.min(rawValue+DEADBAND, 0)*SCALE_MULTIPLIER).unaryMinus();
     }
   }
   private AngularVelocity getAngularJoystickVelocity(double rawValue) {
