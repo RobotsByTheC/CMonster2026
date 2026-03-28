@@ -153,7 +153,7 @@ public class Constants {
       }
 
       public static final AngularVelocity IDLE_SPEED = RPM.of(1300);
-      public static final AngularVelocity FERRY_SPEED = RPM.of(2500);
+      public static final AngularVelocity FERRY_SPEED = RPM.of(3500);
     }
   }
 
