@@ -55,6 +55,10 @@ import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.swerve.RealSwerveIO;
 import frc.robot.subsystems.swerve.SimSwerveIO;
 import frc.robot.subsystems.swerve.Swerve;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -124,6 +128,15 @@ public class Robot extends TimedRobot {
 
     bindDriverButtons();
     bindOperatorButtons();
+
+    // Ping photonvision every 100 ms.
+    // This needs to run on a separate thread to avoid blocking the main robot loop.
+    Executors.newSingleThreadScheduledExecutor(task -> {
+      var thread = new Thread(task);
+      thread.setDaemon(true);
+      thread.setName("PhotonVision Pinger");
+      return thread;
+    }).scheduleAtFixedRate(this::pingPhotonPi, 0, 100, TimeUnit.MILLISECONDS);
   }
 
   public void bindDriverButtons() {
@@ -351,5 +364,21 @@ public class Robot extends TimedRobot {
 
   public String getDriveState() {
     return driveState.toString();
+  }
+
+  @Logged(name = "Orange Pi Connected")
+  private volatile boolean isOrangePiConnected = false; // volatile so logging is consistent
+
+  // Note: this has a 25ms blocking operation. It needs to run in a daemon thread alongside the main
+  //       loop to avoid blocking the main loop.
+  //       This also only checks that the orange pi is on the network; it can't confirm that the
+  //       PhotonVision service is actually up and running.
+  private void pingPhotonPi() {
+    try {
+      var addr = InetAddress.getByName("10.20.84.11");
+      isOrangePiConnected = addr.isReachable(25);
+    } catch (IOException e) {
+      isOrangePiConnected = false;
+    }
   }
 }
