@@ -103,9 +103,9 @@ public class LookupTable {
     fill(Meters.of(0), RPM.of(500), Degrees.of(0));
     fill(Meters.of(1), RPM.of(1000), Degrees.of(10));
     fill(Meters.of(2), RPM.of(1300), Degrees.of(12.5));
-    fill(Meters.of(3), RPM.of(1500), Degrees.of(30));
-    fill(Meters.of(4), RPM.of(1700), Degrees.of(30));
-    fill(Meters.of(5), RPM.of(2200), Degrees.of(30));
+    fill(Meters.of(3), RPM.of(1500), Degrees.of(25));
+    fill(Meters.of(4), RPM.of(1700), Degrees.of(25));
+    fill(Meters.of(5), RPM.of(2200), Degrees.of(25));
 
     // Initialize tuning. Preferences are stored in a text file on the roboRIO and read at bootup.
     // These initial values are only written if these preferences don't already exist.
