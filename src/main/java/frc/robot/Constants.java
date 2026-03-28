@@ -112,7 +112,7 @@ public class Constants {
     public static final Voltage INTAKE_VOLTAGE = Volts.of(10);
     public static final Voltage OUTTAKE_VOLTAGE = Volts.of(-5);
     public static final Voltage DOWN_VOLTAGE = Volts.of(-3);
-    public static final Voltage UP_VOLTAGE = Volts.of(1.5);
+    public static final Voltage UP_VOLTAGE = Volts.of(3);
     public static final AngularVelocity MAX_WRIST_SPEED = RadiansPerSecond.of(10);
     public static final AngularAcceleration MAX_WRIST_ACCELERATION = RadiansPerSecondPerSecond.of(3);
   }

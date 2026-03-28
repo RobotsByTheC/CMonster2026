@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
         overrideState = Constants.OverrideState.SAFE;
       }
     }));
-    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))).alongWith(intake.f_pulseIntake()));
+    operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))));
 
     operatorController.povUp()
         .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1).ignoringDisable(true));
@@ -295,7 +295,7 @@ public class Robot extends TimedRobot {
           if (driveState == Swerve.DriveState.NORMAL) return getAngularJoystickVelocity(rightFlightStick.getTwist());
           else if (driveState == Swerve.DriveState.LOCKED) {
             if (targetTheta.get().isNear(currentTheta.get(), TOLERANCE)) return RadiansPerSecond.zero();
-            return swerve.calculateThetaController(currentTheta.get(), targetTheta.get()).unaryMinus();
+            return swerve.calculateThetaController(currentTheta.get().times(((DriverStation.getAlliance().isEmpty() || DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 1 : -1)), targetTheta.get()).unaryMinus();
           }
           return RadiansPerSecond.zero();
         });
