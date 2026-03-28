@@ -167,9 +167,9 @@ public class Robot extends TimedRobot {
     operatorController.leftTrigger().whileTrue(shooter.f_feed().alongWith(hopper.f_hopperIntake()).alongWith(leds.runPattern(LEDPattern.solid(Color.kAliceBlue))).alongWith(intake.f_pulseIntake()));
 
     operatorController.povUp()
-        .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1));
+        .onTrue(Commands.runOnce(() -> operatorFudgeFactor+=1).ignoringDisable(true));
     operatorController.povDown()
-        .onTrue(Commands.runOnce(() -> operatorFudgeFactor-=1));
+        .onTrue(Commands.runOnce(() -> operatorFudgeFactor-=1).ignoringDisable(true));
     operatorController.y().whileTrue(intake.f_pivotUp());
     operatorController.a().whileTrue(intake.f_pivotDown());
     operatorController.b().whileTrue(intake.f_applyVoltageToRollers());
