@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.FeetPerSecond;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -295,7 +296,7 @@ public class Robot extends TimedRobot {
           if (driveState == Swerve.DriveState.NORMAL) return getAngularJoystickVelocity(rightFlightStick.getTwist());
           else if (driveState == Swerve.DriveState.LOCKED) {
             if (targetTheta.get().isNear(currentTheta.get(), TOLERANCE)) return RadiansPerSecond.zero();
-            return swerve.calculateThetaController(currentTheta.get().times(((DriverStation.getAlliance().isEmpty() || DriverStation.getAlliance().get() == DriverStation.Alliance.Red) ? 1 : -1)), targetTheta.get()).unaryMinus();
+            return swerve.calculateThetaController(currentTheta.get(), targetTheta.get()).unaryMinus();
           }
           return RadiansPerSecond.zero();
         });
@@ -380,5 +381,9 @@ public class Robot extends TimedRobot {
     } catch (IOException e) {
       isOrangePiConnected = false;
     }
+  }
+
+  public Angle getModHeading() {
+    return Degrees.of(swerve.getHeading().getDegrees() % 360);
   }
 }

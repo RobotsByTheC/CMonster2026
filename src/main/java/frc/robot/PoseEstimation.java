@@ -26,12 +26,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.data.LookupTable;
 import frc.robot.data.PolarPoint;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import org.photonvision.EstimatedRobotPose;
@@ -50,6 +52,10 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 public class PoseEstimation {
   private final BooleanSupplier DASHBOARD_FIELD_FRONT_CAMERA_CONNECTED;
   private final BooleanSupplier DASHBOARD_FIELD_REAR_CAMERA_CONNECTED;
+
+  private Set<Integer> RED_HUB_IDS = Set.of(2, 5, 8, 9, 10, 11);
+  private Set<Integer> BLUE_HUB_IDS = Set.of(18, 21, 24, 25, 26, 27);
+  private boolean canSeeHub;
 
   // Loading the field JSON is very slow. Storing it in a static final field means we only need to
   // load it once.
@@ -110,6 +116,7 @@ public class PoseEstimation {
     var frontResults = frontCamera.getAllUnreadResults();
     var rearResults = rearCamera.getAllUnreadResults();
 
+    canSeeHub = false;
     for (PhotonPipelineResult result : frontResults) {
       // Note: this will only do anything the result has 2 or more tags in view
       if (result.getMultiTagResult().isPresent()) {
@@ -123,6 +130,19 @@ public class PoseEstimation {
     }
 
     for (PhotonPipelineResult result : rearResults) {
+      //Track whether or not we can see a hub
+      result.getTargets().forEach(target -> {
+        if (DriverStation.getAlliance().isEmpty() || DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+          if (RED_HUB_IDS.contains(target.getFiducialId())) {
+            canSeeHub = true;
+          }
+        } else {
+          if (BLUE_HUB_IDS.contains(target.getFiducialId())) {
+            canSeeHub = true;
+          }
+        }
+      });
+
       // Note: this will only do anything the result has 2 or more tags in view
       rearEstimator.estimateCoprocMultiTagPose(result).ifPresent(this::applyVisionPose);
     }

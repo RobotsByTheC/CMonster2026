@@ -59,16 +59,6 @@ public class Swerve extends SubsystemBase {
     return io.getHeading();
   }
 
-  @Override
-  public void periodic() {
-//    if (io.getHeading().getDegrees() > 180){
-//      io.setGyro(io.getHeading().minus(new Rotation2d(Math.PI*2)));
-//    }
-//    if (io.getHeading().getDegrees() < -180) {
-//      io.setGyro(io.getHeading().plus(new Rotation2d(Math.PI*2)));
-//    }
-  }
-
   @NotLogged
   public SwerveModulePosition[] getModulePositions() {
     return io.getModulePositions();
@@ -143,6 +133,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public AngularVelocity calculateThetaController(Angle measurement, Angle goal) {
-    return RadiansPerSecond.of(thetaController.calculate(measurement.in(Radians), goal.in(Radians)));
+    double thetaOutput = thetaController.calculate(measurement.in(Radians), goal.in(Radians));
+    double signum = Math.signum(thetaOutput) / 5d;
+    return RadiansPerSecond.of(thetaOutput + signum);
   }
 }
